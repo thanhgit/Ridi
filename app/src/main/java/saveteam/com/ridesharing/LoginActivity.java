@@ -1,9 +1,11 @@
 package saveteam.com.ridesharing;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -17,12 +19,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.gofynd.gravityview.GravityView;
+import saveteam.com.ridesharing.database.RidesharingDB;
+import saveteam.com.ridesharing.database.model.User;
 import saveteam.com.ridesharing.utils.ActivityUtils;
 import saveteam.com.ridesharing.utils.MyGoogleAuthen;
 
@@ -49,12 +54,22 @@ public class LoginActivity extends AppCompatActivity {
         authen = new MyGoogleAuthen(this, new MyGoogleAuthen.CheckSignInListener() {
             @Override
             public void success(FirebaseUser user) {
-                ActivityUtils.changeActivity(LoginActivity.this, HomeActivity.class);
+
+                User requestUser = new User(user.getUid(),
+                        user.getDisplayName(),
+                        user.getEmail(),
+                        user.getPhoneNumber() == null ? "" : user.getPhoneNumber(),
+                        user.getPhotoUrl().toString(),
+                        new Date(user.getMetadata().getCreationTimestamp()),
+                        new Date(user.getMetadata().getLastSignInTimestamp()));
+
+                InsertUserTask insertUserTask = new InsertUserTask(requestUser);
+                insertUserTask.execute();
             }
 
             @Override
             public void fail() {
-                ActivityUtils.displayToast(LoginActivity.this, "Fail to authentication");
+                // ActivityUtils.displayToast(LoginActivity.this, "Fail to authentication");
             }
         });
 
@@ -79,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-//        authen.checkSignIn();
+        authen.checkSignIn();
     }
 
     @Override
@@ -101,4 +116,41 @@ public class LoginActivity extends AppCompatActivity {
         authen.getResult(requestCode, resultCode, data);
     }
 
+    private class InsertUserTask extends AsyncTask<Void, Void, Void> {
+
+        private User user;
+
+        public InsertUserTask(User user) {
+            this.user = user;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            RidesharingDB.getInstance(getApplicationContext()).getUserDao().insertUsers(user);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            ActivityUtils.changeActivity(LoginActivity.this, HomeActivity.class);
+        }
+    }
+
+    private class GetAllUserTask extends AsyncTask<Void, Void, List<User>> {
+        private List<User> users;
+        @Override
+        protected List<User> doInBackground(Void... voids) {
+            return Arrays.asList(RidesharingDB.getInstance(getApplicationContext()).getUserDao().loadAllUsers());
+        }
+
+        @Override
+        protected void onPostExecute(List<User> users) {
+            this.users = users;
+            Log.d("thanhuit", "size is " + users.size());
+        }
+
+        public List<User> getUsers() {
+            return this.users;
+        }
+    }
 }

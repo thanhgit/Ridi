@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin_button_where_home">10dp</dimen>
+    <dimen name="textsize_title">18sp</dimen>
+    <dimen name="textsize_normal">14sp</dimen>
+</resources>
