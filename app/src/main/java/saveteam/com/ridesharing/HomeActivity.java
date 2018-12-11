@@ -36,7 +36,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void signout() {
-        MyGoogleAuthen.signOut(this, new MyGoogleAuthen.SignOutCompleteListener() {
+        MyGoogleAuthen.signOut(this, new MyGoogleAuthen.LogoutCompleteListener() {
             @Override
             public void done() {
                 Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
@@ -46,8 +46,4 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        return;
-    }
 }

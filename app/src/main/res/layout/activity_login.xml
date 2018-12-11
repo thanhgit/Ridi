@@ -46,12 +46,12 @@
         android:layout_weight="1"
         android:padding="20dp"
         android:orientation="vertical">
-        <com.google.android.gms.common.SignInButton
+
+        <com.firebase.ui.auth.util.ui.SupportVectorDrawablesButton
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/btn_signin_where_login"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:buttonSize="wide"
-            app:colorScheme="light"/>
+            style="@style/FirebaseUI.Button.AccountChooser.GoogleButton"
+            android:text="@string/fui_sign_in_with_google" />
     </LinearLayout>
 
 

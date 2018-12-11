@@ -6,10 +6,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
+import com.firebase.ui.auth.util.ui.SupportVectorDrawablesButton;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -18,14 +26,17 @@ import co.gofynd.gravityview.GravityView;
 import saveteam.com.ridesharing.utils.ActivityUtils;
 import saveteam.com.ridesharing.utils.MyGoogleAuthen;
 
+import static saveteam.com.ridesharing.utils.MyGoogleAuthen.RC_SIGN_IN;
+
 public class LoginActivity extends AppCompatActivity {
-    @BindView(R.id.btn_signin_where_login)
-    SignInButton btnSignIn;
     @BindView(R.id.imgView_where_login)
     ImageView imgView;
+    @BindView(R.id.btn_signin_where_login)
+    SupportVectorDrawablesButton btnSignin;
+
+    GravityView gravityView;
 
     MyGoogleAuthen authen;
-    GravityView gravityView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +45,20 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         initGravityView();
-        initGoogleAuthen();
 
+        authen = new MyGoogleAuthen(this, new MyGoogleAuthen.CheckSignInListener() {
+            @Override
+            public void success(FirebaseUser user) {
+                ActivityUtils.changeActivity(LoginActivity.this, HomeActivity.class);
+            }
+
+            @Override
+            public void fail() {
+                ActivityUtils.displayToast(LoginActivity.this, "Fail to authentication");
+            }
+        });
+
+        authen.init();
     }
 
     private void initGravityView() {
@@ -47,25 +70,16 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void initGoogleAuthen(){
-        authen = new MyGoogleAuthen(this);
-        authen.init();
+    @OnClick(R.id.btn_signin_where_login)
+    public void clickButtonSignin(View view) {
+        authen.signIn();
     }
+
 
     @Override
     protected void onStart() {
         super.onStart();
-        authen.checkSignIn(new MyGoogleAuthen.CheckSignInListener() {
-            @Override
-            public void success(GoogleSignInAccount account) {
-                loginSuccess();
-            }
-
-            @Override
-            public void fail() {
-                loginFail();
-            }
-        });
+//        authen.checkSignIn();
     }
 
     @Override
@@ -80,34 +94,11 @@ public class LoginActivity extends AppCompatActivity {
         gravityView.unRegisterListener();
     }
 
-    @OnClick(R.id.btn_signin_where_login)
-    public void clickBtnSignin(View view) {
-        authen.signIn();
-    }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        authen.getResult(requestCode, resultCode, data, new MyGoogleAuthen.CheckSignInListener() {
-            @Override
-            public void success(GoogleSignInAccount account) {
-                loginSuccess();
-            }
-
-            @Override
-            public void fail() {
-                loginFail();
-            }
-        });
+        authen.getResult(requestCode, resultCode, data);
     }
 
-    private void loginSuccess() {
-        ActivityUtils.changeActivity(this, HomeActivity.class);
-    }
-
-    private void loginFail() {
-
-    }
 }
