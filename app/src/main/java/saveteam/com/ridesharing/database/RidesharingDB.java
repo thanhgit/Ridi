@@ -14,7 +14,7 @@ import saveteam.com.ridesharing.database.dao.UserDao;
 import saveteam.com.ridesharing.database.model.Converters;
 import saveteam.com.ridesharing.database.model.User;
 
-@Database(entities = {User.class}, version = 1)
+@Database(entities = {User.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class RidesharingDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ridesharing_db";

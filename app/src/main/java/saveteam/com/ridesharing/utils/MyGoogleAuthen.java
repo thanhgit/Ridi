@@ -17,8 +17,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-import saveteam.com.ridesharing.R;
-
 public class MyGoogleAuthen {
     public static int RC_SIGN_IN = 9001;
     private Activity mActivity;

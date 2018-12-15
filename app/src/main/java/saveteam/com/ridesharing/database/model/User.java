@@ -1,6 +1,7 @@
 package saveteam.com.ridesharing.database.model;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -22,6 +23,7 @@ public class User {
     public User() {
     }
 
+    @Ignore
     public User(@NonNull String uid, String name, String email, String phone, String photoUrl, Date dateStart, Date dateLast) {
         this.uid = uid;
         this.name = name;

@@ -1,7 +1,6 @@
 package saveteam.com.ridesharing.utils;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,7 +21,7 @@ import java.util.List;
 
 import saveteam.com.ridesharing.R;
 
-public class BasicMapActivity extends AppCompatActivity {
+public abstract class BasicMapActivity extends AppCompatActivity {
 
     /**
      * permissions request code
@@ -40,6 +39,8 @@ public class BasicMapActivity extends AppCompatActivity {
 
     // map fragment embedded in this activity
     public MapFragment mapFragment = null;
+
+    public abstract void addInteraction();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,11 +70,14 @@ public class BasicMapActivity extends AppCompatActivity {
                     if (error == OnEngineInitListener.Error.NONE) {
                         // retrieve a reference of the map from the map fragment
                         map = mapFragment.getMap();
+
+                        addInteraction();
+
                         // Set the map center to the Vancouver region (no animation)
-                        map.setCenter(new GeoCoordinate(49.196261, -123.004773, 0.0),
+                        map.setCenter(new GeoCoordinate(10.7859988, 106.7340538, 0.0),
                                 Map.Animation.NONE);
                         // Set the zoom level to the average between min and max
-                        map.setZoomLevel((map.getMaxZoomLevel() + map.getMinZoomLevel()) / 2);
+                        map.setZoomLevel(17);
                     } else {
                         System.out.println("ERROR: Cannot initialize Map Fragment");
                     }

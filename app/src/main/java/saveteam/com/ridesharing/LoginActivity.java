@@ -30,6 +30,7 @@ import saveteam.com.ridesharing.database.RidesharingDB;
 import saveteam.com.ridesharing.database.model.User;
 import saveteam.com.ridesharing.utils.ActivityUtils;
 import saveteam.com.ridesharing.utils.MyGoogleAuthen;
+import saveteam.com.ridesharing.utils.SharedRefUtils;
 
 import static saveteam.com.ridesharing.utils.MyGoogleAuthen.RC_SIGN_IN;
 
@@ -62,6 +63,9 @@ public class LoginActivity extends AppCompatActivity {
                         user.getPhotoUrl().toString(),
                         new Date(user.getMetadata().getCreationTimestamp()),
                         new Date(user.getMetadata().getLastSignInTimestamp()));
+
+                SharedRefUtils.saveEmail(user.getEmail(), LoginActivity.this);
+                SharedRefUtils.saveUid(user.getUid(), LoginActivity.this);
 
                 InsertUserTask insertUserTask = new InsertUserTask(requestUser);
                 insertUserTask.execute();
