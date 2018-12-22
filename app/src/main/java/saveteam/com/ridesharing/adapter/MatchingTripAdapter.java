@@ -1,6 +1,7 @@
 package saveteam.com.ridesharing.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
@@ -8,23 +9,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import saveteam.com.ridesharing.presentation.DisplayMapActivity;
 import saveteam.com.ridesharing.R;
-import saveteam.com.ridesharing.model.Matching;
 import saveteam.com.ridesharing.model.Trip;
 
 public class MatchingTripAdapter extends RecyclerView.Adapter<MatchingTripAdapter.MatchingTripHolder> {
     private List<Trip> trips;
     private Context context;
+    private Trip tripSearch;
 
     public MatchingTripAdapter(List<Trip> trips, Context context) {
         this.trips = trips;
         this.context = context;
+    }
+
+    public void setTripSearch(Trip tripSearch) {
+        this.tripSearch = tripSearch;
     }
 
     @NonNull
@@ -42,8 +47,12 @@ public class MatchingTripAdapter extends RecyclerView.Adapter<MatchingTripAdapte
         matchingTripHolder.btn_choose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Toast.makeText(context, "click", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(context, DisplayMapActivity.class);
+                intent.putExtra("data", trip);
+                if (tripSearch != null) {
+                    intent.putExtra("tripSearch", tripSearch);
+                }
+                context.startActivity(intent);
             }
         });
     }

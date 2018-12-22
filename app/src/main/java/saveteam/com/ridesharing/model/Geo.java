@@ -15,4 +15,9 @@ public class Geo implements Serializable {
         this.lng = lng;
         this.cellId = cellId;
     }
+
+    @Override
+    public String toString() {
+        return "( "+lat+", "+lng+" )";
+    }
 }

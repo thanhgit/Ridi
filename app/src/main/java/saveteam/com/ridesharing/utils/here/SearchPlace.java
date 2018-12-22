@@ -1,4 +1,4 @@
-package saveteam.com.ridesharing.utils;
+package saveteam.com.ridesharing.utils.here;
 
 import com.here.android.mpa.search.DiscoveryResultPage;
 

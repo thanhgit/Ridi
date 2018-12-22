@@ -1,4 +1,4 @@
-package saveteam.com.ridesharing.utils;
+package saveteam.com.ridesharing.utils.google;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,6 +16,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+
+import saveteam.com.ridesharing.utils.activity.SharedRefUtils;
 
 public class MyGoogleAuthen {
     public static int RC_SIGN_IN = 9001;

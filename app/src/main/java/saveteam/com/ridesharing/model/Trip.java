@@ -1,13 +1,12 @@
 package saveteam.com.ridesharing.model;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.io.Serializable;
 import java.util.List;
 
 @IgnoreExtraProperties
-public class Trip {
+public class Trip implements Serializable {
     public String userName;
     public List<Geo> path;
     public Geo startGeo;

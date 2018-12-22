@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Ride sharing</string>
     <string name="title_activity_maps">Map</string>
+    <string name="term_apps">By active account, I agree to <b>Ridesharing term</b></string>
+    <string name="message_where_activate_code">
+        Thank you for active account with Ride sharing \n
+        We send activate code to XXXXXXXX through SMS
+    </string>
 </resources>

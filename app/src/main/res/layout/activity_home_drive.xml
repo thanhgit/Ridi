@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.home.HomeRideActivity"
+    tools:context=".presentation.home.HomeDriveActivity"
     tools:layout_editor_absoluteY="81dp">
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,22 +15,22 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <android.support.v7.widget.AppCompatButton
-                android:id="@+id/btn_ride_where_home_ride"
+                android:id="@+id/btn_ride_where_home_drive"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_margin="@dimen/margin_button_where_home"
-                android:background="@drawable/border_radius"
-                android:backgroundTint="@color/primaryLightColor"
-                android:text="Ride"/>
-            <android.support.v7.widget.AppCompatButton
-                android:id="@+id/btn_drive_where_home_ride"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_button_where_home"
-                android:layout_weight="1"
                 android:background="@drawable/border_radius"
                 android:backgroundTint="@color/primaryDarkColor"
+                android:text="Ride"/>
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_drive_where_home_drive"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_button_where_home"
+                android:layout_weight="1"
+                android:background="@drawable/border_radius"
+                android:backgroundTint="@color/primaryLightColor"
                 android:text="Drive"/>
         </LinearLayout>
 
@@ -123,32 +123,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:orientation="vertical"
-                android:layout_weight="2">
-                <TextView
-                    android:id="@+id/tv_message_where_home"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="message"
-                    android:layout_gravity="center_horizontal"
-                    android:textSize="@dimen/textsize_title"/>
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_view_where_home"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
-            </LinearLayout>
             <android.support.v7.widget.AppCompatButton
-                android:id="@+id/btn_schedule_where_home"
+                android:id="@+id/btn_post_as_drive_where_home"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:background="@drawable/border_radius"
                 android:backgroundTint="@color/colorAccent"
                 android:layout_margin="@dimen/margin_button_where_home"
-                android:text="Schedule"/>
+                android:text="Post as drive"/>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

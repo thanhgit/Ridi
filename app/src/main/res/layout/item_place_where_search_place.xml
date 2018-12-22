@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_where_item_search_place"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/tv_place_name_where_item_search_place"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/margin_button_where_home"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/textsize_title"
+        android:text="Where ?"/>
+</LinearLayout>

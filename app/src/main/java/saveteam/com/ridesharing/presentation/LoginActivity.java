@@ -1,7 +1,9 @@
-package saveteam.com.ridesharing;
+package saveteam.com.ridesharing.presentation;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,13 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.util.ui.SupportVectorDrawablesButton;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.common.Scopes;
-import com.google.android.gms.common.SignInButton;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
@@ -26,13 +22,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.gofynd.gravityview.GravityView;
+import saveteam.com.ridesharing.R;
 import saveteam.com.ridesharing.database.RidesharingDB;
 import saveteam.com.ridesharing.database.model.User;
-import saveteam.com.ridesharing.utils.ActivityUtils;
-import saveteam.com.ridesharing.utils.MyGoogleAuthen;
-import saveteam.com.ridesharing.utils.SharedRefUtils;
-
-import static saveteam.com.ridesharing.utils.MyGoogleAuthen.RC_SIGN_IN;
+import saveteam.com.ridesharing.presentation.home.HomeRideActivity;
+import saveteam.com.ridesharing.utils.activity.ActivityUtils;
+import saveteam.com.ridesharing.utils.google.MyGoogleAuthen;
+import saveteam.com.ridesharing.utils.MyPermission;
+import saveteam.com.ridesharing.utils.activity.SharedRefUtils;
 
 public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.imgView_where_login)
@@ -49,6 +46,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        MyPermission.getInstance(this).requestPermission();
 
         initGravityView();
 
@@ -73,11 +72,23 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void fail() {
-                // ActivityUtils.displayToast(LoginActivity.this, "Fail to authentication");
+                openNetWork();
             }
         });
 
         authen.init();
+    }
+
+    public void openNetWork() {
+        if (!ActivityUtils.checkInternetConnection(this)) {
+            ActivityUtils.displayAlert("Network problem", "Do you want to open network to use apps?", this,
+                    new ActivityUtils.OnOkClickListener(){
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
+                        }
+                    });
+        }
     }
 
     private void initGravityView() {
@@ -105,6 +116,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         gravityView.registerListener();
+//        openNetWork();
     }
 
     @Override
@@ -118,6 +130,12 @@ public class LoginActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         authen.getResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        MyPermission.getInstance(this).onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private class InsertUserTask extends AsyncTask<Void, Void, Void> {
@@ -136,7 +154,7 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            ActivityUtils.changeActivity(LoginActivity.this, HomeActivity.class);
+            ActivityUtils.changeActivity(LoginActivity.this, HomeRideActivity.class);
         }
     }
 

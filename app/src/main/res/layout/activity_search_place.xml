@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchPlaceActivity">
+    tools:context=".presentation.SearchPlaceActivity">
 
     <fragment
         class="com.here.android.mpa.mapping.MapFragment"
@@ -22,20 +22,32 @@
         android:layout_alignParentBottom="true"
         android:text="Choose"/>
 
-    <FrameLayout
-        android:id="@+id/toolbar_container"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/primaryLightColor" />
+            android:layout_height="wrap_content">
 
-        <com.miguelcatalan.materialsearchview.MaterialSearchView
-            android:id="@+id/search_view_where_search_place"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </FrameLayout>
+            <!--<android.support.v7.widget.Toolbar-->
+                <!--android:id="@+id/toolbar_where_search_place"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="?attr/actionBarSize"-->
+                <!--android:background="?attr/colorPrimary"-->
+                <!--app:popupTheme="@style/AppTheme.PopupOverlay" />-->
+
+            <br.com.liveo.searchliveo.SearchLiveo
+                android:id="@+id/search_liveo_where_search_place"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_place_name_where_search_place"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="?actionBarSize"></android.support.v7.widget.RecyclerView>
+        </FrameLayout>
+    </android.support.design.widget.AppBarLayout>
 </RelativeLayout>

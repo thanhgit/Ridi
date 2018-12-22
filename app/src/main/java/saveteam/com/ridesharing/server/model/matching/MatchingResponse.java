@@ -1,8 +1,11 @@
-package saveteam.com.ridesharing.server.model;
+package saveteam.com.ridesharing.server.model.matching;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import saveteam.com.ridesharing.model.Trip;
 
 public class MatchingResponse {
 
@@ -11,7 +14,7 @@ public class MatchingResponse {
     private String keyQuery;
     @SerializedName("similarSet")
     @Expose
-    private List<Integer> similarSet = null;
+    private List<SimilarSet> similarSet = null;
 
     public String getKeyQuery() {
         return keyQuery;
@@ -21,12 +24,22 @@ public class MatchingResponse {
         this.keyQuery = keyQuery;
     }
 
-    public List<Integer> getSimilarSet() {
+    public List<SimilarSet> getSimilarSet() {
         return similarSet;
     }
 
-    public void setSimilarSet(List<Integer> similarSet) {
+    public void setSimilarSet(List<SimilarSet> similarSet) {
         this.similarSet = similarSet;
     }
 
+    public List<Trip> getTrips() {
+        List<Trip> trips = new ArrayList<>();
+        for (SimilarSet item : this.similarSet) {
+            trips.add(item.toTrip());
+        }
+        return trips;
+    }
+
 }
+
+

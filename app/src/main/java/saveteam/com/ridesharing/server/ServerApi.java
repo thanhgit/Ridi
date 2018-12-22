@@ -5,9 +5,8 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import saveteam.com.ridesharing.model.Query;
-import saveteam.com.ridesharing.server.model.MatchingResponse;
 import saveteam.com.ridesharing.server.model.QueryRequest;
+import saveteam.com.ridesharing.server.model.matching.MatchingResponse;
 
 public interface ServerApi {
 

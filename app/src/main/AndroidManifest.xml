@@ -3,50 +3,72 @@
     package="saveteam.com.ridesharing">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:hardwareAccelerated="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <meta-data android:name="com.here.android.maps.appid" android:value="zQMG2ngiscDYKJhtSnGF"/>
-        <meta-data android:name="com.here.android.maps.apptoken" android:value="YC4UasAmWb4rY3OCN9jGBQ"/>
-        <meta-data android:name="com.here.android.maps.license.key" android:value="YecYI7S5XVUZmd5Hg3xPD+sTzAQ7naynlPoPCLBb+erqiHIe+rvZBsR8jdcrE2G63xnvJ2y4WiW64kHlgYx2hpMXjckwAZ2IP2s3N3uU2MMKc1qdhsyBs8YdiGfIG71NnStqbUwDIrXqu72lDCDKqAceC/ZnkfFy5ycya+Kdmco7u940z095FGC0pB+fliCrVFEp0odcB79TXDYd668XAVcXUXfAm2PhQrYV0SkwB014rYPWsTeIJxqgSExOwuFMNhqqD9D8gkW5KPLvmfo0n3PYy9dyhHkU9YiD2LItuHiJm95IEjXmvDiVidqji5w1gi2JW2ByWBr4NmCUw9HHuM4GD2jzVBm+D3i31cAGyxcttHgaUsA1d+od0k2UTFapyS1SL+LPZ2WrI7A08OanwplkH0EA3KSGwjSUbr9D3PJqOEwUtSQ13s+5oIVB+DqUkIbDJh9es/0zQYRJiCtlS2Web4Bw8tOOPK5g48bAoL1qOophJqV6+o0DXuuCl2bwKxi/15LFrzpwnvx2IGVYhrtylp+NcJRoa4oWw1A9wYxLXDB//I4k03hcp1kGFhTF0SSJRbZMSRvqZge0gXLy08LdW+f5Un9iYgKtZZ0ZziNkA7KyHLvCQ9DCN+uAxdu0s3vLV20ZBphrYV4LLQkN21J5+EfCh/0mjQlWv0uTjd4="/>"/>
-
-
+        <meta-data
+            android:name="com.here.android.maps.appid"
+            android:value="zQMG2ngiscDYKJhtSnGF" />
+        <meta-data
+            android:name="com.here.android.maps.apptoken"
+            android:value="YC4UasAmWb4rY3OCN9jGBQ" />
+        <meta-data
+            android:name="com.here.android.maps.license.key"
+            android:value="YecYI7S5XVUZmd5Hg3xPD+sTzAQ7naynlPoPCLBb+erqiHIe+rvZBsR8jdcrE2G63xnvJ2y4WiW64kHlgYx2hpMXjckwAZ2IP2s3N3uU2MMKc1qdhsyBs8YdiGfIG71NnStqbUwDIrXqu72lDCDKqAceC/ZnkfFy5ycya+Kdmco7u940z095FGC0pB+fliCrVFEp0odcB79TXDYd668XAVcXUXfAm2PhQrYV0SkwB014rYPWsTeIJxqgSExOwuFMNhqqD9D8gkW5KPLvmfo0n3PYy9dyhHkU9YiD2LItuHiJm95IEjXmvDiVidqji5w1gi2JW2ByWBr4NmCUw9HHuM4GD2jzVBm+D3i31cAGyxcttHgaUsA1d+od0k2UTFapyS1SL+LPZ2WrI7A08OanwplkH0EA3KSGwjSUbr9D3PJqOEwUtSQ13s+5oIVB+DqUkIbDJh9es/0zQYRJiCtlS2Web4Bw8tOOPK5g48bAoL1qOophJqV6+o0DXuuCl2bwKxi/15LFrzpwnvx2IGVYhrtylp+NcJRoa4oWw1A9wYxLXDB//I4k03hcp1kGFhTF0SSJRbZMSRvqZge0gXLy08LdW+f5Un9iYgKtZZ0ZziNkA7KyHLvCQ9DCN+uAxdu0s3vLV20ZBphrYV4LLQkN21J5+EfCh/0mjQlWv0uTjd4=" />
+        "/>
         <service
             android:name="com.here.android.mpa.service.MapService"
-            android:label="saveteam.com.ridesharing.MapService"
-            android:exported="false">
+            android:exported="false"
+            android:label="saveteam.com.ridesharing.MapService">
             <intent-filter>
-                <action android:name="saveteam.com.ridesharing.MapService">
-                </action>
+                <action android:name="saveteam.com.ridesharing.MapService" />
             </intent-filter>
         </service>
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".presentation.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
+        <activity android:name=".presentation.home.HomeRideActivity" />
+        <activity
+            android:name=".presentation.SearchPlaceActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".HomeActivity" />
-        <activity android:name=".SearchPlaceActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+        <activity
+            android:name=".presentation.DisplayMapActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".presentation.profile.RegisterProfileActivity" />
+        <activity android:name=".presentation.profile.ActivateCodeActivity" />
+        <activity android:name=".presentation.home.HomeDriveActivity" />
+        <activity android:name=".presentation.profile.ProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
     </application>
 
 </manifest>

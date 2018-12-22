@@ -13,9 +13,9 @@ public class ServerClient {
     private static Retrofit server = null;
     public static Retrofit getServer(String base_url){
         OkHttpClient builder = new OkHttpClient.Builder()
-                .readTimeout(35000,TimeUnit.MILLISECONDS)
-                .writeTimeout(35000, TimeUnit.MILLISECONDS)
-                .connectTimeout(60000, TimeUnit.MILLISECONDS)
+                .readTimeout(55000,TimeUnit.MILLISECONDS)
+                .writeTimeout(55000, TimeUnit.MILLISECONDS)
+                .connectTimeout(80000, TimeUnit.MILLISECONDS)
                 .retryOnConnectionFailure(true)
                 .build();
         Gson gson = new GsonBuilder().setLenient().setDateFormat("dd-MM-yyy").create();

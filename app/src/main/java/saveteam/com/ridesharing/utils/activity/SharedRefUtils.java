@@ -1,4 +1,4 @@
-package saveteam.com.ridesharing.utils;
+package saveteam.com.ridesharing.utils.activity;
 
 import android.content.Context;
 import android.content.SharedPreferences;

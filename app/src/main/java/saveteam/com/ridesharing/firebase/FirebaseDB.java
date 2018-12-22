@@ -13,7 +13,7 @@ import java.util.List;
 
 import saveteam.com.ridesharing.model.Query;
 import saveteam.com.ridesharing.model.Trip;
-import saveteam.com.ridesharing.utils.ActivityUtils;
+import saveteam.com.ridesharing.utils.activity.ActivityUtils;
 
 public class FirebaseDB {
     public static DatabaseReference getInstance() {

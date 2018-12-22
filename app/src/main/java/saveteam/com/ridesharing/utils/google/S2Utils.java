@@ -1,4 +1,4 @@
-package saveteam.com.ridesharing.utils;
+package saveteam.com.ridesharing.utils.google;
 
 import com.google.common.geometry.S2Cell;
 import com.google.common.geometry.S2CellId;

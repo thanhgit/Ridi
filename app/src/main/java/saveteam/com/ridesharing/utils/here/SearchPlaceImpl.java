@@ -1,4 +1,4 @@
-package saveteam.com.ridesharing.utils;
+package saveteam.com.ridesharing.utils.here;
 
 import android.util.Log;
 
@@ -13,6 +13,8 @@ import com.here.android.mpa.search.SearchRequest;
 import com.here.android.mpa.search.TextAutoSuggestionRequest;
 
 import java.util.List;
+
+import saveteam.com.ridesharing.utils.activity.ActivityUtils;
 
 public class SearchPlaceImpl implements SearchPlace {
     GeoCoordinate center;
