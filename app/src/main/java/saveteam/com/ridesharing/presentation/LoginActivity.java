@@ -26,6 +26,7 @@ import saveteam.com.ridesharing.R;
 import saveteam.com.ridesharing.database.RidesharingDB;
 import saveteam.com.ridesharing.database.model.User;
 import saveteam.com.ridesharing.presentation.home.HomeRideActivity;
+import saveteam.com.ridesharing.presentation.home.MainActivity;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
 import saveteam.com.ridesharing.utils.google.MyGoogleAuthen;
 import saveteam.com.ridesharing.utils.MyPermission;
@@ -154,7 +155,7 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            ActivityUtils.changeActivity(LoginActivity.this, HomeRideActivity.class);
+            ActivityUtils.changeActivity(LoginActivity.this, MainActivity.class);
         }
     }
 

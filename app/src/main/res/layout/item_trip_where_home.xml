@@ -6,28 +6,102 @@
     android:padding="@dimen/margin_button_where_home"
     android:orientation="horizontal">
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="3">
-        <TextView
-            android:id="@+id/tv_user_name_where_item_trip"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:textStyle="bold"
-            android:textSize="@dimen/textsize_title"
-            android:inputType="text"
-            android:text="No name"/>
+        android:layout_width="64dp"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/cicular_border"
+            android:src="@drawable/default_user"/>
     </LinearLayout>
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btn_choose_where_item_trip"
-            android:layout_width="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Choose"/>
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="3">
+                <TextView
+                    android:id="@+id/tv_user_name_where_item_trip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/textsize_title"
+                    android:inputType="text"
+                    android:text="No name"/>
+                <TextView
+                    android:id="@+id/tv_user_company_where_item_trip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/textsize_normal"
+                    android:inputType="text"
+                    android:text="No company"/>
+                <TextView
+                    android:id="@+id/tv_user_address_where_item_trip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/textsize_normal"
+                    android:lines="1"
+                    android:maxLines="2"
+                    android:inputType="text"
+                    android:text="154 street, Tan Phu ward, District 9, HCM city"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/btn_choose_where_item_trip"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/border_radius"
+                    android:backgroundTint="@color/fui_buttonShadow"
+                    android:text="Request"
+                    android:textColor="@color/primaryDarkColor"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="74% route"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="11:23 AM"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="7(5)"/>
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
+
 
 </LinearLayout>

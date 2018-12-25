@@ -41,7 +41,7 @@
             <br.com.liveo.searchliveo.SearchLiveo
                 android:id="@+id/search_liveo_where_search_place"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize" />
+                android:layout_height="wrap_content" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_place_name_where_search_place"

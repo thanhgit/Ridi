@@ -186,6 +186,13 @@ public class SearchPlaceActivity extends BasicMapActivity implements SearchLiveo
         searchLiveo.with(this).minToSearch(0).searchDelay(1).hideVoice().
                 build();
         searchLiveo.show();
+
+        searchLiveo.with(this).hideSearch(new SearchLiveo.OnHideSearchListener() {
+            @Override
+            public void hideSearch() {
+                finish();
+            }
+        });
     }
 
 

@@ -1,16 +1,11 @@
-package saveteam.com.ridesharing.database.model;
+package saveteam.com.ridesharing.firebase.model;
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
+import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.io.Serializable;
 
-@Entity(tableName = "profiles")
-public class Profile implements Serializable {
-    @PrimaryKey
-    @NonNull
+@IgnoreExtraProperties
+public class ProfileFB implements Serializable {
     private String uid;
 
     private String firstName;
@@ -23,12 +18,11 @@ public class Profile implements Serializable {
      */
     private boolean gender;
 
-    public Profile() {
+    public ProfileFB() {
 
     }
 
-    @Ignore
-    public Profile(@NonNull String uid, String firstName, String lastName, String avatar, String phone, boolean gender) {
+    public ProfileFB(String uid, String firstName, String lastName, String avatar, String phone, boolean gender) {
         this.uid = uid;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -37,12 +31,11 @@ public class Profile implements Serializable {
         this.gender = gender;
     }
 
-    @NonNull
     public String getUid() {
         return uid;
     }
 
-    public void setUid(@NonNull String uid) {
+    public void setUid(String uid) {
         this.uid = uid;
     }
 
@@ -84,14 +77,5 @@ public class Profile implements Serializable {
 
     public void setGender(boolean gender) {
         this.gender = gender;
-    }
-
-    @Ignore
-    public String getGenderString() {
-        if (gender) {
-            return "male";
-        } else {
-            return "female";
-        }
     }
 }
