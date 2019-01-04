@@ -24,12 +24,8 @@ import butterknife.ButterKnife;
 import saveteam.com.ridesharing.R;
 import saveteam.com.ridesharing.adapter.MatchingTripAdapter;
 import saveteam.com.ridesharing.database.model.Profile;
-import saveteam.com.ridesharing.firebase.FirebaseDB;
 import saveteam.com.ridesharing.model.Geo;
-import saveteam.com.ridesharing.model.MatchingDTO;
 import saveteam.com.ridesharing.model.Trip;
-import saveteam.com.ridesharing.server.model.MatchingResponseWithUser;
-import saveteam.com.ridesharing.utils.activity.ActivityUtils;
 
 public class MatchingActivity extends AppCompatActivity {
     @BindView(R.id.rv_users_where_matching)

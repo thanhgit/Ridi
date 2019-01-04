@@ -172,6 +172,10 @@ public class MainActivity extends BasicMapActivity {
         if (this.mapRoute != null) {
             this.map.removeMapObject(this.mapRoute);
         }
+
+        if (start_point!=null && end_point!=null) {
+            clickFromTime(btn_from_time);
+        }
     }
 
     private void initDateTimePicker() {

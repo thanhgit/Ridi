@@ -13,18 +13,21 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import saveteam.com.ridesharing.database.dao.ProfileDao;
+import saveteam.com.ridesharing.database.dao.SearchPlaceHistoryDao;
 import saveteam.com.ridesharing.database.dao.UserDao;
 import saveteam.com.ridesharing.database.model.Converters;
 import saveteam.com.ridesharing.database.model.Profile;
+import saveteam.com.ridesharing.database.model.SearchPlaceHistory;
 import saveteam.com.ridesharing.database.model.User;
 
-@Database(entities = {User.class, Profile.class}, version = 2, exportSchema = false)
+@Database(entities = {User.class, Profile.class, SearchPlaceHistory.class}, version = 4, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class RidesharingDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ridesharing_db";
 
     public abstract UserDao getUserDao();
     public abstract ProfileDao getProfileDao();
+    public abstract SearchPlaceHistoryDao getSearchPlaceHistoryDao();
 
     private static volatile RidesharingDB instance;
 
@@ -43,12 +46,4 @@ public abstract class RidesharingDB extends RoomDatabase {
 
         return instance;
     }
-
-//    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
-//        @Override
-//        public void migrate(SupportSQLiteDatabase database) {
-//
-//        }
-//    };
-
 }

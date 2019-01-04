@@ -7,22 +7,24 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import java.util.List;
+
 import saveteam.com.ridesharing.database.model.User;
 
 @Dao
 public interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insertUsers(User... users);
+    void insertUsers(User... users);
 
     @Update
-    public void updateUsers(User... users);
+    void updateUsers(User... users);
 
     @Delete
-    public void deleteUsers(User... users);
+    void deleteUsers(User... users);
 
     @Query("SELECT * FROM users")
-    public User[] loadAllUsers();
+    List<User> loadAllUsers();
 
     @Query("SELECT * FROM users WHERE uid = :uid")
-    public User[] loadUserBy(String uid);
+    List<User> loadUserBy(String uid);
 }

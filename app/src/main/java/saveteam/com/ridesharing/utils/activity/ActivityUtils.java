@@ -17,11 +17,14 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.here.android.mpa.common.GeoCoordinate;
@@ -245,5 +248,28 @@ public class ActivityUtils {
             }
         });
         snackbar.show();
+    }
+
+    /**
+     * keyboard
+     */
+
+    public static void showKeyboard(Activity activity, EditText txt) {
+        InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(txt, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    public static void hideKeyboard(Activity activity, EditText txt) {
+        InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(txt.getWindowToken(), 0);
+    }
+
+    /**
+     * Background processing
+     */
+
+    public static void backgroundProcess(Runnable runnable, int time) {
+        Handler handler = new Handler();
+        handler.postDelayed(runnable, time);
     }
 }

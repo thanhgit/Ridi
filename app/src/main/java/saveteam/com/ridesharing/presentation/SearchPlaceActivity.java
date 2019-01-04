@@ -1,21 +1,27 @@
 package saveteam.com.ridesharing.presentation;
 
-import android.content.Context;
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.PointF;
-import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatButton;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.ActionProvider;
-import android.view.ContextMenu;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.here.android.mpa.common.GeoCoordinate;
 import com.here.android.mpa.common.ViewObject;
@@ -28,13 +34,13 @@ import com.here.android.mpa.search.DiscoveryResultPage;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import br.com.liveo.searchliveo.SearchLiveo;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import saveteam.com.ridesharing.R;
 import saveteam.com.ridesharing.adapter.SearchPlaceAdapter;
+import saveteam.com.ridesharing.database.RidesharingDB;
+import saveteam.com.ridesharing.database.model.SearchPlaceHistory;
 import saveteam.com.ridesharing.model.Geo;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
 import saveteam.com.ridesharing.utils.activity.BasicMapActivity;
@@ -42,16 +48,21 @@ import saveteam.com.ridesharing.utils.google.S2Utils;
 import saveteam.com.ridesharing.utils.here.SearchPlace;
 import saveteam.com.ridesharing.utils.here.SearchPlaceImpl;
 
-public class SearchPlaceActivity extends BasicMapActivity implements SearchLiveo.OnSearchListener {
+public class SearchPlaceActivity extends BasicMapActivity {
 
-//    @BindView(R.id.toolbar_where_search_place)
-//    Toolbar toolbar;
-    @BindView(R.id.btn_choose_where_search_place)
-    AppCompatButton btn_choose;
+    @BindView(R.id.drawer_layout_where_search_place)
+    DrawerLayout drawerLayout;
     @BindView(R.id.rv_place_name_where_search_place)
     RecyclerView rv_place_name;
-    @BindView(R.id.search_liveo_where_search_place)
-    SearchLiveo searchLiveo;
+    @BindView(R.id.txt_search_where_search_place)
+    EditText txt_search;
+    @BindView(R.id.ibtn_close_where_search_place)
+    ImageButton ibtn_close;
+    @BindView(R.id.ibtn_menu_where_search_place)
+    ImageButton ibtn_menu;
+    @BindView(R.id.navigation_view_where_search_place)
+    NavigationView navigationView;
+
 
     SearchPlaceAdapter searchPlaceAdapter;
 
@@ -74,9 +85,7 @@ public class SearchPlaceActivity extends BasicMapActivity implements SearchLiveo
             mapFragment.getMapGesture().addOnGestureListener(new MyOnGestureListener(new OnSelectMarkerListener() {
                 @Override
                 public void selected(MapMarker marker) {
-                    if (btn_choose != null) {
-                        btn_choose.setEnabled(true);
-                    }
+
                 }
             }), 0, true);
         }
@@ -93,9 +102,6 @@ public class SearchPlaceActivity extends BasicMapActivity implements SearchLiveo
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-
-//        setSupportActionBar(toolbar);
-
         results = new ArrayList<>();
 
         configRecycleView();
@@ -113,54 +119,116 @@ public class SearchPlaceActivity extends BasicMapActivity implements SearchLiveo
                     map.setZoomLevel(17);
                     results.clear();
                     searchPlaceAdapter.notifyDataSetChanged();
-                    searchLiveo.text("");
-                    searchLiveo.hideKeyboardAfterSearch();
+
+                    clickButtonChoose();
                 }
             }
         });
 
         initSearchView();
-    }
 
-    @Override
-    public void changedSearch(CharSequence charSequence) {
-        String query = charSequence.toString();
-        if (!query.trim().equals("") && !query.equals(querySearch)){
-            searchResults = searchPlace.searchPlaceByName(query, new SearchPlaceImpl.SearchResultListener() {
-                @Override
-                public void done(DiscoveryResultPage discoveryResultPage) {
-                    if (discoveryResultPage != null) {
-                        searchResults = discoveryResultPage;
-                        List<String> strings = new ArrayList<>();
-                        for (DiscoveryResult item : discoveryResultPage.getItems()) {
-                            String str = item.getTitle();
-                            strings.add(str);
-                            ActivityUtils.displayLog("title is: " + str);
+        txt_search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String query = s.toString();
+                if (!query.trim().equals("") && !query.equals(querySearch)){
+                    searchResults = searchPlace.searchPlaceByName(query, new SearchPlaceImpl.SearchResultListener() {
+                        @Override
+                        public void done(DiscoveryResultPage discoveryResultPage) {
+                            if (discoveryResultPage != null) {
+                                searchResults = discoveryResultPage;
+                                List<String> strings = new ArrayList<>();
+                                for (DiscoveryResult item : discoveryResultPage.getItems()) {
+                                    String str = item.getTitle();
+                                    strings.add(str);
+                                    ActivityUtils.displayLog("title is: " + str);
+                                }
+
+                                results.clear();
+                                results.addAll(discoveryResultPage.getItems());
+                                searchPlaceAdapter.notifyDataSetChanged();
+                            }
                         }
+                    });
 
-                        results.clear();
-                        results.addAll(discoveryResultPage.getItems());
-                        searchPlaceAdapter.notifyDataSetChanged();
-                    }
+                    querySearch = query;
                 }
-            });
+            }
 
-            querySearch = query;
-        }
+            @Override
+            public void afterTextChanged(Editable s) {
+               if (s.length() > 0) {
+                   ibtn_close.setVisibility(View.VISIBLE);
+               } else {
+                   ibtn_close.setVisibility(View.GONE);
+                   results.clear();
+                   searchPlaceAdapter.notifyDataSetChanged();
+               }
+            }
+        });
 
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View view, float v) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View view) {
+                ActivityUtils.hideKeyboard(SearchPlaceActivity.this, txt_search);
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View view) {
+                ActivityUtils.showKeyboard(SearchPlaceActivity.this, txt_search);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int i) {
+
+            }
+        });
+
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                txt_search.setText(menuItem.getTitle());
+                drawerLayout.closeDrawer(Gravity.LEFT);
+                return true;
+            }
+        });
     }
 
-    @OnClick(R.id.btn_choose_where_search_place)
-    public void clickButtonChoose(View view) {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+    @OnClick(R.id.ibtn_menu_where_search_place)
+    public void clickButtonMenu(View view) {
+        drawerLayout.openDrawer(Gravity.LEFT);
+    }
 
+    @OnClick(R.id.ibtn_close_where_search_place)
+    public void clickButtonClose(View view) {
+        txt_search.setText("");
+    }
+
+    public void clickButtonChoose() {
         if (marker != null) {
-            double lat = marker.getCoordinate().getLatitude();
-            double lng = marker.getCoordinate().getLongitude();
-            long cellId = S2Utils.getCellId(lat, lng).id();
+            final double lat = marker.getCoordinate().getLatitude();
+            final double lng = marker.getCoordinate().getLongitude();
+            final long cellId = S2Utils.getCellId(lat, lng).id();
             Geo geo = new Geo(lat, lng, cellId);
 
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    RidesharingDB.getInstance(SearchPlaceActivity.this)
+                            .getSearchPlaceHistoryDao()
+                            .insertSearchPlaceHistorys(new SearchPlaceHistory(lat, lng, cellId, titlePlaceName ));
+                }
+            });
             Intent resultIntent = new Intent();
             resultIntent.putExtra("data", geo);
             resultIntent.putExtra("title", titlePlaceName);
@@ -178,21 +246,10 @@ public class SearchPlaceActivity extends BasicMapActivity implements SearchLiveo
         rv_place_name.setItemAnimator( new DefaultItemAnimator());
         rv_place_name.setHasFixedSize(true);
         rv_place_name.setLayoutManager(layoutManager);
-
     }
 
     private void initSearchView() {
         searchPlace = new SearchPlaceImpl(new GeoCoordinate(10.789148,106.6615424));
-        searchLiveo.with(this).minToSearch(0).searchDelay(1).hideVoice().
-                build();
-        searchLiveo.show();
-
-        searchLiveo.with(this).hideSearch(new SearchLiveo.OnHideSearchListener() {
-            @Override
-            public void hideSearch() {
-                finish();
-            }
-        });
     }
 
 
@@ -202,9 +259,77 @@ public class SearchPlaceActivity extends BasicMapActivity implements SearchLiveo
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        StartTask startTask = new StartTask(this, new StartTask.GetSearchPlaceHistoryListener() {
+            @Override
+            public void done(List<SearchPlaceHistory> histories) {
+                createMenu(histories);
+            }
+        });
+        startTask.execute();
+    }
+
+    public void createMenu(List<SearchPlaceHistory> histories){
+        Menu menu = navigationView.getMenu();
+        menu.clear();
+        Menu submenu = menu.addSubMenu("History");
+        for (SearchPlaceHistory history : histories) {
+            submenu.add(history.getTitle());
+        }
+
+        navigationView.invalidate();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        txt_search.requestFocus();
+    }
+
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+    }
+
+    private static class StartTask extends AsyncTask<Void, Void, Void> {
+        Activity activity;
+        ProgressDialog progressDialog;
+        GetSearchPlaceHistoryListener listener;
+
+        public interface GetSearchPlaceHistoryListener {
+            void done(List<SearchPlaceHistory> histories);
+        }
+
+        public StartTask(Activity activity, GetSearchPlaceHistoryListener listener) {
+            this.activity = activity;
+            this.listener = listener;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = new ProgressDialog(activity);
+            progressDialog.setMessage("Loading ...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if (progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            List<SearchPlaceHistory> histories;
+            histories = RidesharingDB.getInstance(activity).getSearchPlaceHistoryDao().loadAllSearchPlaceHistorys();
+            listener.done(histories);
+            return null;
+        }
     }
 
     private class MyOnGestureListener implements MapGesture.OnGestureListener {
@@ -240,8 +365,6 @@ public class SearchPlaceActivity extends BasicMapActivity implements SearchLiveo
 
         @Override
         public boolean onTapEvent(PointF p) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
             return false;
         }
 
@@ -281,7 +404,6 @@ public class SearchPlaceActivity extends BasicMapActivity implements SearchLiveo
 
             createMarker(map.pixelToGeo(p));
             titlePlaceName = "";
-            //listener.selected(marker);
             return false;
         }
 
@@ -294,213 +416,4 @@ public class SearchPlaceActivity extends BasicMapActivity implements SearchLiveo
             return false;
         }
     }
-
-    private class MyMenuItem implements MenuItem {
-
-        @Override
-        public int getItemId() {
-            return R.id.action_search_where_search_place_menu;
-        }
-
-        @Override
-        public int getGroupId() {
-            return 0;
-        }
-
-        @Override
-        public int getOrder() {
-            return 0;
-        }
-
-        @Override
-        public MenuItem setTitle(CharSequence title) {
-            return null;
-        }
-
-        @Override
-        public MenuItem setTitle(int title) {
-            return null;
-        }
-
-        @Override
-        public CharSequence getTitle() {
-            return null;
-        }
-
-        @Override
-        public MenuItem setTitleCondensed(CharSequence title) {
-            return null;
-        }
-
-        @Override
-        public CharSequence getTitleCondensed() {
-            return null;
-        }
-
-        @Override
-        public MenuItem setIcon(Drawable icon) {
-            return null;
-        }
-
-        @Override
-        public MenuItem setIcon(int iconRes) {
-            return null;
-        }
-
-        @Override
-        public Drawable getIcon() {
-            return null;
-        }
-
-        @Override
-        public MenuItem setIntent(Intent intent) {
-            return null;
-        }
-
-        @Override
-        public Intent getIntent() {
-            return null;
-        }
-
-        @Override
-        public MenuItem setShortcut(char numericChar, char alphaChar) {
-            return null;
-        }
-
-        @Override
-        public MenuItem setNumericShortcut(char numericChar) {
-            return null;
-        }
-
-        @Override
-        public char getNumericShortcut() {
-            return 0;
-        }
-
-        @Override
-        public MenuItem setAlphabeticShortcut(char alphaChar) {
-            return null;
-        }
-
-        @Override
-        public char getAlphabeticShortcut() {
-            return 0;
-        }
-
-        @Override
-        public MenuItem setCheckable(boolean checkable) {
-            return null;
-        }
-
-        @Override
-        public boolean isCheckable() {
-            return false;
-        }
-
-        @Override
-        public MenuItem setChecked(boolean checked) {
-            return null;
-        }
-
-        @Override
-        public boolean isChecked() {
-            return false;
-        }
-
-        @Override
-        public MenuItem setVisible(boolean visible) {
-            return null;
-        }
-
-        @Override
-        public boolean isVisible() {
-            return false;
-        }
-
-        @Override
-        public MenuItem setEnabled(boolean enabled) {
-            return null;
-        }
-
-        @Override
-        public boolean isEnabled() {
-            return false;
-        }
-
-        @Override
-        public boolean hasSubMenu() {
-            return false;
-        }
-
-        @Override
-        public SubMenu getSubMenu() {
-            return null;
-        }
-
-        @Override
-        public MenuItem setOnMenuItemClickListener(OnMenuItemClickListener menuItemClickListener) {
-            return null;
-        }
-
-        @Override
-        public ContextMenu.ContextMenuInfo getMenuInfo() {
-            return null;
-        }
-
-        @Override
-        public void setShowAsAction(int actionEnum) {
-
-        }
-
-        @Override
-        public MenuItem setShowAsActionFlags(int actionEnum) {
-            return null;
-        }
-
-        @Override
-        public MenuItem setActionView(View view) {
-            return null;
-        }
-
-        @Override
-        public MenuItem setActionView(int resId) {
-            return null;
-        }
-
-        @Override
-        public View getActionView() {
-            return null;
-        }
-
-        @Override
-        public MenuItem setActionProvider(ActionProvider actionProvider) {
-            return null;
-        }
-
-        @Override
-        public ActionProvider getActionProvider() {
-            return null;
-        }
-
-        @Override
-        public boolean expandActionView() {
-            return false;
-        }
-
-        @Override
-        public boolean collapseActionView() {
-            return false;
-        }
-
-        @Override
-        public boolean isActionViewExpanded() {
-            return false;
-        }
-
-        @Override
-        public MenuItem setOnActionExpandListener(OnActionExpandListener listener) {
-            return null;
-        }
-    }
-
 }

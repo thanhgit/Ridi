@@ -177,7 +177,7 @@ public class LoginActivity extends AppCompatActivity {
         private List<User> users;
         @Override
         protected List<User> doInBackground(Void... voids) {
-            return Arrays.asList(RidesharingDB.getInstance(getApplicationContext()).getUserDao().loadAllUsers());
+            return RidesharingDB.getInstance(getApplicationContext()).getUserDao().loadAllUsers();
         }
 
         @Override
