@@ -67,6 +67,7 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:1.2.1'
 
     implementation 'com.github.jlmd:AnimatedCircleLoadingView:1.1.5@aar'
+    implementation 'com.github.chyrta:AndroidOnboarder:0.7'
 
 }
 

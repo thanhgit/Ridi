@@ -11,6 +11,7 @@ import saveteam.com.ridesharing.utils.google.MyGoogleAuthen;
 public class SharedRefUtils {
     public static final String REF_UID = "uid";
     public static final String REF_EMAIL = "email";
+    public static final String REF_ONBOARDING = "onboarding";
     public static final String REF_APPS = "refapps";
 
     private static SharedPreferences sharedpreferences;
@@ -42,6 +43,16 @@ public class SharedRefUtils {
 
     public static String getUid(Context context) {
         return SharedRefUtils.getInstance(context).getString(REF_UID, "0000");
+    }
+
+    public static void saveOnboarding(Context context) {
+        SharedPreferences.Editor editor = SharedRefUtils.getInstance(context).edit();
+        editor.putBoolean(REF_ONBOARDING, false);
+        editor.commit();
+    }
+
+    public static boolean isOnboarding(Context context) {
+        return SharedRefUtils.getInstance(context).getBoolean(REF_ONBOARDING, true);
     }
 
     public static void signout(final Activity activity) {

@@ -3,7 +3,6 @@ package saveteam.com.ridesharing.presentation.splashscreen;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.RelativeLayout;
@@ -31,8 +30,6 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
-
-
     }
 
     @Override
@@ -78,7 +75,6 @@ public class SplashActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             this.progress.stopOk();
-            ActivityUtils.displayToast(context, "Done" );
             if (ActivityUtils.checkInternetConnection(context)) {
                 this.progress.stopOk();
 
@@ -89,15 +85,15 @@ public class SplashActivity extends AppCompatActivity {
                     public void run() {
                         if(!email.equals("") && !uid.equals("")) {
                             ActivityUtils.changeActivity(context, MainActivity.class);
-                        } else {
+                        } else if(SharedRefUtils.isOnboarding(context)) {
+                            ActivityUtils.changeActivity(context, OnBoardingActivity.class);
+                        } else  {
                             ActivityUtils.changeActivity(context, LoginActivity.class);
                         }
                     }
                 };
 
                 handler.postDelayed(runnable, 3500);
-
-
             } else {
                 this.progress.stopFailure();
                 ActivityUtils.openNetWork(context);

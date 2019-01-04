@@ -11,4 +11,9 @@
     <color name="secondaryTextColor">#000000</color>
 
     <color name="transparent">#00ffffff</color>
+
+    // common color
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="yellow">#ffff00</color>
 </resources>
