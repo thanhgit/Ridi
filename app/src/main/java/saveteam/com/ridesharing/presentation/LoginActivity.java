@@ -79,24 +79,14 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void fail() {
-                openNetWork();
+                ActivityUtils.openNetWork(LoginActivity.this);
             }
         });
 
         authen.init();
     }
 
-    public void openNetWork() {
-        if (!ActivityUtils.checkInternetConnection(this)) {
-            ActivityUtils.displayAlert("Network problem", "Do you want to open network to use apps?", this,
-                    new ActivityUtils.OnOkClickListener(){
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
-                        }
-                    });
-        }
-    }
+
 
     private void initGravityView() {
         gravityView = GravityView.getInstance(this)

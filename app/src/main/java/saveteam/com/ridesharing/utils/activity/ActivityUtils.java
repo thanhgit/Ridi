@@ -18,8 +18,10 @@ import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.here.android.mpa.common.GeoCoordinate;
@@ -65,7 +67,7 @@ public class ActivityUtils {
     /**
      * Change activity
      */
-    public static void changeActivity(AppCompatActivity app, Class<?> cls) {
+    public static void changeActivity(Activity app, Class<?> cls) {
         Intent changeActivity = new Intent(app.getApplicationContext(), cls);
         app.startActivity(changeActivity);
     }
@@ -193,6 +195,18 @@ public class ActivityUtils {
         return false;
     }
 
+    public static void openNetWork(final Activity context) {
+        if (!ActivityUtils.checkInternetConnection(context)) {
+            ActivityUtils.displayAlert("Network problem", "Do you want to open network to use apps?", context,
+                    new ActivityUtils.OnOkClickListener(){
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            context.startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
+                        }
+                    });
+        }
+    }
+
 
     public interface OnOkClickListener{
         void onClick(DialogInterface dialog, int which);
@@ -221,5 +235,15 @@ public class ActivityUtils {
                         }).show();
             }
         });
+    }
+
+    public static void displaySnackbar(final Activity context,View view, String message, String action) {
+        Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE).setAction(action, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                context.startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
+            }
+        });
+        snackbar.show();
     }
 }

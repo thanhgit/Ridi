@@ -166,6 +166,14 @@ public class MainActivity extends BasicMapActivity {
         initDateTimePicker();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (this.mapRoute != null) {
+            this.map.removeMapObject(this.mapRoute);
+        }
+    }
+
     private void initDateTimePicker() {
         dateTimeFragment = (SwitchDateTimeDialogFragment) getSupportFragmentManager().findFragmentByTag(FROM_TIME_DATETIME_FRAGMENT);
         if(dateTimeFragment == null) {

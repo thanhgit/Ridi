@@ -25,6 +25,7 @@ import saveteam.com.ridesharing.R;
 import saveteam.com.ridesharing.adapter.MatchingTripAdapter;
 import saveteam.com.ridesharing.database.model.Profile;
 import saveteam.com.ridesharing.firebase.FirebaseDB;
+import saveteam.com.ridesharing.model.Geo;
 import saveteam.com.ridesharing.model.MatchingDTO;
 import saveteam.com.ridesharing.model.Trip;
 import saveteam.com.ridesharing.server.model.MatchingResponseWithUser;
@@ -43,6 +44,8 @@ public class MatchingActivity extends AppCompatActivity {
     List<Profile> mProfiles;
 
     ProgressDialog dialog;
+
+    Trip tripSearch;
 
 
     @Override
@@ -75,13 +78,14 @@ public class MatchingActivity extends AppCompatActivity {
                     dialog.dismiss();
                 }
 
-                if (mUsers != null) {
+                if (mUsers != null && tripSearch!= null) {
                     HashSet hashSet = new HashSet(mUsers);
-
                     for (Trip trip : trips) {
                         if (hashSet.contains(trip.userName.replaceFirst("thanh", "").replace("@gmail.com", ""))) {
-                            mTrips.add(trip);
-                            usersAdapter.notifyDataSetChanged();
+                            if (TripContainPoint(trip, tripSearch.startGeo) || TripContainPoint(trip, tripSearch.endGeo)) {
+                                mTrips.add(trip);
+                                usersAdapter.notifyDataSetChanged();
+                            }
                         }
                     }
                 }
@@ -101,10 +105,20 @@ public class MatchingActivity extends AppCompatActivity {
         initApp();
     }
 
+    public boolean TripContainPoint(Trip _trip, Geo _geo) {
+        for (Geo geo: _trip.path) {
+            if (geo.cellId == _geo.cellId) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private void initApp() {
 
         List<String> matchingDTO =  getIntent().getStringArrayListExtra("matching");
-        Trip tripSearch = (Trip) getIntent().getSerializableExtra("query");
+        tripSearch = (Trip) getIntent().getSerializableExtra("query");
 
         if (matchingDTO != null) {
             mUsers.clear();
@@ -179,25 +193,25 @@ public class MatchingActivity extends AppCompatActivity {
                 }
             });
 
-            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("profiles");
-            dbRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    List<Profile> _profiles = new ArrayList<>();
-
-                    for (DataSnapshot item : dataSnapshot.getChildren()) {
-                        Profile _profile = item.getValue(Profile.class);
-                        _profiles.add(_profile);
-                    }
-
-                    getProfileListener.done(_profiles);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    getProfileListener.fail(databaseError.getMessage());
-                }
-            });
+//            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("profiles");
+//            dbRef.addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                    List<Profile> _profiles = new ArrayList<>();
+//
+//                    for (DataSnapshot item : dataSnapshot.getChildren()) {
+//                        Profile _profile = item.getValue(Profile.class);
+//                        _profiles.add(_profile);
+//                    }
+//
+//                    getProfileListener.done(_profiles);
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError databaseError) {
+//                    getProfileListener.fail(databaseError.getMessage());
+//                }
+//            });
 
             return null;
         }

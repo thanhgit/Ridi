@@ -66,6 +66,8 @@ dependencies {
     implementation 'com.github.Kunzisoft:Android-SwitchDateTimePicker:2.0'
     implementation 'de.hdodenhof:circleimageview:1.2.1'
 
+    implementation 'com.github.jlmd:AnimatedCircleLoadingView:1.1.5@aar'
+
 }
 
 apply plugin: 'com.google.gms.google-services'
