@@ -77,13 +77,11 @@
                     android:id="@+id/btn_from_where_where_main"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="@drawable/action_button"
                     android:text="Where?"/>
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/btn_from_time_where_main"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/action_button"
                     android:text="Time?"/>
             </LinearLayout>
             <LinearLayout
@@ -113,7 +111,6 @@
                     android:id="@+id/btn_to_where_where_main"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="@drawable/action_button"
                     android:text="Where?"/>
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/btn_options_where_main"
@@ -127,7 +124,6 @@
             android:id="@+id/btn_submit_where_main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/action_button"
             android:text="Post ride"/>
     </LinearLayout>
 </LinearLayout>

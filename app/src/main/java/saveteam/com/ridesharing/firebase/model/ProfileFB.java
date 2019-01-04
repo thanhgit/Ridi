@@ -1,5 +1,10 @@
 package saveteam.com.ridesharing.firebase.model;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.io.Serializable;
@@ -78,4 +83,5 @@ public class ProfileFB implements Serializable {
     public void setGender(boolean gender) {
         this.gender = gender;
     }
+
 }

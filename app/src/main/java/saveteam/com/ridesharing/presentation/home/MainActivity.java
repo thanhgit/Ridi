@@ -2,6 +2,7 @@ package saveteam.com.ridesharing.presentation.home;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -24,9 +25,13 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.here.android.mpa.common.GeoBoundingBox;
 import com.here.android.mpa.common.GeoCoordinate;
@@ -49,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -69,8 +75,10 @@ import saveteam.com.ridesharing.presentation.DisplayMapActivity;
 import saveteam.com.ridesharing.presentation.LoginActivity;
 import saveteam.com.ridesharing.presentation.MatchingActivity;
 import saveteam.com.ridesharing.presentation.SearchPlaceActivity;
+import saveteam.com.ridesharing.presentation.profile.ActivateCodeActivity;
 import saveteam.com.ridesharing.presentation.profile.ProfileActivity;
 import saveteam.com.ridesharing.server.ApiUtils;
+import saveteam.com.ridesharing.server.model.MatchingResponseWithUser;
 import saveteam.com.ridesharing.server.model.QueryRequest;
 import saveteam.com.ridesharing.server.model.matching.MatchingResponse;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
@@ -106,13 +114,14 @@ public class MainActivity extends BasicMapActivity {
     @BindView(R.id.btn_options_where_main)
     AppCompatButton btn_options;
 
+    ProgressDialog dialog;
+
     MapMarker start_point;
     MapMarker end_point;
     List<MapMarker> markers;
     MapRoute mapRoute;
     List<Geo> geos;
     Trip tripSearch;
-    List<Trip> similarTrips;
 
     private static final String TAG = "Sample";
 
@@ -139,23 +148,18 @@ public class MainActivity extends BasicMapActivity {
 
         geos = new ArrayList<>();
         tripSearch = new Trip();
-        similarTrips = new ArrayList<>();
+
         markers = new ArrayList<>();
 
         initApp();
 
-        Snackbar snackbar = Snackbar.make(layout, "Update profile", Snackbar.LENGTH_INDEFINITE);
-        snackbar.setAction("OK", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ActivityUtils.changeActivity(MainActivity.this, ProfileActivity.class);
-            }
-        });
-        snackbar.show();
-
     }
 
     private void initApp() {
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("Loading ...");
+        dialog.setCancelable(false);
+
         mode_user = MODE_USER.FIND_RIDE;
         changeMode(mode_user);
 
@@ -261,33 +265,68 @@ public class MainActivity extends BasicMapActivity {
             query.key = tripSearch.userName;
             query.trip = tripSearch;
 
-            QueryRequest queryRequest = new QueryRequest(0.01, query);
+            dialog.show();
 
-            Call<MatchingResponse> matchingResponseCall = ApiUtils.getUserClient().getMatchingFromPersonal(queryRequest);
-            matchingResponseCall.enqueue(new Callback<MatchingResponse>() {
+            QueryRequest queryRequest = new QueryRequest(0.5, query);
+
+            Call<MatchingResponseWithUser> matchingResponseCall = ApiUtils.getUserClient().getMatchingFromPersonalResultUser(queryRequest);
+            matchingResponseCall.enqueue(new Callback<MatchingResponseWithUser>() {
                 @Override
-                public void onResponse(Call<MatchingResponse> call, Response<MatchingResponse> response) {
-                    MatchingResponse matchingResponse = response.body();
+                public void onResponse(Call<MatchingResponseWithUser> call, Response<MatchingResponseWithUser> response) {
+                    MatchingResponseWithUser matchingResponse = response.body();
                     if (matchingResponse != null) {
-                        similarTrips.clear();
-                        for (Trip index : matchingResponse.getTrips()) {
-                            ActivityUtils.displayLog("similar item is: " + index.userName);
-                            similarTrips.add(index);
+
+                        for (String user : matchingResponse.getUsers()) {
+                            ActivityUtils.displayLog(user);
+                        }
+
+                        if (dialog.isShowing()) {
+                            dialog.dismiss();
                         }
 
                         Intent intent = new Intent(MainActivity.this, MatchingActivity.class);
-                        intent.putExtra("matching", new MatchingDTO(similarTrips));
+                        intent.putExtra("query", tripSearch);
+                        intent.putStringArrayListExtra("matching", (ArrayList<String>) matchingResponse.getUsers());
                         startActivity(intent);
                     }
                 }
 
                 @Override
-                public void onFailure(Call<MatchingResponse> call, Throwable t) {
+                public void onFailure(Call<MatchingResponseWithUser> call, Throwable t) {
                     ActivityUtils.displayLog(t.getMessage());
+                    if (dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
                 }
             });
         } else if (mode_user == MODE_USER.OFFER_RIDE) {
+            tripSearch.userName = SharedRefUtils.getEmail(MainActivity.this);
+            tripSearch.startGeo = ActivityUtils.convertToGeo(start_point.getCoordinate());
+            tripSearch.endGeo = ActivityUtils.convertToGeo(end_point.getCoordinate());
+            tripSearch.path = new ArrayList<>();
+            tripSearch.path.addAll(geos);
 
+            dialog.show();
+
+            DatabaseReference dbref = FirebaseDB.getInstance().child("testpaths");
+            String key = dbref.push().getKey();
+            dbref.child(key).setValue(tripSearch).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+
+                    if (task.isSuccessful()) {
+                        ActivityUtils.displayToast(MainActivity.this, "Add offer ride successfully");
+                    } else {
+                        ActivityUtils.displayToast(MainActivity.this, "Add offer ride fail");
+                    }
+
+                    if (dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                }
+
+
+            });
         } else {
             ActivityUtils.displayToast(this, "Error");
         }
@@ -313,13 +352,13 @@ public class MainActivity extends BasicMapActivity {
             rb_offer_ride.setChecked(false);
             btn_submit.setText("Find Ride");
             btn_options.setText("1 slot");
-            mode_user = MODE_USER.FIND_RIDE;
+            this.mode_user = MODE_USER.FIND_RIDE;
         } else {
             rb_find_ride.setChecked(false);
             rb_offer_ride.setChecked(true);
             btn_submit.setText("Offer Ride");
             btn_options.setText("Motor bike");
-            mode_user= MODE_USER.OFFER_RIDE;
+            this.mode_user= MODE_USER.OFFER_RIDE;
         }
     }
 
@@ -366,6 +405,7 @@ public class MainActivity extends BasicMapActivity {
             if (mapRoute!= null) {
                 map.removeMapObject(mapRoute);
             }
+
             createRoute(start_point.getCoordinate(), end_point.getCoordinate(), Color.BLUE);
         }
 
@@ -382,6 +422,9 @@ public class MainActivity extends BasicMapActivity {
         switch (item.getItemId()) {
             case R.id.btn_signout_where_home_menu:
                 signout();
+                return true;
+            case R.id.btn_update_profile_where_home_menu:
+                ActivityUtils.changeActivity(this, ProfileActivity.class);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -467,6 +510,10 @@ public class MainActivity extends BasicMapActivity {
             if (routingError == RoutingError.NONE) {
                 if (routeResults.get(0).getRoute() != null) {
                     /* Create a MapRoute so that it can be placed on the map */
+                    if (m_mapRoute != null) {
+                        map.removeMapObject(m_mapRoute);
+                    }
+
                     m_mapRoute = new MapRoute(routeResults.get(0).getRoute());
                     m_mapRoute.setColor(color);
 

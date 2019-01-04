@@ -1,7 +1,12 @@
 package saveteam.com.ridesharing.utils.activity;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+
+import saveteam.com.ridesharing.presentation.LoginActivity;
+import saveteam.com.ridesharing.utils.google.MyGoogleAuthen;
 
 public class SharedRefUtils {
     public static final String REF_UID = "uid";
@@ -37,6 +42,20 @@ public class SharedRefUtils {
 
     public static String getUid(Context context) {
         return SharedRefUtils.getInstance(context).getString(REF_UID, "0000");
+    }
+
+    public static void signout(final Activity activity) {
+        MyGoogleAuthen.signOut(activity, new MyGoogleAuthen.LogoutCompleteListener() {
+            @Override
+            public void done() {
+                SharedRefUtils.saveEmail("", activity.getApplicationContext());
+                SharedRefUtils.saveUid("", activity.getApplicationContext());
+
+                Intent intent = new Intent(activity.getApplicationContext(), LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                activity.startActivity(intent);
+            }
+        });
     }
 
 }

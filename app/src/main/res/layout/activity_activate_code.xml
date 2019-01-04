@@ -21,17 +21,20 @@
             android:layout_marginTop="10dp">
 
             <EditText
+                android:id="@+id/txt_activate_code_where_activate_code"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Enter activate code"
                 android:inputType="number" />
         </android.support.design.widget.TextInputLayout>
         <TextView
+            android:id="@+id/tv_resend_where_activate_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#00f"
             android:text="Resend code"/>
         <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_activate_where_activate_code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Activate"/>

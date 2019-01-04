@@ -13,6 +13,10 @@ import android.widget.ImageView;
 
 import com.firebase.ui.auth.util.ui.SupportVectorDrawablesButton;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -24,9 +28,11 @@ import butterknife.OnClick;
 import co.gofynd.gravityview.GravityView;
 import saveteam.com.ridesharing.R;
 import saveteam.com.ridesharing.database.RidesharingDB;
+import saveteam.com.ridesharing.database.model.Profile;
 import saveteam.com.ridesharing.database.model.User;
-import saveteam.com.ridesharing.presentation.home.HomeRideActivity;
+import saveteam.com.ridesharing.firebase.FirebaseDB;
 import saveteam.com.ridesharing.presentation.home.MainActivity;
+import saveteam.com.ridesharing.presentation.profile.RegisterProfileActivity;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
 import saveteam.com.ridesharing.utils.google.MyGoogleAuthen;
 import saveteam.com.ridesharing.utils.MyPermission;
@@ -60,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                         user.getDisplayName(),
                         user.getEmail(),
                         user.getPhoneNumber() == null ? "" : user.getPhoneNumber(),
-                        user.getPhotoUrl().toString(),
+                        user.getPhotoUrl() == null ? "" : user.getPhotoUrl().toString(),
                         new Date(user.getMetadata().getCreationTimestamp()),
                         new Date(user.getMetadata().getLastSignInTimestamp()));
 
@@ -155,7 +161,25 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            ActivityUtils.changeActivity(LoginActivity.this, MainActivity.class);
+            DatabaseReference dbref = FirebaseDB.getInstance().child("profiles");
+            dbref.child(user.getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Profile profile = dataSnapshot.getValue(Profile.class);
+                    if (profile != null) {
+                        ActivityUtils.changeActivity(LoginActivity.this, MainActivity.class);
+
+                    } else {
+                        ActivityUtils.changeActivity(LoginActivity.this, RegisterProfileActivity.class);
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
         }
     }
 

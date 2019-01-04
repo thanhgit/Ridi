@@ -36,7 +36,7 @@
             android:paddingBottom="24dp">
 
             <ImageView
-                android:id="@+id/btn_change_where_profile"
+                android:id="@+id/btn_edit_profile_where_profile"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="16dp"
@@ -45,7 +45,7 @@
                 android:src="@drawable/update" />
 
             <TextView
-                android:id="@+id/user_profile_name"
+                android:id="@+id/tv_user_name_where_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -56,12 +56,81 @@
                 android:textStyle="bold" />
         </RelativeLayout>
         <LinearLayout
-            android:id="@+id/layout_change_where_profile"
+            android:id="@+id/layout_profile_where_profile"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/profile_layout"
             android:layout_marginTop="5dp"
             android:visibility="visible"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Phone: "
+                    android:textSize="@dimen/textsize_title"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/tv_phone_where_profile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="09853xxxxx"
+                    android:textSize="@dimen/textsize_title"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Email: "
+                    android:textSize="@dimen/textsize_title"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/tv_email_where_profile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="defaultuser@gmail.com"
+                    android:textSize="@dimen/textsize_title"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Gender: "
+                    android:textSize="@dimen/textsize_title"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/tv_gender_where_profile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="Male"
+                    android:textSize="@dimen/textsize_title"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layout_update_profile_where_profile"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/profile_layout"
+            android:layout_marginTop="5dp"
+            android:visibility="invisible"
             android:orientation="vertical">
             <include layout="@layout/ui_profile_user" />
             <android.support.v7.widget.AppCompatButton

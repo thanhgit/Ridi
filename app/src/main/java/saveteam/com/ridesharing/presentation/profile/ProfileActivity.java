@@ -1,5 +1,6 @@
 package saveteam.com.ridesharing.presentation.profile;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -24,13 +25,20 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,14 +54,15 @@ import saveteam.com.ridesharing.utils.activity.SharedRefUtils;
 public class ProfileActivity extends AppCompatActivity {
     private boolean update = false;
 
-    @BindView(R.id.btn_change_where_profile)
-    ImageView btn_change;
-    @BindView(R.id.layout_change_where_profile)
-    LinearLayout layout_update_profile;
-    @BindView(R.id.btn_update_profile_where_profile)
-    AppCompatButton btn_update_profile;
+    @BindView(R.id.btn_edit_profile_where_profile)
+    ImageView btn_edit_profile;
     @BindView(R.id.btn_user_profile_photo_where_profile)
     ImageButton btn_user_profile_photo;
+
+    @BindView(R.id.layout_update_profile_where_profile)
+    LinearLayout layout_update_profile;
+    @BindView(R.id.layout_profile_where_profile)
+    LinearLayout layout_profile;
 
     // update profile
     @BindView(R.id.txt_first_name_where_ui_profile_user)
@@ -64,6 +73,22 @@ public class ProfileActivity extends AppCompatActivity {
     RadioGroup rbg_gender;
     @BindView(R.id.txt_phone_where_ui_profile_user)
     EditText txt_phone;
+    @BindView(R.id.btn_update_profile_where_profile)
+    AppCompatButton btn_update_profile;
+
+    // profile
+    @BindView(R.id.tv_user_name_where_profile)
+    TextView tv_user_name;
+    @BindView(R.id.tv_phone_where_profile)
+    TextView tv_phone;
+    @BindView(R.id.tv_email_where_profile)
+    TextView tv_email;
+    @BindView(R.id.tv_gender_where_profile)
+    TextView tv_gender;
+
+    Profile mProfile;
+
+    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,22 +96,34 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         ButterKnife.bind(this);
 
-        if (getCurrentProfile() != null) {
-            txt_first_name.setText(getCurrentProfile().getFirstName());
-            txt_last_name.setText(getCurrentProfile().getLastName());
-            txt_phone.setText(getCurrentProfile().getPhone());
-            if (getCurrentProfile().getGenderString().equals("male")) {
+        dialog = new ProgressDialog(this);
+        dialog.setCancelable(false);
+        dialog.setMessage("Loading profile ...");
+        dialog.show();
+
+        layout_update_profile.setVisibility(View.INVISIBLE);
+        layout_profile.setVisibility(View.VISIBLE);
+
+        loadCurrentProfile();
+    }
+
+    @OnClick(R.id.btn_edit_profile_where_profile)
+    public void clickEditProfile(View view) {
+        update = true;
+        layout_update_profile.setVisibility(View.VISIBLE);
+        layout_profile.setVisibility(View.INVISIBLE);
+
+        if (mProfile != null) {
+            txt_phone.setText(mProfile.getPhone());
+            txt_first_name.setText(mProfile.getFirstName());
+            txt_last_name.setText(mProfile.getLastName());
+            if (mProfile.isGender()) {
                 rbg_gender.check(R.id.rb_male);
             } else {
                 rbg_gender.check(R.id.rb_female);
             }
         }
-    }
 
-    @OnClick(R.id.btn_change_where_profile)
-    public void clickChangeProfile(View view) {
-        update = true;
-        layout_update_profile.setVisibility(View.VISIBLE);
     }
 
 
@@ -94,6 +131,8 @@ public class ProfileActivity extends AppCompatActivity {
     public void clickUpdateProfile(View view) {
         update = false;
         layout_update_profile.setVisibility(View.INVISIBLE);
+        layout_profile.setVisibility(View.VISIBLE);
+
         updateProfile();
     }
 
@@ -109,17 +148,16 @@ public class ProfileActivity extends AppCompatActivity {
                 gender);
 
         DatabaseReference db = FirebaseDB.getInstance().child("profiles");
-        db.child(uid).setValue(profile);
-        db.addValueEventListener(new ValueEventListener() {
+        Map<String, Object> obj = new HashMap<>();
+        obj.put(uid, profile);
+        db.updateChildren(obj, new DatabaseReference.CompletionListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ActivityUtils.displayLog("add successfully");
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                ActivityUtils.displayLog("add error");
-
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    ActivityUtils.displayLog("add profile success");
+                } else {
+                    ActivityUtils.displayLog("add profile false");
+                }
             }
         });
     }
@@ -130,23 +168,29 @@ public class ProfileActivity extends AppCompatActivity {
         startActivityForResult(cameraIntent, 2000);
     }
 
-    private Profile getCurrentProfile() {
-        final Profile[] result = {null};
+    public void loadCurrentProfile() {
         String uid = SharedRefUtils.getUid(this);
         GetProfileByIdTask task = new GetProfileByIdTask(this, uid, new GetProfileByIdTask.GetProfileListener() {
             @Override
             public void done(Profile profile) {
-                result[0] = profile;
+                mProfile = profile;
+
+                if (mProfile != null) {
+                    tv_user_name.setText(mProfile.getFirstName() +" " + mProfile.getLastName());
+                    tv_email.setText(SharedRefUtils.getEmail(ProfileActivity.this));
+                    tv_phone.setText(mProfile.getPhone());
+                    tv_gender.setText(mProfile.getGenderString());
+                }
+
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+
             }
         });
         task.execute();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return result[0];
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -200,10 +244,19 @@ public class ProfileActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            RidesharingDB db = RidesharingDB.getInstance(context);
-            Profile[] profiles = db.getProfileDao().loadProfileBy(uid);
-            Profile profile = profiles != null && profiles.length > 0 ? profiles[0] : null;
-            listener.done(profile);
+            DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("profiles").child(uid);
+            dbref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Profile profile = dataSnapshot.getValue(Profile.class);
+                    listener.done(profile);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    listener.done(null);
+                }
+            });
             return null;
         }
     }
