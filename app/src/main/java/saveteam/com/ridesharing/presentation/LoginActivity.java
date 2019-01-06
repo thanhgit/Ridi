@@ -1,5 +1,6 @@
 package saveteam.com.ridesharing.presentation;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -16,6 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
@@ -27,6 +29,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.gofynd.gravityview.GravityView;
 import saveteam.com.ridesharing.R;
+import saveteam.com.ridesharing.database.DBUtils;
 import saveteam.com.ridesharing.database.RidesharingDB;
 import saveteam.com.ridesharing.database.model.Profile;
 import saveteam.com.ridesharing.database.model.User;
@@ -158,7 +161,8 @@ public class LoginActivity extends AppCompatActivity {
                     Profile profile = dataSnapshot.getValue(Profile.class);
                     if (profile != null) {
                         ActivityUtils.changeActivity(LoginActivity.this, MainActivity.class);
-
+                        DBUtils.InsertProfileTask insertProfileTask = new DBUtils.InsertProfileTask(LoginActivity.this, profile);
+                        insertProfileTask.execute();
                     } else {
                         ActivityUtils.changeActivity(LoginActivity.this, RegisterProfileActivity.class);
 
@@ -170,24 +174,6 @@ public class LoginActivity extends AppCompatActivity {
 
                 }
             });
-        }
-    }
-
-    private class GetAllUserTask extends AsyncTask<Void, Void, List<User>> {
-        private List<User> users;
-        @Override
-        protected List<User> doInBackground(Void... voids) {
-            return RidesharingDB.getInstance(getApplicationContext()).getUserDao().loadAllUsers();
-        }
-
-        @Override
-        protected void onPostExecute(List<User> users) {
-            this.users = users;
-            Log.d("thanhuit", "size is " + users.size());
-        }
-
-        public List<User> getUsers() {
-            return this.users;
         }
     }
 }

@@ -14,16 +14,15 @@
             android:layout_height="200dp"
             android:scaleType="centerCrop"
             android:src="@drawable/header_cover_image"/>
-        <ImageButton
+        <ImageView
             android:id="@+id/btn_user_profile_photo_where_profile"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_below="@+id/header_cover_image"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="-60dp"
-            android:background="@drawable/cicular_border"
+            android:background="@drawable/bg_circle"
             android:elevation="5dp"
-            android:padding="10dp"
             android:scaleType="centerCrop"
             android:src="@drawable/default_user" />
         <RelativeLayout

@@ -75,6 +75,8 @@ public class SearchPlaceActivity extends BasicMapActivity {
 
     MapMarker marker;
 
+    List<SearchPlaceHistory> histories;
+
     public interface OnSelectMarkerListener {
         void selected(MapMarker marker);
     }
@@ -202,10 +204,19 @@ public class SearchPlaceActivity extends BasicMapActivity {
                 return true;
             }
         });
+
+        StartTask startTask = new StartTask(this, new StartTask.GetSearchPlaceHistoryListener() {
+            @Override
+            public void done(List<SearchPlaceHistory> _histories) {
+                histories = _histories;
+            }
+        });
+        startTask.execute();
     }
 
     @OnClick(R.id.ibtn_menu_where_search_place)
     public void clickButtonMenu(View view) {
+        createMenu(this.histories);
         drawerLayout.openDrawer(Gravity.LEFT);
     }
 
@@ -262,24 +273,19 @@ public class SearchPlaceActivity extends BasicMapActivity {
     protected void onStart() {
         super.onStart();
 
-        StartTask startTask = new StartTask(this, new StartTask.GetSearchPlaceHistoryListener() {
-            @Override
-            public void done(List<SearchPlaceHistory> histories) {
-                createMenu(histories);
-            }
-        });
-        startTask.execute();
     }
 
     public void createMenu(List<SearchPlaceHistory> histories){
         Menu menu = navigationView.getMenu();
-        menu.clear();
-        Menu submenu = menu.addSubMenu("History");
-        for (SearchPlaceHistory history : histories) {
-            submenu.add(history.getTitle());
+        if (histories.size() > 0 && menu != null) {
+            Menu submenu = menu.addSubMenu("History");
+            for (SearchPlaceHistory history : histories) {
+                submenu.add(history.getTitle());
+            }
+
+            navigationView.invalidate();
         }
 
-        navigationView.invalidate();
     }
 
     @Override

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_sheet_where_main"
+    android:layout_width="match_parent"
+    android:layout_height="160dp"
+    android:orientation="vertical"
+    android:padding="@dimen/margin_button_where_home"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="45dp"
+    android:background="@color/white"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3">
+            <RadioButton
+                android:id="@+id/rb_find_ride_where_main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Find Ride"></RadioButton>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3">
+            <RadioButton
+                android:id="@+id/rb_offer_ride_where_main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Offer Ride"></RadioButton>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="3">
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_from_time_where_main"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:gravity="left|center"
+                android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
+                android:text="01/01/2019 00:00"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="3">
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_options_where_main"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ffff"
+                android:text="Options"/>
+        </LinearLayout>
+    </LinearLayout>
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_submit_where_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Post ride"/>
+</LinearLayout>
