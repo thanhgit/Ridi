@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
@@ -152,6 +153,22 @@ public class ActivityUtils {
     public static Geo convertToGeo(GeoCoordinate geo) {
         long cellId = S2Utils.getCellId(geo.getLatitude(), geo.getLongitude()).id();
         return new Geo(geo.getLatitude(), geo.getLongitude(), cellId);
+    }
+
+    /**
+     * Computing distance between 2 geo
+     */
+
+    public static float distanceBetween2Geo(Geo geo1, Geo geo2) {
+        Location loc1 = new Location("");
+        loc1.setLatitude(geo1.lat);
+        loc1.setLongitude(geo1.lng);
+
+        Location loc2 = new Location("");
+        loc2.setLatitude(geo2.lat);
+        loc2.setLongitude(geo2.lng);
+
+        return  loc1.distanceTo(loc2);
     }
 
     /**

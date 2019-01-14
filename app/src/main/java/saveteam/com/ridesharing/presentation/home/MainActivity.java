@@ -68,6 +68,7 @@ import saveteam.com.ridesharing.database.RidesharingDB;
 import saveteam.com.ridesharing.database.model.Profile;
 import saveteam.com.ridesharing.firebase.FirebaseDB;
 import saveteam.com.ridesharing.firebase.FirebaseUtils;
+import saveteam.com.ridesharing.logic.MatchingForSearch;
 import saveteam.com.ridesharing.model.Geo;
 import saveteam.com.ridesharing.model.Query;
 import saveteam.com.ridesharing.model.Trip;
@@ -103,6 +104,8 @@ public class MainActivity extends BasicMapActivity {
     AppCompatButton btn_from_where;
     @BindView(R.id.btn_from_time_where_main)
     AppCompatButton btn_from_time;
+    @BindView(R.id.btn_time_on_search_where_main)
+    AppCompatButton btn_time_on_search;
 
     @BindView(R.id.btn_to_place_where_main)
     AppCompatButton btn_to_where;
@@ -124,6 +127,8 @@ public class MainActivity extends BasicMapActivity {
     ImageButton ibtn_menu;
     @BindView(R.id.nav_view_where_main)
     NavigationView nav_view;
+
+    BottomSheetBehavior bottomSheetBehavior;
 
     View nav_header;
     TextView tv_name;
@@ -225,7 +230,7 @@ public class MainActivity extends BasicMapActivity {
 
         initDateTimePicker();
 
-        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet);
+        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
         nav_view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -251,6 +256,7 @@ public class MainActivity extends BasicMapActivity {
 
         if (start_point!=null && end_point!=null) {
             clickFromTime(btn_from_time);
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         }
     }
 
@@ -283,6 +289,8 @@ public class MainActivity extends BasicMapActivity {
 
         // Init format
         final SimpleDateFormat myDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault());
+        final SimpleDateFormat myTimeFormat = new SimpleDateFormat("HH:mm", java.util.Locale.getDefault());
+
         // Assign unmodifiable values
         dateTimeFragment.set24HoursMode(false);
         dateTimeFragment.setHighlightAMPMSelection(false);
@@ -301,6 +309,7 @@ public class MainActivity extends BasicMapActivity {
             @Override
             public void onPositiveButtonClick(Date date) {
                 btn_from_time.setText(myDateFormat.format(date));
+                btn_time_on_search.setText(myTimeFormat.format(date));
             }
 
             @Override
@@ -325,7 +334,7 @@ public class MainActivity extends BasicMapActivity {
      * button from
      */
 
-    @OnClick(R.id.btn_from_time_where_main)
+    @OnClick({R.id.btn_from_time_where_main, R.id.btn_time_on_search_where_main})
     public void clickFromTime(View view) {
         dateTimeFragment.startAtCalendarView();
         dateTimeFragment.setDefaultDateTime(Calendar.getInstance().getTime());
@@ -373,10 +382,8 @@ public class MainActivity extends BasicMapActivity {
 
             dialog.show();
 
-            QueryRequest queryRequest = new QueryRequest(0.5, query);
-
-            Call<MatchingResponseWithUser> matchingResponseCall = ApiUtils.getUserClient().getMatchingFromPersonalResultUser(queryRequest);
-            matchingResponseCall.enqueue(new Callback<MatchingResponseWithUser>() {
+            MatchingForSearch matchingForSearch = new MatchingForSearch(0.8, query);
+            matchingForSearch.matching(new Callback<MatchingResponseWithUser>() {
                 @Override
                 public void onResponse(Call<MatchingResponseWithUser> call, Response<MatchingResponseWithUser> response) {
                     MatchingResponseWithUser matchingResponse = response.body();

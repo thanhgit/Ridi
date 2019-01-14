@@ -2,12 +2,15 @@ package saveteam.com.ridesharing.presentation;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,23 +24,27 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import saveteam.com.ridesharing.R;
 import saveteam.com.ridesharing.adapter.MatchingTripAdapter;
 import saveteam.com.ridesharing.database.model.Profile;
+import saveteam.com.ridesharing.firebase.model.TripFB;
 import saveteam.com.ridesharing.model.Geo;
 import saveteam.com.ridesharing.model.Trip;
+import saveteam.com.ridesharing.presentation.home.MainActivity;
+import saveteam.com.ridesharing.utils.activity.ActivityUtils;
 
 public class MatchingActivity extends AppCompatActivity {
     @BindView(R.id.rv_users_where_matching)
     RecyclerView rv_users;
+    @BindView(R.id.btn_find_trip_again_where_matching)
+    AppCompatButton btn_find_trip_again;
 
     MatchingTripAdapter usersAdapter;
 
     List<String> mUsers;
 
-    List<Trip> mTrips;
-
-    List<Profile> mProfiles;
+    List<TripFB> mTrips;
 
     ProgressDialog dialog;
 
@@ -52,58 +59,53 @@ public class MatchingActivity extends AppCompatActivity {
 
         mTrips = new ArrayList<>();
         mUsers = new ArrayList<>();
-        mProfiles = new ArrayList<>();
 
-        StartTask startTask = new StartTask(this, new StartTask.GetProfileListener() {
-            @Override
-            public void done(List<Profile> profiles) {
-                mProfiles.clear();
-                mProfiles.addAll(profiles);
-            }
+        initApp();
 
-            @Override
-            public void fail(String error) {
+        StartTask startTask = new StartTask(this, mUsers,
+                new StartTask.GetTripListener() {
+                    @Override
+                    public void get(TripFB trip) {
 
-            }
-        },
-        new StartTask.GetTripListener() {
-            @Override
-            public void done(List<Trip> trips) {
+                        if (dialog.isShowing()) {
+                            dialog.dismiss();
+                        }
 
-                if (dialog.isShowing()) {
-                    dialog.dismiss();
-                }
-
-                if (mUsers != null && tripSearch!= null) {
-                    HashSet hashSet = new HashSet(mUsers);
-                    for (Trip trip : trips) {
-                        if (hashSet.contains(trip.userName.replaceFirst("thanh", "").replace("@gmail.com", ""))) {
-                            if (TripContainPoint(trip, tripSearch.startGeo) || TripContainPoint(trip, tripSearch.endGeo)) {
+                        if (trip != null && tripSearch!= null) {
+                            if (TripContainPoint(trip, tripSearch.startGeo) && TripContainPoint(trip, tripSearch.endGeo)) {
                                 mTrips.add(trip);
                                 usersAdapter.notifyDataSetChanged();
                             }
                         }
+
                     }
-                }
 
-            }
+                    @Override
+                    public void complete() {
+                        if (dialog.isShowing()) {
+                            dialog.dismiss();
+                        }
 
-            @Override
-            public void fail(String error) {
-                if (dialog.isShowing()) {
-                    dialog.dismiss();
-                }
-            }
-        });
+                        if (mUsers.size() == 0) {
+                            ActivityUtils.displayToast(MatchingActivity.this, "Not matching");
+                        }
+                    }
+                });
 
         startTask.execute();
 
-        initApp();
     }
 
-    public boolean TripContainPoint(Trip _trip, Geo _geo) {
-        for (Geo geo: _trip.path) {
-            if (geo.cellId == _geo.cellId) {
+    @OnClick(R.id.btn_find_trip_again_where_matching)
+    public void clickFindTripAgain(View view) {
+        Intent intent = new Intent(MatchingActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
+    public boolean TripContainPoint(TripFB _trip, Geo _geo) {
+        for (Geo geo: _trip.getPaths()) {
+            if (ActivityUtils.distanceBetween2Geo(geo, _geo) < 500) {
                 return true;
             }
         }
@@ -138,22 +140,17 @@ public class MatchingActivity extends AppCompatActivity {
 
     static class StartTask extends AsyncTask<Void, Void, Void> {
         private Context context;
-        private GetProfileListener getProfileListener;
+        private List<String> users;
         private GetTripListener getTripListener;
 
-        public interface GetProfileListener {
-            void done(List<Profile> profiles);
-            void fail(String error);
-        }
-
         public interface GetTripListener {
-            void done(List<Trip> trips);
-            void fail(String error);
+            void get(TripFB trip);
+            void complete();
         }
 
-        public StartTask(Context context, GetProfileListener getProfileListener, GetTripListener getTripListener) {
+        public StartTask(Context context, List<String> users ,GetTripListener getTripListener) {
             this.context = context;
-            this.getProfileListener = getProfileListener;
+            this.users = users;
             this.getTripListener = getTripListener;
         }
 
@@ -164,51 +161,29 @@ public class MatchingActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            getTripListener.complete();
             super.onPostExecute(aVoid);
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            DatabaseReference dbRefTrips = FirebaseDatabase.getInstance().getReference("testpaths");
-            dbRefTrips.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    List<Trip> _trips = new ArrayList<>();
-
-                    for (DataSnapshot item : dataSnapshot.getChildren()) {
-                        Trip _trip = item.getValue(Trip.class);
-                        _trips.add(_trip);
+            DatabaseReference dbRefTrips = FirebaseDatabase.getInstance().getReference(TripFB.DB_IN_FB);
+            for (String user : users) {
+                dbRefTrips.child(user).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        TripFB _trip = dataSnapshot.getValue(TripFB.class);
+                        if (_trip != null) {
+                            getTripListener.get(_trip);
+                        }
                     }
 
-                    getTripListener.done(_trips);
-                }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    getTripListener.fail(databaseError.getMessage());
-                }
-            });
-
-//            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("profiles");
-//            dbRef.addValueEventListener(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                    List<Profile> _profiles = new ArrayList<>();
-//
-//                    for (DataSnapshot item : dataSnapshot.getChildren()) {
-//                        Profile _profile = item.getValue(Profile.class);
-//                        _profiles.add(_profile);
-//                    }
-//
-//                    getProfileListener.done(_profiles);
-//                }
-//
-//                @Override
-//                public void onCancelled(@NonNull DatabaseError databaseError) {
-//                    getProfileListener.fail(databaseError.getMessage());
-//                }
-//            });
-
+                    }
+                });
+            }
             return null;
         }
     }

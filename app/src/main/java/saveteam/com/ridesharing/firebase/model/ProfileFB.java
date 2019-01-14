@@ -11,6 +11,7 @@ import java.io.Serializable;
 
 @IgnoreExtraProperties
 public class ProfileFB implements Serializable {
+    public static final String DB_IN_FB = "myprofiles";
     private String uid;
 
     private String firstName;

@@ -14,16 +14,17 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import saveteam.com.ridesharing.firebase.model.TripFB;
 import saveteam.com.ridesharing.presentation.DisplayMapActivity;
 import saveteam.com.ridesharing.R;
 import saveteam.com.ridesharing.model.Trip;
 
 public class MatchingTripAdapter extends RecyclerView.Adapter<MatchingTripAdapter.MatchingTripHolder> {
-    private List<Trip> trips;
+    private List<TripFB> trips;
     private Context context;
     private Trip tripSearch;
 
-    public MatchingTripAdapter(List<Trip> trips, Context context) {
+    public MatchingTripAdapter(List<TripFB> trips, Context context) {
         this.trips = trips;
         this.context = context;
     }
@@ -42,8 +43,8 @@ public class MatchingTripAdapter extends RecyclerView.Adapter<MatchingTripAdapte
 
     @Override
     public void onBindViewHolder(@NonNull MatchingTripHolder matchingTripHolder, int i) {
-        final Trip trip = this.trips.get(i);
-        matchingTripHolder.tv_user_name.setText(trip.userName);
+        final TripFB trip = this.trips.get(i);
+        matchingTripHolder.tv_user_name.setText(trip.getUid());
         matchingTripHolder.btn_choose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

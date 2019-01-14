@@ -17,6 +17,9 @@ import java.io.ByteArrayOutputStream;
 
 public class FirebaseUtils {
 
+    /**
+     * working at storage firebase
+     */
     public static void uploadImageFile(String fileName, ImageView imageView, OnSuccessListener successListener ,OnFailureListener failureListener) {
         StorageReference storage = FirebaseStorage.getInstance().getReference();
         StorageReference imgRef = storage.child("images/" + fileName + ".jpg");

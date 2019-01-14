@@ -30,10 +30,20 @@
                     android:orientation="vertical">
                     <ImageButton
                         android:id="@+id/ibtn_menu_where_main"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="32dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
                         android:background="@color/transparent"
                         android:src="@drawable/ic_menu_black_24dp"/>
+                    <android.support.v7.widget.AppCompatButton
+                        android:id="@+id/btn_time_on_search_where_main"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left|center"
+                        android:drawableLeft="@drawable/time"
+                        android:background="@color/transparent"
+                        android:hint="Time"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -59,6 +69,7 @@
                         android:drawableLeft="@drawable/to_place"
                         android:background="@color/transparent"
                         android:hint="To place"/>
+
                 </LinearLayout>
 
                 <LinearLayout

@@ -25,13 +25,14 @@ import com.here.android.mpa.routing.RoutingError;
 import java.util.List;
 
 import saveteam.com.ridesharing.R;
+import saveteam.com.ridesharing.firebase.model.TripFB;
 import saveteam.com.ridesharing.model.Trip;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
 import saveteam.com.ridesharing.utils.activity.BasicMapActivity;
 
 public class DisplayMapActivity extends BasicMapActivity {
 
-    Trip trip;
+    TripFB trip;
     Trip tripSearch;
     MapRoute mapRoute;
 
@@ -40,14 +41,14 @@ public class DisplayMapActivity extends BasicMapActivity {
 
     @Override
     public void addInteraction() {
-        createRoute(ActivityUtils.convertFrom(trip.startGeo),
-                ActivityUtils.convertFrom(trip.endGeo), Color.argb(100, 255, 0, 0));
+        createRoute(ActivityUtils.convertFrom(trip.getGeoStart()),
+                ActivityUtils.convertFrom(trip.getGeoEnd()), Color.argb(100, 255, 0, 0));
 
         createRoute(ActivityUtils.convertFrom(tripSearch.startGeo),
                 ActivityUtils.convertFrom(tripSearch.endGeo), Color.argb(100, 0, 0, 255));
 
-        startMarker = new MapMarker(ActivityUtils.convertFrom(trip.startGeo), ActivityUtils.getMarker(R.drawable.marker_start));
-        endMarker = new MapMarker(ActivityUtils.convertFrom(trip.endGeo), ActivityUtils.getMarker(R.drawable.marker_end));
+        startMarker = new MapMarker(ActivityUtils.convertFrom(trip.getGeoStart()), ActivityUtils.getMarker(R.drawable.marker_start));
+        endMarker = new MapMarker(ActivityUtils.convertFrom(trip.getGeoEnd()), ActivityUtils.getMarker(R.drawable.marker_end));
 
         map.addMapObject(startMarker);
         map.addMapObject(endMarker);
@@ -72,7 +73,7 @@ public class DisplayMapActivity extends BasicMapActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        trip = (Trip) intent.getSerializableExtra("data");
+        trip = (TripFB) intent.getSerializableExtra("data");
         tripSearch = (Trip) intent.getSerializableExtra("tripSearch");
 
     }

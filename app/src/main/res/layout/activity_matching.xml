@@ -1,12 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".presentation.MatchingActivity">
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_users_where_matching"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
-</android.support.constraint.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_where_matching"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/textsize_title"
+            android:text="Not matching"/>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_find_trip_again_where_matching"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Find trip again"/>
+    </LinearLayout>
+</LinearLayout>

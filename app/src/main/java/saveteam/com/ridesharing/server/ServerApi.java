@@ -11,12 +11,9 @@ import saveteam.com.ridesharing.server.model.matching.MatchingResponse;
 
 public interface ServerApi {
 
-    @GET("v1/ridesharing/matching/server/0.1")
+    @GET("v1/ridesharing/matching/schedule/0.1")
     Call<MatchingResponse> getMatchingFromServer();
 
-    @POST("/v1/ridesharing/matching/personal")
-    Call<MatchingResponse> getMatchingFromPersonal(@Body QueryRequest query);
-
-    @POST("/v1/ridesharing/matching/findride")
+    @POST("/v1/ridesharing/matching/search")
     Call<MatchingResponseWithUser> getMatchingFromPersonalResultUser(@Body QueryRequest query);
 }
