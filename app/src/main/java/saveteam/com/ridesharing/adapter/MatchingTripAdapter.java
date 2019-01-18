@@ -15,6 +15,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import saveteam.com.ridesharing.firebase.model.TripFB;
+import saveteam.com.ridesharing.model.FindTripDTO;
 import saveteam.com.ridesharing.presentation.DisplayMapActivity;
 import saveteam.com.ridesharing.R;
 import saveteam.com.ridesharing.model.Trip;
@@ -22,15 +23,16 @@ import saveteam.com.ridesharing.model.Trip;
 public class MatchingTripAdapter extends RecyclerView.Adapter<MatchingTripAdapter.MatchingTripHolder> {
     private List<TripFB> trips;
     private Context context;
-    private Trip tripSearch;
+    private FindTripDTO findTripDTO;
+
 
     public MatchingTripAdapter(List<TripFB> trips, Context context) {
         this.trips = trips;
         this.context = context;
     }
 
-    public void setTripSearch(Trip tripSearch) {
-        this.tripSearch = tripSearch;
+    public void setFindTripDTO(FindTripDTO findTripDTO) {
+        this.findTripDTO = findTripDTO;
     }
 
     @NonNull
@@ -45,13 +47,15 @@ public class MatchingTripAdapter extends RecyclerView.Adapter<MatchingTripAdapte
     public void onBindViewHolder(@NonNull MatchingTripHolder matchingTripHolder, int i) {
         final TripFB trip = this.trips.get(i);
         matchingTripHolder.tv_user_name.setText(trip.getUid());
+        String txtPercent = (findTripDTO.getPercentByUid(trip.getUid())*100) + "% route";
+        matchingTripHolder.tv_percent.setText(txtPercent);
         matchingTripHolder.btn_choose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, DisplayMapActivity.class);
                 intent.putExtra("data", trip);
-                if (tripSearch != null) {
-                    intent.putExtra("tripSearch", tripSearch);
+                if (findTripDTO.getTripSearch() != null) {
+                    intent.putExtra("tripSearch", findTripDTO.getTripSearch());
                 }
                 context.startActivity(intent);
             }
@@ -66,6 +70,8 @@ public class MatchingTripAdapter extends RecyclerView.Adapter<MatchingTripAdapte
     public class MatchingTripHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.tv_user_name_where_item_trip)
         TextView tv_user_name;
+        @BindView(R.id.tv_percent_where_item_trip)
+        TextView tv_percent;
         @BindView(R.id.btn_choose_where_item_trip)
         AppCompatButton btn_choose;
 

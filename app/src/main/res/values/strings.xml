@@ -11,9 +11,12 @@
     <string name="nav_home">Home</string>
     <string name="nav_notifications">Notifications</string>
     <string name="nav_settings">Settings</string>
+    <string name="nav_chat">Chat</string>
 
     <string name="activity_title_about_us">About Us</string>
     <string name="activity_title_privacy_policy">Privacy Policy</string>
     <string name="action_clear_all">Clear All</string>
     <string name="action_logout">Logout</string>
+
+    <string name="note_where_add_bank_card">Lưu ý: vui lòng nhập đúng thông tin đã đăng ký với ngân hàng</string>
 </resources>

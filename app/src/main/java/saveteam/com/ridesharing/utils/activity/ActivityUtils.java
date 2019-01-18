@@ -32,7 +32,9 @@ import com.here.android.mpa.common.GeoCoordinate;
 import com.here.android.mpa.common.Image;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import saveteam.com.ridesharing.R;
@@ -288,5 +290,14 @@ public class ActivityUtils {
     public static void backgroundProcess(Runnable runnable, int time) {
         Handler handler = new Handler();
         handler.postDelayed(runnable, time);
+    }
+
+    /**
+     * Get now
+     */
+
+    public static String getNow() {
+        SimpleDateFormat myDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault());
+        return myDateFormat.format(new Date());
     }
 }

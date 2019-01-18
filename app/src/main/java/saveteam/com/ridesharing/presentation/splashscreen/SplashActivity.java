@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.widget.RelativeLayout;
 
 import com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView;
+import com.google.firebase.database.FirebaseDatabase;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,6 +31,8 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
+
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     }
 
     @Override

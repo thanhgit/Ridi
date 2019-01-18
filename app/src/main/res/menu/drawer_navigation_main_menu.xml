@@ -5,6 +5,9 @@
             android:icon="@drawable/ic_home_black_24dp"></item>
         <item android:title="@string/nav_notifications"
             android:icon="@drawable/ic_notifications_black_24dp"></item>
+        <item android:id="@+id/nav_chat_where_drawer_navigation_main_menu"
+            android:title="@string/nav_chat"
+            android:icon="@drawable/ic_chat_black_24dp"></item>
         <item android:title="@string/nav_settings"
             android:icon="@drawable/ic_settings_applications_black_24dp"></item>
     </group>

@@ -29,9 +29,13 @@ import saveteam.com.ridesharing.R;
 import saveteam.com.ridesharing.adapter.MatchingTripAdapter;
 import saveteam.com.ridesharing.database.model.Profile;
 import saveteam.com.ridesharing.firebase.model.TripFB;
+import saveteam.com.ridesharing.model.FindTripDTO;
 import saveteam.com.ridesharing.model.Geo;
+import saveteam.com.ridesharing.model.MatchingDTO;
 import saveteam.com.ridesharing.model.Trip;
 import saveteam.com.ridesharing.presentation.home.MainActivity;
+import saveteam.com.ridesharing.server.model.MatchingResponseWithUser;
+import saveteam.com.ridesharing.server.model.matching.MatchingResponse;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
 
 public class MatchingActivity extends AppCompatActivity {
@@ -42,7 +46,7 @@ public class MatchingActivity extends AppCompatActivity {
 
     MatchingTripAdapter usersAdapter;
 
-    List<String> mUsers;
+    List<MatchingDTO> matchingDTOS;
 
     List<TripFB> mTrips;
 
@@ -58,11 +62,11 @@ public class MatchingActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mTrips = new ArrayList<>();
-        mUsers = new ArrayList<>();
+        matchingDTOS = new ArrayList<>();
 
         initApp();
 
-        StartTask startTask = new StartTask(this, mUsers,
+        StartTask startTask = new StartTask(this, matchingDTOS,
                 new StartTask.GetTripListener() {
                     @Override
                     public void get(TripFB trip) {
@@ -86,7 +90,7 @@ public class MatchingActivity extends AppCompatActivity {
                             dialog.dismiss();
                         }
 
-                        if (mUsers.size() == 0) {
+                        if (matchingDTOS.size() == 0) {
                             ActivityUtils.displayToast(MatchingActivity.this, "Not matching");
                         }
                     }
@@ -115,16 +119,12 @@ public class MatchingActivity extends AppCompatActivity {
 
     private void initApp() {
 
-        List<String> matchingDTO =  getIntent().getStringArrayListExtra("matching");
-        tripSearch = (Trip) getIntent().getSerializableExtra("query");
-
-        if (matchingDTO != null) {
-            mUsers.clear();
-            mUsers.addAll(matchingDTO);
-        }
+        FindTripDTO findTripDTO = (FindTripDTO) getIntent().getSerializableExtra("matching");
+        tripSearch = findTripDTO.getTripSearch();
+        matchingDTOS = findTripDTO.getMatchingDTOS();
 
         usersAdapter = new MatchingTripAdapter(mTrips, this);
-        usersAdapter.setTripSearch(tripSearch);
+        usersAdapter.setFindTripDTO(findTripDTO);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
@@ -140,7 +140,7 @@ public class MatchingActivity extends AppCompatActivity {
 
     static class StartTask extends AsyncTask<Void, Void, Void> {
         private Context context;
-        private List<String> users;
+        private List<MatchingDTO> users;
         private GetTripListener getTripListener;
 
         public interface GetTripListener {
@@ -148,7 +148,7 @@ public class MatchingActivity extends AppCompatActivity {
             void complete();
         }
 
-        public StartTask(Context context, List<String> users ,GetTripListener getTripListener) {
+        public StartTask(Context context, List<MatchingDTO> users ,GetTripListener getTripListener) {
             this.context = context;
             this.users = users;
             this.getTripListener = getTripListener;
@@ -168,8 +168,8 @@ public class MatchingActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             DatabaseReference dbRefTrips = FirebaseDatabase.getInstance().getReference(TripFB.DB_IN_FB);
-            for (String user : users) {
-                dbRefTrips.child(user).addListenerForSingleValueEvent(new ValueEventListener() {
+            for (MatchingDTO user : users) {
+                dbRefTrips.child(user.getUserName()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         TripFB _trip = dataSnapshot.getValue(TripFB.class);

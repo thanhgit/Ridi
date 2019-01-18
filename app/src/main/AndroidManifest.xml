@@ -62,10 +62,11 @@
         <activity
             android:name=".presentation.SearchPlaceActivity"
             android:theme="@style/AppTheme.NoActionBar">
-             <!--<intent-filter>-->
-             <!--<action android:name="android.intent.action.MAIN" />-->
-             <!--<category android:name="android.intent.category.LAUNCHER" />-->
-             <!--</intent-filter>-->
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".presentation.DisplayMapActivity"
@@ -86,7 +87,7 @@
         <activity
             android:name=".presentation.home.MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".presentation.MatchingActivity" />
         <activity
             android:name=".presentation.splashscreen.SplashActivity"
@@ -98,7 +99,33 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.splashscreen.OnBoardingActivity"></activity>
+        <activity android:name=".presentation.splashscreen.OnBoardingActivity" />
+        <activity android:name=".presentation.payment.AddBankCardActivity">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+        </activity>
+        <activity android:name=".presentation.payment.BankcardManagerActivity">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+        </activity>
+        <activity android:name=".presentation.chat.ChatActivity">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+        </activity>
+        <activity android:name=".presentation.chat.FriendActivity"></activity>
     </application>
 
 </manifest>

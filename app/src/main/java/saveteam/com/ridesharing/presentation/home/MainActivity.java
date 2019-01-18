@@ -69,12 +69,15 @@ import saveteam.com.ridesharing.database.model.Profile;
 import saveteam.com.ridesharing.firebase.FirebaseDB;
 import saveteam.com.ridesharing.firebase.FirebaseUtils;
 import saveteam.com.ridesharing.logic.MatchingForSearch;
+import saveteam.com.ridesharing.model.FindTripDTO;
 import saveteam.com.ridesharing.model.Geo;
+import saveteam.com.ridesharing.model.MatchingDTO;
 import saveteam.com.ridesharing.model.Query;
 import saveteam.com.ridesharing.model.Trip;
 import saveteam.com.ridesharing.presentation.LoginActivity;
 import saveteam.com.ridesharing.presentation.MatchingActivity;
 import saveteam.com.ridesharing.presentation.SearchPlaceActivity;
+import saveteam.com.ridesharing.presentation.chat.FriendActivity;
 import saveteam.com.ridesharing.presentation.profile.ProfileActivity;
 import saveteam.com.ridesharing.server.ApiUtils;
 import saveteam.com.ridesharing.server.model.MatchingResponseWithUser;
@@ -240,6 +243,9 @@ public class MainActivity extends BasicMapActivity {
                     case R.id.logout_where_drawer_navigation_main_menu:
                         signout();
                         return true;
+                    case R.id.nav_chat_where_drawer_navigation_main_menu:
+                        ActivityUtils.changeActivity(MainActivity.this, FriendActivity.class);
+                        return true;
                     default:
                         return true;
                 }
@@ -382,12 +388,21 @@ public class MainActivity extends BasicMapActivity {
 
             dialog.show();
 
-            MatchingForSearch matchingForSearch = new MatchingForSearch(0.8, query);
+            MatchingForSearch matchingForSearch = new MatchingForSearch(0.5, query);
             matchingForSearch.matching(new Callback<MatchingResponseWithUser>() {
                 @Override
                 public void onResponse(Call<MatchingResponseWithUser> call, Response<MatchingResponseWithUser> response) {
                     MatchingResponseWithUser matchingResponse = response.body();
                     if (matchingResponse != null) {
+
+                        List<MatchingDTO> matchingDTOS = new ArrayList<>();
+
+                        for (int index = 0; index < matchingResponse.getUsers().size(); index++) {
+                            matchingDTOS.add(new MatchingDTO(
+                                    matchingResponse.getUsers().get(index),
+                                    matchingResponse.getPercents().get(index)
+                            ));
+                        }
 
                         for (String user : matchingResponse.getUsers()) {
                             ActivityUtils.displayLog(user);
@@ -398,8 +413,8 @@ public class MainActivity extends BasicMapActivity {
                         }
 
                         Intent intent = new Intent(MainActivity.this, MatchingActivity.class);
-                        intent.putExtra("query", tripSearch);
-                        intent.putStringArrayListExtra("matching", (ArrayList<String>) matchingResponse.getUsers());
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra("matching", new FindTripDTO(tripSearch, matchingDTOS));
                         startActivity(intent);
                     }
                 }
