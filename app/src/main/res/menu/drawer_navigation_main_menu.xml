@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
-        <item android:title="@string/nav_home"
+        <item android:id="@+id/nav_home_where_drawer_navigation_main_menu"
+            android:title="@string/nav_home"
             android:icon="@drawable/ic_home_black_24dp"></item>
-        <item android:title="@string/nav_notifications"
+        <item android:id="@+id/nav_notification_where_drawer_navigation_main_menu"
+            android:title="@string/nav_notifications"
             android:icon="@drawable/ic_notifications_black_24dp"></item>
         <item android:id="@+id/nav_chat_where_drawer_navigation_main_menu"
             android:title="@string/nav_chat"
             android:icon="@drawable/ic_chat_black_24dp"></item>
-        <item android:title="@string/nav_settings"
+        <item android:id="@+id/nav_setting_where_drawer_navigation_main_menu"
+            android:title="@string/nav_settings"
             android:icon="@drawable/ic_settings_applications_black_24dp"></item>
     </group>
 
     <item android:title="Others">
         <menu>
-            <item android:title="@string/activity_title_about_us"></item>
-            <item android:title="@string/activity_title_privacy_policy"></item>
-            <item android:title="@string/action_clear_all"></item>
+            <item android:id="@+id/nav_about_us_where_drawer_navigation_main_menu"
+                android:title="@string/activity_title_about_us"></item>
+            <item android:id="@+id/nav_privacy_policy_where_drawer_navigation_main_menu"
+                android:title="@string/activity_title_privacy_policy"></item>
             <item android:id="@+id/logout_where_drawer_navigation_main_menu"
                 android:title="@string/action_logout"></item>
         </menu>

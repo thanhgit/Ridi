@@ -95,6 +95,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void done(ConversationFB conversation) {
                 conversationFB = conversation;
+                messages.clear();
                 messages.addAll(conversationFB.getMessages());
                 conversationAdapter.notifyDataSetChanged();
                 if (progressDialog.isShowing()) {

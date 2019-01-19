@@ -79,6 +79,7 @@ import saveteam.com.ridesharing.presentation.MatchingActivity;
 import saveteam.com.ridesharing.presentation.SearchPlaceActivity;
 import saveteam.com.ridesharing.presentation.chat.FriendActivity;
 import saveteam.com.ridesharing.presentation.profile.ProfileActivity;
+import saveteam.com.ridesharing.presentation.setting.SettingActivity;
 import saveteam.com.ridesharing.server.ApiUtils;
 import saveteam.com.ridesharing.server.model.MatchingResponseWithUser;
 import saveteam.com.ridesharing.server.model.QueryRequest;
@@ -245,6 +246,20 @@ public class MainActivity extends BasicMapActivity {
                         return true;
                     case R.id.nav_chat_where_drawer_navigation_main_menu:
                         ActivityUtils.changeActivity(MainActivity.this, FriendActivity.class);
+                        return true;
+                    case R.id.nav_notification_where_drawer_navigation_main_menu:
+                        ActivityUtils.changeActivity(MainActivity.this, NotificationActivity.class);
+                        return true;
+                    case R.id.nav_setting_where_drawer_navigation_main_menu:
+                        ActivityUtils.changeActivity(MainActivity.this, SettingActivity.class);
+                        return true;
+                    case R.id.nav_home_where_drawer_navigation_main_menu:
+                        return true;
+                    case R.id.nav_about_us_where_drawer_navigation_main_menu:
+                        ActivityUtils.changeActivity(MainActivity.this, AboutUsActivity.class);
+                        return true;
+                    case R.id.nav_privacy_policy_where_drawer_navigation_main_menu:
+                        ActivityUtils.changeActivity(MainActivity.this, PolicyActivity.class);
                         return true;
                     default:
                         return true;

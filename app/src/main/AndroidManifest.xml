@@ -125,7 +125,13 @@
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
-        <activity android:name=".presentation.chat.FriendActivity"></activity>
+        <activity android:name=".presentation.chat.FriendActivity" />
+        <activity android:name=".presentation.home.NotificationActivity" />
+        <activity
+            android:name=".presentation.setting.SettingActivity"
+            android:label="@string/title_activity_setting" />
+        <activity android:name=".presentation.home.AboutUsActivity" />
+        <activity android:name=".presentation.home.PolicyActivity"></activity>
     </application>
 
 </manifest>
