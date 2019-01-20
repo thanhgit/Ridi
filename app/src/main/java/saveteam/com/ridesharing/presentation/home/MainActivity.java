@@ -159,7 +159,7 @@ public class MainActivity extends BasicMapActivity {
 
     @Override
     public void addInteraction() {
-
+        
     }
 
     @Override
@@ -512,6 +512,8 @@ public class MainActivity extends BasicMapActivity {
         if (requestCode == START_POINT_ACTIVITY && resultCode == RESULT_OK) {
             Geo start = (Geo) data.getSerializableExtra("data");
             String title = data.getStringExtra("title");
+            String placeId = data.getStringExtra("placeId");
+
             if (start != null) {
                 if (title.equals("")) {
                     btn_from_where.setText(start.toString());
@@ -529,6 +531,7 @@ public class MainActivity extends BasicMapActivity {
         if (requestCode == END_POINT_ACTIVITY && resultCode == RESULT_OK ) {
             Geo end = (Geo) data.getSerializableExtra("data");
             String title = data.getStringExtra("title");
+            String placeId = data.getStringExtra("placeId");
 
             if (end != null) {
                 if (title.equals("")) {

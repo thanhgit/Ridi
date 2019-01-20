@@ -16,17 +16,18 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import saveteam.com.ridesharing.R;
+import saveteam.com.ridesharing.server.model.place.Result;
 
 public class SearchPlaceAdapter extends RecyclerView.Adapter<SearchPlaceAdapter.SearchPlaceHolder> {
     Context context;
-    List<DiscoveryResult> results;
+    List<Result> results;
     OnClickItemSearchPlaceListener listener;
 
     public interface OnClickItemSearchPlaceListener {
-        void selected(int position);
+        void selected(Result result);
     }
 
-    public SearchPlaceAdapter(Context context, List<DiscoveryResult> results) {
+    public SearchPlaceAdapter(Context context, List<Result> results) {
         this.context = context;
         this.results = results;
     }
@@ -44,15 +45,14 @@ public class SearchPlaceAdapter extends RecyclerView.Adapter<SearchPlaceAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull SearchPlaceHolder searchPlaceHolder, int i) {
-        final DiscoveryResult result = results.get(i);
+        final Result result = results.get(i);
         final int position = i;
-        searchPlaceHolder.tv_place_name.setText(result.getTitle());
+        searchPlaceHolder.tv_place_name.setText(result.getFormattedAddress());
         searchPlaceHolder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    listener.selected(position);
-
+                    listener.selected(result);
                 }
             }
         });

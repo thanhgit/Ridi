@@ -3,52 +3,59 @@ package saveteam.com.ridesharing.presentation;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.PointF;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.telecom.Call;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 
-import com.here.android.mpa.common.GeoCoordinate;
-import com.here.android.mpa.common.ViewObject;
-import com.here.android.mpa.mapping.Map;
-import com.here.android.mpa.mapping.MapFragment;
-import com.here.android.mpa.mapping.MapGesture;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.here.android.mpa.mapping.MapMarker;
-import com.here.android.mpa.search.DiscoveryResult;
-import com.here.android.mpa.search.DiscoveryResultPage;
 
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Callback;
+import retrofit2.Response;
 import saveteam.com.ridesharing.R;
 import saveteam.com.ridesharing.adapter.SearchPlaceAdapter;
 import saveteam.com.ridesharing.database.RidesharingDB;
 import saveteam.com.ridesharing.database.model.SearchPlaceHistory;
 import saveteam.com.ridesharing.model.Geo;
+import saveteam.com.ridesharing.server.ApiUtils;
+import saveteam.com.ridesharing.server.model.place.AddressComponent;
+import saveteam.com.ridesharing.server.model.place.PlaceResponse;
+import saveteam.com.ridesharing.server.model.place.Result;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
-import saveteam.com.ridesharing.utils.activity.BasicMapActivity;
 import saveteam.com.ridesharing.utils.google.S2Utils;
-import saveteam.com.ridesharing.utils.here.SearchPlace;
-import saveteam.com.ridesharing.utils.here.SearchPlaceImpl;
 
-public class SearchPlaceActivity extends BasicMapActivity {
+public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyCallback {
 
     @BindView(R.id.drawer_layout_where_search_place)
     DrawerLayout drawerLayout;
@@ -57,54 +64,120 @@ public class SearchPlaceActivity extends BasicMapActivity {
     @BindView(R.id.txt_search_where_search_place)
     EditText txt_search;
     @BindView(R.id.ibtn_close_where_search_place)
-    ImageButton ibtn_close;
+    ImageView ibtn_close;
     @BindView(R.id.ibtn_menu_where_search_place)
-    ImageButton ibtn_menu;
+    ImageView ibtn_menu;
     @BindView(R.id.navigation_view_where_search_place)
     NavigationView navigationView;
+
+    @BindView(R.id.iv_search_location_where_search_place)
+    ImageView iv_search_location;
 
 
     SearchPlaceAdapter searchPlaceAdapter;
 
-    SearchPlace searchPlace;
-    DiscoveryResultPage searchResults;
-    List<DiscoveryResult> results;
     String querySearch = "";
 
+    /**
+     * data
+     */
     String titlePlaceName = "";
-
-    MapMarker marker;
+    Geo choose;
+    String placeId;
 
     List<SearchPlaceHistory> histories;
+
+    List<Result> results;
+
+    private GoogleMap mMap;
+    private Location myLocation;
+    private LatLng center;
+    private boolean searchLocation = false;
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        LatLng here = new LatLng(10.8659698,106.8107944);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 13));
+
+        try {
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(true);
+            mMap.getUiSettings().setRotateGesturesEnabled(true);
+            mMap.getUiSettings().setZoomGesturesEnabled(true);
+        } catch (SecurityException e)  {
+            Log.e("Exception: %s", e.getMessage());
+        }
+
+        mMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
+            @Override
+            public void onCameraMove() {
+                if (searchLocation) {
+                    mMap.clear();
+                    center = mMap.getCameraPosition().target;
+
+                    mMap.addMarker(new MarkerOptions()
+                            .position(center)
+                            .title("Your position"));
+                }
+
+            }
+        });
+
+        mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+            @Override
+            public void onCameraIdle() {
+                if (searchLocation) {
+                    mMap.clear();
+                    if (mMap != null && searchLocation) {
+                        center = mMap.getCameraPosition().target;
+
+                        mMap.addMarker(new MarkerOptions()
+                                .position(center)
+                                .title("Your position"));
+
+                        retrofit2.Call<PlaceResponse> placeResponseCall = ApiUtils.getServerGoogleMapApi()
+                                .searchWithCoordinate(center.latitude+","+center.longitude, getResources().getString(R.string.google_maps_key));
+                        placeResponseCall.enqueue(new Callback<PlaceResponse>() {
+                            @Override
+                            public void onResponse(retrofit2.Call<PlaceResponse> call, Response<PlaceResponse> response) {
+                                if (response.isSuccessful()) {
+                                    PlaceResponse placeResponse = response.body();
+                                    if (placeResponse.getResults().size() > 0) {
+                                        Result result = placeResponse.getResults().get(0);
+                                        titlePlaceName = result.getFormattedAddress();
+                                        choose = new Geo(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng(), 0);
+                                        txt_search.setText(result.getFormattedAddress());
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(retrofit2.Call<PlaceResponse> call, Throwable t) {
+                                ActivityUtils.displayToast(SearchPlaceActivity.this, t.getMessage());
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
 
     public interface OnSelectMarkerListener {
         void selected(MapMarker marker);
     }
 
     @Override
-    public void addInteraction() {
-        if (mapFragment != null) {
-            mapFragment.getMapGesture().addOnGestureListener(new MyOnGestureListener(new OnSelectMarkerListener() {
-                @Override
-                public void selected(MapMarker marker) {
-
-                }
-            }), 0, true);
-        }
-
-    }
-
-    @Override
-    public void addView() {
-        setContentView(R.layout.activity_search_place);
-        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map_where_search_place_activity);
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search_place);
         ButterKnife.bind(this);
+
         results = new ArrayList<>();
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map_where_search_place_activity);
+        mapFragment.getMapAsync(this);
 
         configRecycleView();
         searchPlaceAdapter = new SearchPlaceAdapter(getApplicationContext(), results);
@@ -112,18 +185,11 @@ public class SearchPlaceActivity extends BasicMapActivity {
 
         searchPlaceAdapter.setOnClickItemSearchPlaceListener(new SearchPlaceAdapter.OnClickItemSearchPlaceListener() {
             @Override
-            public void selected(int position) {
-                if (searchResults != null) {
-                    GeoCoordinate geo = searchResults.getPlaceLinks().get(position).getPosition();
-                    titlePlaceName = searchResults.getPlaceLinks().get(position).getTitle();
-                    createMarker(geo);
-                    map.setCenter(marker.getCoordinate(), Map.Animation.NONE);
-                    map.setZoomLevel(17);
-                    results.clear();
-                    searchPlaceAdapter.notifyDataSetChanged();
-
-                    clickButtonChoose();
-                }
+            public void selected(Result result) {
+                placeId = result.getPlaceId();
+                titlePlaceName = result.getFormattedAddress();
+                choose = new Geo(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng(), 0);
+                clickButtonChoose();
             }
         });
 
@@ -139,25 +205,29 @@ public class SearchPlaceActivity extends BasicMapActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String query = s.toString();
                 if (!query.trim().equals("") && !query.equals(querySearch)){
-                    searchResults = searchPlace.searchPlaceByName(query, new SearchPlaceImpl.SearchResultListener() {
-                        @Override
-                        public void done(DiscoveryResultPage discoveryResultPage) {
-                            if (discoveryResultPage != null) {
-                                searchResults = discoveryResultPage;
-                                List<String> strings = new ArrayList<>();
-                                for (DiscoveryResult item : discoveryResultPage.getItems()) {
-                                    String str = item.getTitle();
-                                    strings.add(str);
-                                    ActivityUtils.displayLog("title is: " + str);
-                                }
+                    retrofit2.Call<PlaceResponse> placeResponseCall = ApiUtils.getServerGoogleMapApi()
+                            .searchWithString(query.replaceAll(" ", "+").toLowerCase(),
+                                    getResources().getString(R.string.google_maps_key));
 
+                    placeResponseCall.enqueue(new Callback<PlaceResponse>() {
+                        @Override
+                        public void onResponse(retrofit2.Call<PlaceResponse> call, Response<PlaceResponse> response) {
+                            if (response.isSuccessful()) {
                                 results.clear();
-                                results.addAll(discoveryResultPage.getItems());
+                                results.addAll(response.body().getResults());
                                 searchPlaceAdapter.notifyDataSetChanged();
+
+                                for (Result result : response.body().getResults()) {
+                                    ActivityUtils.displayLog(result.getFormattedAddress());
+                                }
                             }
                         }
-                    });
 
+                        @Override
+                        public void onFailure(retrofit2.Call<PlaceResponse> call, Throwable t) {
+
+                        }
+                    });
                     querySearch = query;
                 }
             }
@@ -168,7 +238,6 @@ public class SearchPlaceActivity extends BasicMapActivity {
                    ibtn_close.setVisibility(View.VISIBLE);
                } else {
                    ibtn_close.setVisibility(View.GONE);
-                   results.clear();
                    searchPlaceAdapter.notifyDataSetChanged();
                }
             }
@@ -214,6 +283,63 @@ public class SearchPlaceActivity extends BasicMapActivity {
         startTask.execute();
     }
 
+    @OnClick(R.id.iv_my_location_where_search_place)
+    public void clickMyLocation(View view) {
+        mMap.clear();
+        if (mMap != null) {
+            myLocation = mMap.getMyLocation();
+
+            if (myLocation != null) {
+
+                retrofit2.Call<PlaceResponse> placeResponseCall = ApiUtils.getServerGoogleMapApi()
+                        .searchWithCoordinate(myLocation.getLatitude()+","+myLocation.getLongitude(), getResources().getString(R.string.google_maps_key));
+                placeResponseCall.enqueue(new Callback<PlaceResponse>() {
+                    @Override
+                    public void onResponse(retrofit2.Call<PlaceResponse> call, Response<PlaceResponse> response) {
+                        if (response.isSuccessful()) {
+                            PlaceResponse placeResponse = response.body();
+                            if (placeResponse.getResults().size() > 0) {
+                                Result result = placeResponse.getResults().get(0);
+                                titlePlaceName = result.getFormattedAddress();
+                                choose = new Geo(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng(), 0);
+                                txt_search.setText(result.getFormattedAddress());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(retrofit2.Call<PlaceResponse> call, Throwable t) {
+                        ActivityUtils.displayToast(SearchPlaceActivity.this, t.getMessage());
+                    }
+                });
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()))
+                        .zoom(13)
+                        .build();
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
+                mMap.animateCamera(cameraUpdate);
+            }
+
+        }
+    }
+
+    @OnClick(R.id.iv_search_location_where_search_place)
+    public void clickSearchLocation(View view) {
+        if (searchLocation) {
+            searchLocation = false;
+            iv_search_location.setBackgroundResource(R.drawable.ic_edit_location_black_24dp);
+        } else {
+            searchLocation = true;
+            iv_search_location.setBackgroundResource(R.drawable.ic_edit_location_pink_a400_24dp);
+            mMap.clear();
+            center = mMap.getCameraPosition().target;
+
+            mMap.addMarker(new MarkerOptions()
+                    .position(center)
+                    .title("Your position"));
+        }
+    }
+
     @OnClick(R.id.ibtn_menu_where_search_place)
     public void clickButtonMenu(View view) {
         createMenu(this.histories);
@@ -223,26 +349,27 @@ public class SearchPlaceActivity extends BasicMapActivity {
     @OnClick(R.id.ibtn_close_where_search_place)
     public void clickButtonClose(View view) {
         txt_search.setText("");
+        results.clear();
+        searchPlaceAdapter.notifyDataSetChanged();
     }
 
     public void clickButtonChoose() {
-        if (marker != null) {
-            final double lat = marker.getCoordinate().getLatitude();
-            final double lng = marker.getCoordinate().getLongitude();
-            final long cellId = S2Utils.getCellId(lat, lng).id();
-            Geo geo = new Geo(lat, lng, cellId);
+        if (choose != null) {
+            final long cellId = S2Utils.getCellId(choose.lat, choose.lng).id();
+            Geo geo = new Geo(choose.lat, choose.lng, cellId);
 
             AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
                     RidesharingDB.getInstance(SearchPlaceActivity.this)
                             .getSearchPlaceHistoryDao()
-                            .insertSearchPlaceHistorys(new SearchPlaceHistory(lat, lng, cellId, titlePlaceName ));
+                            .insertSearchPlaceHistorys(new SearchPlaceHistory(choose.lat, choose.lng, cellId, titlePlaceName ));
                 }
             });
             Intent resultIntent = new Intent();
             resultIntent.putExtra("data", geo);
             resultIntent.putExtra("title", titlePlaceName);
+            resultIntent.putExtra("placeId", placeId);
             setResult(RESULT_OK, resultIntent );
             finish();
         } else {
@@ -260,14 +387,9 @@ public class SearchPlaceActivity extends BasicMapActivity {
     }
 
     private void initSearchView() {
-        searchPlace = new SearchPlaceImpl(new GeoCoordinate(10.789148,106.6615424));
+
     }
 
-
-    public void createMarker(GeoCoordinate coordinate) {
-        marker = new MapMarker(coordinate, ActivityUtils.getMarker());
-        map.addMapObject(marker);
-    }
 
     @Override
     protected void onStart() {
@@ -277,6 +399,7 @@ public class SearchPlaceActivity extends BasicMapActivity {
 
     public void createMenu(List<SearchPlaceHistory> histories){
         Menu menu = navigationView.getMenu();
+        menu.clear();
         if (histories.size() > 0 && menu != null) {
             Menu submenu = menu.addSubMenu("History");
             for (SearchPlaceHistory history : histories) {
@@ -335,91 +458,6 @@ public class SearchPlaceActivity extends BasicMapActivity {
             histories = RidesharingDB.getInstance(activity).getSearchPlaceHistoryDao().loadAllSearchPlaceHistorys();
             listener.done(histories);
             return null;
-        }
-    }
-
-    private class MyOnGestureListener implements MapGesture.OnGestureListener {
-        private OnSelectMarkerListener listener;
-
-        public MyOnGestureListener(OnSelectMarkerListener listener) {
-            this.listener = listener;
-        }
-
-        public MyOnGestureListener() {
-        }
-
-        @Override
-        public void onPanStart() {
-        }
-
-        @Override
-        public void onPanEnd() {
-        }
-
-        @Override
-        public void onMultiFingerManipulationStart() {
-        }
-
-        @Override
-        public void onMultiFingerManipulationEnd() {
-        }
-
-        @Override
-        public boolean onMapObjectsSelected(List<ViewObject> objects) {
-            return false;
-        }
-
-        @Override
-        public boolean onTapEvent(PointF p) {
-            return false;
-        }
-
-        @Override
-        public boolean onDoubleTapEvent(PointF p) {
-            return false;
-        }
-
-        @Override
-        public void onPinchLocked() {
-        }
-
-        @Override
-        public boolean onPinchZoomEvent(float scaleFactor, PointF p) {
-            return false;
-        }
-
-        @Override
-        public void onRotateLocked() {
-        }
-
-        @Override
-        public boolean onRotateEvent(float rotateAngle) {
-            return false;
-        }
-
-        @Override
-        public boolean onTiltEvent(float angle) {
-            return false;
-        }
-
-        @Override
-        public boolean onLongPressEvent(PointF p) {
-            if (marker != null) {
-                map.removeMapObject(marker);
-            }
-
-            createMarker(map.pixelToGeo(p));
-            titlePlaceName = "";
-            return false;
-        }
-
-        @Override
-        public void onLongPressRelease() {
-        }
-
-        @Override
-        public boolean onTwoFingerTapEvent(PointF p) {
-            return false;
         }
     }
 }

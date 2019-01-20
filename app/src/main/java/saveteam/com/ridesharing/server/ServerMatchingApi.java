@@ -5,14 +5,15 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import saveteam.com.ridesharing.server.model.MatchingResponseWithUser;
 import saveteam.com.ridesharing.server.model.QueryRequest;
 import saveteam.com.ridesharing.server.model.matching.MatchingResponse;
 
-public interface ServerApi {
+public interface ServerMatchingApi {
 
-    @GET("v1/ridesharing/matching/schedule/0.1")
-    Call<MatchingResponse> getMatchingFromServer();
+    @GET("v1/ridesharing/matching/schedule/{threshold}")
+    Call<MatchingResponse> getMatchingFromServer(@Path("threshold")String threshold);
 
     @POST("/v1/ridesharing/matching/search")
     Call<MatchingResponseWithUser> getMatchingFromPersonalResultUser(@Body QueryRequest query);
