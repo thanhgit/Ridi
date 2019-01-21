@@ -55,6 +55,7 @@ public class ChatActivity extends AppCompatActivity {
 
         roomId = getIntent().getStringExtra("data");
         profile = (ProfileFB) getIntent().getSerializableExtra("profile");
+
         uid = SharedRefUtils.getUid(this);
         conversationFB = new ConversationFB();
         conversationFB.setRoomid(roomId);

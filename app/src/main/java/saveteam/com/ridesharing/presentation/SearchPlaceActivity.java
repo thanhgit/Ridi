@@ -32,9 +32,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.here.android.mpa.mapping.MapMarker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +47,6 @@ import saveteam.com.ridesharing.database.RidesharingDB;
 import saveteam.com.ridesharing.database.model.SearchPlaceHistory;
 import saveteam.com.ridesharing.model.Geo;
 import saveteam.com.ridesharing.server.ApiUtils;
-import saveteam.com.ridesharing.server.model.place.AddressComponent;
 import saveteam.com.ridesharing.server.model.place.PlaceResponse;
 import saveteam.com.ridesharing.server.model.place.Result;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
@@ -163,9 +160,6 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
         });
     }
 
-    public interface OnSelectMarkerListener {
-        void selected(MapMarker marker);
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -330,7 +324,7 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
             iv_search_location.setBackgroundResource(R.drawable.ic_edit_location_black_24dp);
         } else {
             searchLocation = true;
-            iv_search_location.setBackgroundResource(R.drawable.ic_edit_location_pink_a400_24dp);
+            iv_search_location.setBackgroundResource(R.drawable.ic_edit_location_pink_400_24dp);
             mMap.clear();
             center = mMap.getCameraPosition().target;
 

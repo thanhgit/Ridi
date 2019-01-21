@@ -1,6 +1,5 @@
 package saveteam.com.ridesharing.presentation.home;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
@@ -23,29 +23,27 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.constant.TransportMode;
+import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.model.Route;
+import com.akexorcist.googledirection.util.DirectionConverter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
-import com.here.android.mpa.common.GeoBoundingBox;
-import com.here.android.mpa.common.GeoCoordinate;
-import com.here.android.mpa.mapping.Map;
-import com.here.android.mpa.mapping.MapFragment;
-import com.here.android.mpa.mapping.MapMarker;
-import com.here.android.mpa.mapping.MapRoute;
-import com.here.android.mpa.routing.CoreRouter;
-import com.here.android.mpa.routing.Route;
-import com.here.android.mpa.routing.RouteOptions;
-import com.here.android.mpa.routing.RoutePlan;
-import com.here.android.mpa.routing.RouteResult;
-import com.here.android.mpa.routing.RouteWaypoint;
-import com.here.android.mpa.routing.Router;
-import com.here.android.mpa.routing.RoutingError;
 import com.kunzisoft.switchdatetime.SwitchDateTimeDialogFragment;
 
 import java.text.SimpleDateFormat;
@@ -68,6 +66,7 @@ import saveteam.com.ridesharing.database.RidesharingDB;
 import saveteam.com.ridesharing.database.model.Profile;
 import saveteam.com.ridesharing.firebase.FirebaseDB;
 import saveteam.com.ridesharing.firebase.FirebaseUtils;
+import saveteam.com.ridesharing.firebase.model.TripFB;
 import saveteam.com.ridesharing.logic.MatchingForSearch;
 import saveteam.com.ridesharing.model.FindTripDTO;
 import saveteam.com.ridesharing.model.Geo;
@@ -80,17 +79,16 @@ import saveteam.com.ridesharing.presentation.SearchPlaceActivity;
 import saveteam.com.ridesharing.presentation.chat.FriendActivity;
 import saveteam.com.ridesharing.presentation.profile.ProfileActivity;
 import saveteam.com.ridesharing.presentation.setting.SettingActivity;
-import saveteam.com.ridesharing.server.ApiUtils;
 import saveteam.com.ridesharing.server.model.MatchingResponseWithUser;
-import saveteam.com.ridesharing.server.model.QueryRequest;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
-import saveteam.com.ridesharing.utils.activity.BasicMapActivity;
 import saveteam.com.ridesharing.utils.activity.SharedRefUtils;
 import saveteam.com.ridesharing.utils.google.MyGoogleAuthen;
 
-public class MainActivity extends BasicMapActivity {
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
     private static final int START_POINT_ACTIVITY = 9000;
     private static final int END_POINT_ACTIVITY = 9001;
+
+
 
     public enum MODE_USER {
         FIND_RIDE,
@@ -142,13 +140,15 @@ public class MainActivity extends BasicMapActivity {
     ProgressDialog dialog;
     String email = "";
     Profile profile;
+    String uid = "";
 
-    MapMarker start_point;
-    MapMarker end_point;
-    List<MapMarker> markers;
-    MapRoute mapRoute;
-    List<Geo> geos;
+    LatLng start_point;
+    LatLng end_point;
+
     Trip tripSearch;
+    List<Geo> geos;
+
+    GoogleMap mMap;
 
     private static final String TAG = "Sample";
 
@@ -158,25 +158,21 @@ public class MainActivity extends BasicMapActivity {
     private MODE_USER mode_user;
 
     @Override
-    public void addInteraction() {
-        
-    }
-
-    @Override
-    public void addView() {
-        setContentView(R.layout.activity_main);
-        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map_where_main);
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
         ButterKnife.bind(this);
 
-        geos = new ArrayList<>();
-        tripSearch = new Trip();
+        uid = SharedRefUtils.getUid(this);
 
-        markers = new ArrayList<>();
+        geos = new ArrayList<>();
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map_where_main);
+        mapFragment.getMapAsync(this);
+
+        tripSearch = new Trip();
 
         nav_header = nav_view.getHeaderView(0);
         tv_name = nav_header.findViewById(R.id.tv_name_where_nav_header_main);
@@ -192,6 +188,13 @@ public class MainActivity extends BasicMapActivity {
         });
 
         initApp();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        LatLng here = new LatLng(10.8659698,106.8107944);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 13));
     }
 
     private void initApp() {
@@ -271,9 +274,6 @@ public class MainActivity extends BasicMapActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (this.mapRoute != null) {
-            this.map.removeMapObject(this.mapRoute);
-        }
 
         if (start_point!=null && end_point!=null) {
             clickFromTime(btn_from_time);
@@ -392,8 +392,8 @@ public class MainActivity extends BasicMapActivity {
     public void clickSubmit(View view) {
         if (mode_user == MODE_USER.FIND_RIDE) {
             tripSearch.userName = SharedRefUtils.getEmail(MainActivity.this);
-            tripSearch.startGeo = ActivityUtils.convertToGeo(start_point.getCoordinate());
-            tripSearch.endGeo = ActivityUtils.convertToGeo(end_point.getCoordinate());
+            tripSearch.startGeo = ActivityUtils.convertToGeo(start_point);
+            tripSearch.endGeo = ActivityUtils.convertToGeo(end_point);
             tripSearch.path = new ArrayList<>();
             tripSearch.path.addAll(geos);
 
@@ -444,16 +444,22 @@ public class MainActivity extends BasicMapActivity {
             });
         } else if (mode_user == MODE_USER.OFFER_RIDE) {
             tripSearch.userName = SharedRefUtils.getEmail(MainActivity.this);
-            tripSearch.startGeo = ActivityUtils.convertToGeo(start_point.getCoordinate());
-            tripSearch.endGeo = ActivityUtils.convertToGeo(end_point.getCoordinate());
+            tripSearch.startGeo = ActivityUtils.convertToGeo(start_point);
+            tripSearch.endGeo = ActivityUtils.convertToGeo(end_point);
             tripSearch.path = new ArrayList<>();
             tripSearch.path.addAll(geos);
 
+            TripFB tripFB = new TripFB();
+            tripFB.setUid(uid);
+            tripFB.setGeoStart(ActivityUtils.convertToGeo(start_point));
+            tripFB.setGeoEnd(ActivityUtils.convertToGeo(end_point));
+            tripFB.setPaths(geos);
+            tripFB.setSize(geos.size());
+
             dialog.show();
 
-            DatabaseReference dbref = FirebaseDB.getInstance().child("testpaths");
-            String key = dbref.push().getKey();
-            dbref.child(key).setValue(tripSearch).addOnCompleteListener(new OnCompleteListener<Void>() {
+            DatabaseReference dbref = FirebaseDB.getInstance().child(TripFB.DB_IN_FB);
+            dbref.child(uid).setValue(tripFB).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
 
@@ -522,9 +528,8 @@ public class MainActivity extends BasicMapActivity {
                 }
                 btn_from_where.setBackground(null);
 
-                map.removeMapObject(start_point);
-                start_point = new MapMarker(ActivityUtils.convertFrom(start), ActivityUtils.getMarker());
-                map.addMapObject(start_point);
+                start_point = new LatLng(start.lat, start.lng);
+                mMap.addMarker(new MarkerOptions().position(start_point));
             }
         }
 
@@ -541,20 +546,51 @@ public class MainActivity extends BasicMapActivity {
                 }
                 btn_to_where.setBackground(null);
 
-                map.removeMapObject(end_point);
-                end_point = new MapMarker(ActivityUtils.convertFrom(end), ActivityUtils.getMarker());
-                map.addMapObject(end_point);
+                end_point = new LatLng(end.lat, end.lng);
+                mMap.addMarker(new MarkerOptions().position(end_point));
+
             }
         }
 
         if (start_point!=null && end_point!= null) {
-            if (mapRoute!= null) {
-                map.removeMapObject(mapRoute);
-            }
+            GoogleDirection.withServerKey(getResources().getString(R.string.google_maps_key))
+                    .from(start_point)
+                    .to(end_point)
+                    .transitMode(TransportMode.BICYCLING)
+                    .alternativeRoute(true)
+                    .execute(new DirectionCallback() {
+                        @Override
+                        public void onDirectionSuccess(Direction direction, String rawBody) {
+                            if (direction.isOK()) {
+                                mMap.addMarker(new MarkerOptions().position(start_point));
+                                mMap.addMarker(new MarkerOptions().position(end_point));
 
-            createRoute(start_point.getCoordinate(), end_point.getCoordinate(), Color.BLUE);
+//                                for (int i = 0; i < direction.getRouteList().size(); i++) {
+                                    Route route = direction.getRouteList().get(0);
+                                    int color = Color.argb(100, 255,0,0);
+                                    ArrayList<LatLng> directionPositionList = route.getLegList().get(0).getDirectionPoint();
+                                    geos.clear();
+                                    geos.addAll(ActivityUtils.convertToGeo(directionPositionList));
+                                    mMap.addPolyline(DirectionConverter.createPolyline(MainActivity.this, directionPositionList, 5, color));
+//                                }
+                                setCameraWithCoordinationBounds(direction.getRouteList().get(0));
+                            }
+                        }
+
+                        @Override
+                        public void onDirectionFailure(Throwable t) {
+
+                        }
+                    });
         }
 
+    }
+
+    private void setCameraWithCoordinationBounds(Route route) {
+        LatLng southwest = route.getBound().getSouthwestCoordination().getCoordination();
+        LatLng northeast = route.getBound().getNortheastCoordination().getCoordination();
+        LatLngBounds bounds = new LatLngBounds(southwest, northeast);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
     }
 
     public void signout() {
@@ -569,118 +605,5 @@ public class MainActivity extends BasicMapActivity {
                 startActivity(intent);
             }
         });
-    }
-
-    private void createRoute(GeoCoordinate start, GeoCoordinate end, int color) {
-        CoreRouter coreRouter = new CoreRouter();
-        RoutePlan routePlan = new RoutePlan();
-        RouteOptions routeOptions = null;
-        if (routeOptions == null) {
-            routeOptions = new RouteOptions();
-            routeOptions.setTransportMode(RouteOptions.TransportMode.BICYCLE);
-            routeOptions.setHighwaysAllowed(false);
-            routeOptions.setRouteType(RouteOptions.Type.SHORTEST);
-            routeOptions.setRouteCount(3);
-            routePlan.setRouteOptions(routeOptions);
-        }
-
-        RouteWaypoint startPoint = new RouteWaypoint(start);
-        RouteWaypoint destination = new RouteWaypoint(end);
-
-        routePlan.addWaypoint(startPoint);
-        routePlan.addWaypoint(destination);
-
-        MyRoutingForMatching routingForMatching = new MyRoutingForMatching(this, map, mapRoute, color);
-        routingForMatching.setListener(new MyRoutingForMatching.GetRouteListener() {
-            @Override
-            public void finished(List<RouteResult> routeResults) {
-                geos.clear();
-                geos.addAll(ActivityUtils.convertToGeo(routeResults.get(0).getRoute().getRouteGeometry()));
-            }
-        });
-        coreRouter.calculateRoute(routePlan,routingForMatching);
-    }
-
-    public static class MyRoutingForMatching implements Router.Listener<List<RouteResult>, RoutingError> {
-        private Activity context;
-        private Map map;
-        private MapRoute m_mapRoute;
-        private int color;
-
-        public interface GetRouteListener{
-            void finished(List<RouteResult> routeResults);
-        }
-
-        GetRouteListener listener;
-
-        public MyRoutingForMatching(Activity context, Map map, MapRoute m_mapRoute, int color) {
-            this.context = context;
-            this.map = map;
-            this.m_mapRoute = m_mapRoute;
-            this.color = color;
-        }
-
-        public void setListener(GetRouteListener listener) {
-            this.listener = listener;
-        }
-
-        @Override
-        public void onProgress(int i) {
-
-        }
-
-        @Override
-        public void onCalculateRouteFinished(List<RouteResult> routeResults,
-                                             RoutingError routingError) {
-            /* Calculation is done. Let's handle the result */
-            if (routingError == RoutingError.NONE) {
-                if (routeResults.get(0).getRoute() != null) {
-                    /* Create a MapRoute so that it can be placed on the map */
-                    if (m_mapRoute != null) {
-                        map.removeMapObject(m_mapRoute);
-                    }
-
-                    m_mapRoute = new MapRoute(routeResults.get(0).getRoute());
-                    m_mapRoute.setColor(color);
-
-                    /* Show the maneuver number on top of the route */
-                    m_mapRoute.setManeuverNumberVisible(true);
-
-                    /* Add the MapRoute to the map */
-                    map.addMapObject(m_mapRoute);
-
-                    if (listener != null) {
-                        listener.finished(routeResults);
-                    }
-
-                    /*
-                     * We may also want to make sure the map view is orientated properly
-                     * so the entire route can be easily seen.
-                     */
-                    GeoBoundingBox gbb = routeResults.get(0).getRoute()
-                            .getBoundingBox();
-
-                    Route route = routeResults.get(0).getRoute();
-
-
-                    route.getRouteWaypoints();
-                    for (RouteWaypoint routeWaypoint: route.getRouteWaypoints()) {
-                        GeoCoordinate geo = routeWaypoint.getOriginalPosition();
-                        Log.d("thanhuit", geo.getLatitude() + " - " + geo.getLongitude());
-                    }
-
-                    map.zoomTo(gbb, Map.Animation.NONE,
-                            Map.MOVE_PRESERVE_ORIENTATION);
-                } else {
-                    Toast.makeText(context,
-                            "Error:route results returned is not valid",
-                            Toast.LENGTH_LONG).show();
-                }
-            } else {
-                Toast.makeText(context,
-                        "Error:route calculation returned error code: " + routingError,
-                        Toast.LENGTH_LONG).show();
-            }
-        }
     }
 }

@@ -148,7 +148,7 @@ public class ProfileActivity extends AppCompatActivity {
                 txt_phone.getText().toString(),
                 gender);
 
-        DatabaseReference db = FirebaseDB.getInstance().child("profiles");
+        DatabaseReference db = FirebaseDB.getInstance().child(ProfileFB.DB_IN_FB);
         Map<String, Object> obj = new HashMap<>();
         obj.put(uid, profile);
         db.updateChildren(obj, new DatabaseReference.CompletionListener() {

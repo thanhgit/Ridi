@@ -21,16 +21,13 @@ import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.here.android.mpa.common.GeoCoordinate;
-import com.here.android.mpa.common.Image;
-
+import com.google.android.gms.maps.model.LatLng;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -78,41 +75,6 @@ public class ActivityUtils {
         app.startActivity(changeActivity);
     }
 
-    /**
-     * Get image
-     */
-    public static Image getMarker(Context context, int res, int color) {
-        Bitmap sourceBitmap = BitmapFactory.decodeResource(context.getResources() ,res);
-
-        Bitmap source = changeBitmapColor(sourceBitmap, color);
-        Image marker_img = new Image();
-        marker_img.setBitmap(source);
-        return marker_img;
-    }
-
-    public static Image getMarker(int res) {
-        Image image = new Image();
-        try {
-            image.setImageResource(res);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return image;
-    }
-
-    public static Image getMarker() {
-        Image image = new Image();
-
-        try {
-            image.setImageResource(R.drawable.marker);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return image;
-    }
-
     public static Bitmap changeBitmapColor(Bitmap sourceBitmap, int color)
     {
         Bitmap resultBitmap = sourceBitmap.copy(sourceBitmap.getConfig(),true);
@@ -127,34 +89,34 @@ public class ActivityUtils {
     /**
      * Convert from Geo to GeoCoordinate
      */
-    public static List<GeoCoordinate> convertFrom(List<Geo> geos) {
-        List<GeoCoordinate> result = new ArrayList<>();
+    public static List<LatLng> convertFrom(List<Geo> geos) {
+        List<LatLng> result = new ArrayList<>();
         for (Geo geo : geos) {
-            result.add(new GeoCoordinate(geo.lat, geo.lng));
+            result.add(new LatLng(geo.lat, geo.lng));
         }
         return result;
     }
 
-    public static GeoCoordinate convertFrom(Geo geo) {
-        return new GeoCoordinate(geo.lat, geo.lng);
+    public static LatLng convertFrom(Geo geo) {
+        return new LatLng(geo.lat, geo.lng);
     }
 
     /**
      * Convert from GeoCoordinate to Geo
      */
-    public static List<Geo> convertToGeo(List<GeoCoordinate> geos) {
+    public static List<Geo> convertToGeo(List<LatLng> geos) {
         List<Geo> result = new ArrayList<>();
 
-        for (GeoCoordinate geo : geos) {
-            long cellId = S2Utils.getCellId(geo.getLatitude(), geo.getLongitude()).id();
-            result.add(new Geo(geo.getLatitude(), geo.getLongitude(), cellId));
+        for (LatLng geo : geos) {
+            long cellId = S2Utils.getCellId(geo.latitude, geo.longitude).id();
+            result.add(new Geo(geo.latitude, geo.longitude, cellId));
         }
         return result;
     }
 
-    public static Geo convertToGeo(GeoCoordinate geo) {
-        long cellId = S2Utils.getCellId(geo.getLatitude(), geo.getLongitude()).id();
-        return new Geo(geo.getLatitude(), geo.getLongitude(), cellId);
+    public static Geo convertToGeo(LatLng geo) {
+        long cellId = S2Utils.getCellId(geo.latitude, geo.longitude).id();
+        return new Geo(geo.latitude, geo.longitude, cellId);
     }
 
     /**

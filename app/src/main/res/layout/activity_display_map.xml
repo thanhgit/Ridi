@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".presentation.DisplayMapActivity">
 
+    <!--<fragment-->
+        <!--class="com.here.android.mpa.mapping.MapFragment"-->
+        <!--android:id="@+id/map_where_display_map"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"/>-->
     <fragment
-        class="com.here.android.mpa.mapping.MapFragment"
-        android:id="@+id/map_where_display_map"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</android.support.constraint.ConstraintLayout>
+        android:layout_height="match_parent"
+        android:id="@+id/map_where_display_map"
+        tools:context=".presentation.SearchPlaceActivity"
+        android:name="com.google.android.gms.maps.SupportMapFragment" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_put_trip_where_display_map"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:layout_alignParentBottom="true"
+        android:text="Put Trip"/>
+</RelativeLayout>

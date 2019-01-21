@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.here.android.mpa.search.DiscoveryResult;
-
 import java.util.List;
 
 import butterknife.BindView;
