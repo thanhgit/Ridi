@@ -3,6 +3,7 @@ package saveteam.com.ridesharing.presentation.splashscreen;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.RelativeLayout;
@@ -15,6 +16,7 @@ import butterknife.ButterKnife;
 import saveteam.com.ridesharing.R;
 import saveteam.com.ridesharing.presentation.LoginActivity;
 import saveteam.com.ridesharing.presentation.home.MainActivity;
+import saveteam.com.ridesharing.utils.MyPermission;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
 import saveteam.com.ridesharing.utils.activity.SharedRefUtils;
 
@@ -53,6 +55,12 @@ public class SplashActivity extends AppCompatActivity {
             ActivityUtils.openNetWork(this);
         }
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        MyPermission.getInstance(this).onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private static class StartTask extends AsyncTask<Void, Integer, Void> {

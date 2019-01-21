@@ -36,6 +36,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -87,8 +88,6 @@ import saveteam.com.ridesharing.utils.google.MyGoogleAuthen;
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
     private static final int START_POINT_ACTIVITY = 9000;
     private static final int END_POINT_ACTIVITY = 9001;
-
-
 
     public enum MODE_USER {
         FIND_RIDE,
@@ -346,6 +345,23 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    @OnClick(R.id.iv_exchange_place_where_main)
+    public void clickExchangePlace(View view) {
+        ActivityUtils.displayToast(this, "change");
+
+        LatLng tmp = start_point;
+        start_point = end_point;
+        end_point = tmp;
+
+        String strTmp = btn_from_where.getText().toString();
+        btn_from_where.setText(btn_to_where.getText().toString());
+        btn_to_where.setText(strTmp);
+
+        if (start_point != null && end_point != null) {
+            createRoute();
+        }
+    }
+
     @OnClick(R.id.ibtn_menu_where_main)
     public void clickIBtnMenu(View view) {
         drawerLayout.openDrawer(Gravity.LEFT);
@@ -529,7 +545,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 btn_from_where.setBackground(null);
 
                 start_point = new LatLng(start.lat, start.lng);
-                mMap.addMarker(new MarkerOptions().position(start_point));
+                mMap.addMarker(new MarkerOptions().position(start_point).icon(BitmapDescriptorFactory.fromResource(R.drawable.from_place)));
             }
         }
 
@@ -547,43 +563,48 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 btn_to_where.setBackground(null);
 
                 end_point = new LatLng(end.lat, end.lng);
-                mMap.addMarker(new MarkerOptions().position(end_point));
+                mMap.addMarker(new MarkerOptions().position(end_point).icon(BitmapDescriptorFactory.fromResource(R.drawable.to_place)));
 
             }
         }
 
         if (start_point!=null && end_point!= null) {
-            GoogleDirection.withServerKey(getResources().getString(R.string.google_maps_key))
-                    .from(start_point)
-                    .to(end_point)
-                    .transitMode(TransportMode.BICYCLING)
-                    .alternativeRoute(true)
-                    .execute(new DirectionCallback() {
-                        @Override
-                        public void onDirectionSuccess(Direction direction, String rawBody) {
-                            if (direction.isOK()) {
-                                mMap.addMarker(new MarkerOptions().position(start_point));
-                                mMap.addMarker(new MarkerOptions().position(end_point));
-
-//                                for (int i = 0; i < direction.getRouteList().size(); i++) {
-                                    Route route = direction.getRouteList().get(0);
-                                    int color = Color.argb(100, 255,0,0);
-                                    ArrayList<LatLng> directionPositionList = route.getLegList().get(0).getDirectionPoint();
-                                    geos.clear();
-                                    geos.addAll(ActivityUtils.convertToGeo(directionPositionList));
-                                    mMap.addPolyline(DirectionConverter.createPolyline(MainActivity.this, directionPositionList, 5, color));
-//                                }
-                                setCameraWithCoordinationBounds(direction.getRouteList().get(0));
-                            }
-                        }
-
-                        @Override
-                        public void onDirectionFailure(Throwable t) {
-
-                        }
-                    });
+            createRoute();
         }
 
+    }
+
+    private void createRoute() {
+        GoogleDirection.withServerKey(getResources().getString(R.string.google_maps_key))
+                .from(start_point)
+                .to(end_point)
+                .transitMode(TransportMode.BICYCLING)
+                .alternativeRoute(true)
+                .execute(new DirectionCallback() {
+                    @Override
+                    public void onDirectionSuccess(Direction direction, String rawBody) {
+                        if (direction.isOK()) {
+                            mMap.clear();
+                            mMap.addMarker(new MarkerOptions().position(start_point).icon(BitmapDescriptorFactory.fromResource(R.drawable.from_place)));
+                            mMap.addMarker(new MarkerOptions().position(end_point).icon(BitmapDescriptorFactory.fromResource(R.drawable.to_place)));
+
+//                                for (int i = 0; i < direction.getRouteList().size(); i++) {
+                            Route route = direction.getRouteList().get(0);
+                            int color = Color.argb(100, 255,0,0);
+                            ArrayList<LatLng> directionPositionList = route.getLegList().get(0).getDirectionPoint();
+                            geos.clear();
+                            geos.addAll(ActivityUtils.convertToGeo(directionPositionList));
+                            mMap.addPolyline(DirectionConverter.createPolyline(MainActivity.this, directionPositionList, 5, color));
+//                                }
+                            setCameraWithCoordinationBounds(direction.getRouteList().get(0));
+                        }
+                    }
+
+                    @Override
+                    public void onDirectionFailure(Throwable t) {
+
+                    }
+                });
     }
 
     private void setCameraWithCoordinationBounds(Route route) {

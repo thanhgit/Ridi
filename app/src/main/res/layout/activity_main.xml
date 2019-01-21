@@ -18,11 +18,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <!--<fragment-->
-                <!--class="com.here.android.mpa.mapping.MapFragment"-->
-                <!--android:id="@+id/map_where_main"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"/>-->
             <fragment
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
@@ -52,8 +47,7 @@
                         android:layout_width="32dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center"
-                        android:background="@color/transparent"
-                        android:src="@drawable/ic_menu_black_24dp"/>
+                        android:background="@drawable/ic_menu_black_24dp"/>
                     <android.support.v7.widget.AppCompatButton
                         android:id="@+id/btn_time_on_search_where_main"
                         android:layout_width="match_parent"
@@ -94,13 +88,13 @@
                 <LinearLayout
                     android:layout_width="64dp"
                     android:layout_height="match_parent"
+                    android:gravity="center"
                     android:orientation="vertical">
-                    <ImageButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:background="@color/transparent"
-                        android:src="@drawable/ic_transform_black_24dp"/>
+                    <ImageView
+                        android:id="@+id/iv_exchange_place_where_main"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/ic_transform_black_24dp"/>
                 </LinearLayout>
             </LinearLayout>
         </android.support.v7.widget.CardView>
