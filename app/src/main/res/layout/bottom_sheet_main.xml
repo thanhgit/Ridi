@@ -87,6 +87,44 @@
                 android:text="Options"/>
         </LinearLayout>
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="@dimen/textsize_title"
+            android:text="Distance is :  "/>
+        <TextView
+            android:id="@+id/tv_distance_where_main"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="0 km"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="@dimen/textsize_title"
+            android:text="Cash is :  "/>
+        <TextView
+            android:id="@+id/tv_cash_where_main"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="0 VND"/>
+    </LinearLayout>
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/btn_submit_where_main"
         android:layout_width="match_parent"

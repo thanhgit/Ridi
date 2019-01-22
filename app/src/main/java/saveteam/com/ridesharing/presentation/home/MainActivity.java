@@ -27,7 +27,9 @@ import android.widget.TextView;
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
 import com.akexorcist.googledirection.constant.TransportMode;
+import com.akexorcist.googledirection.constant.Unit;
 import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.bumptech.glide.Glide;
@@ -114,6 +116,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     AppCompatButton btn_to_where;
     @BindView(R.id.btn_options_where_main)
     AppCompatButton btn_options;
+    @BindView(R.id.tv_cash_where_main)
+    TextView tv_cash;
+    @BindView(R.id.tv_distance_where_main)
+    TextView tv_distance;
 
     @BindView(R.id.bottom_sheet_where_main)
     LinearLayout bottom_sheet;
@@ -155,6 +161,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     private SwitchDateTimeDialogFragment dateTimeFragment;
     private MODE_USER mode_user;
+
+    private double distance = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -627,16 +635,29 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 .to(end_point)
                 .transitMode(TransportMode.BICYCLING)
                 .alternativeRoute(true)
+                .unit(Unit.METRIC)
                 .execute(new DirectionCallback() {
                     @Override
                     public void onDirectionSuccess(Direction direction, String rawBody) {
                         if (direction.isOK()) {
+
                             mMap.clear();
                             mMap.addMarker(new MarkerOptions().position(start_point).icon(BitmapDescriptorFactory.fromResource(R.drawable.from_place)));
                             mMap.addMarker(new MarkerOptions().position(end_point).icon(BitmapDescriptorFactory.fromResource(R.drawable.to_place)));
 
 //                                for (int i = 0; i < direction.getRouteList().size(); i++) {
                             Route route = direction.getRouteList().get(0);
+                            distance = 0;
+                            for (Leg leg : route.getLegList()) {
+                                distance += Integer.parseInt(leg.getDistance().getValue());
+                            }
+
+                            distance /=1000;
+                            tv_distance.setText(distance +" km");
+                            double cash = distance * 5;
+                            tv_cash.setText((int)cash + " thousand VND");
+
+                            ActivityUtils.displayToast(MainActivity.this, "distance: "+distance);
                             int color = Color.argb(100, 255,0,0);
                             ArrayList<LatLng> directionPositionList = route.getLegList().get(0).getDirectionPoint();
                             geos.clear();
