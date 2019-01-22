@@ -32,7 +32,7 @@ public class SharedRefUtils {
     }
 
     public static String getEmail(Context context) {
-        return SharedRefUtils.getInstance(context).getString(REF_EMAIL, "thanh29695@gmail.com");
+        return SharedRefUtils.getInstance(context).getString(REF_EMAIL, "");
     }
 
     public static void saveUid(String uid, Context context) {
@@ -42,7 +42,7 @@ public class SharedRefUtils {
     }
 
     public static String getUid(Context context) {
-        return SharedRefUtils.getInstance(context).getString(REF_UID, "0000");
+        return SharedRefUtils.getInstance(context).getString(REF_UID, "");
     }
 
     public static void saveOnboarding(Context context) {

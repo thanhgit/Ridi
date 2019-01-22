@@ -80,7 +80,7 @@ import saveteam.com.ridesharing.presentation.SearchPlaceActivity;
 import saveteam.com.ridesharing.presentation.chat.FriendActivity;
 import saveteam.com.ridesharing.presentation.profile.ProfileActivity;
 import saveteam.com.ridesharing.presentation.setting.SettingActivity;
-import saveteam.com.ridesharing.server.model.MatchingResponseWithUser;
+import saveteam.com.ridesharing.server.model.MatchingForSearchResponse;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
 import saveteam.com.ridesharing.utils.activity.SharedRefUtils;
 import saveteam.com.ridesharing.utils.google.MyGoogleAuthen;
@@ -100,6 +100,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     RadioButton rb_offer_ride;
     @BindView(R.id.btn_submit_where_main)
     AppCompatButton btn_submit;
+    @BindView(R.id.layout_extend_where_main)
+    LinearLayout layout_extend;
 
     @BindView(R.id.btn_from_place_where_main)
     AppCompatButton btn_from_where;
@@ -137,8 +139,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     ImageView iv_profile;
 
     ProgressDialog dialog;
-    String email = "";
-    Profile profile;
     String uid = "";
 
     LatLng start_point;
@@ -238,6 +238,21 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View view, int i) {
+                if (i == BottomSheetBehavior.STATE_EXPANDED) {
+                    layout_extend.setVisibility(View.GONE);
+                } else if (i == BottomSheetBehavior.STATE_COLLAPSED) {
+                    layout_extend.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View view, float v) {
+
+            }
+        });
 
         nav_view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -347,8 +362,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     @OnClick(R.id.iv_exchange_place_where_main)
     public void clickExchangePlace(View view) {
-        ActivityUtils.displayToast(this, "change");
-
         LatLng tmp = start_point;
         start_point = end_point;
         end_point = tmp;
@@ -359,8 +372,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         if (start_point != null && end_point != null) {
             createRoute();
+        } else if (start_point != null) {
+            mMap.clear();
+            mMap.addMarker(new MarkerOptions().position(start_point).icon(BitmapDescriptorFactory.fromResource(R.drawable.from_place)));
+        } else if (end_point != null) {
+            mMap.clear();
+            mMap.addMarker(new MarkerOptions().position(end_point).icon(BitmapDescriptorFactory.fromResource(R.drawable.to_place)));
         }
     }
+
 
     @OnClick(R.id.ibtn_menu_where_main)
     public void clickIBtnMenu(View view) {
@@ -420,10 +440,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             dialog.show();
 
             MatchingForSearch matchingForSearch = new MatchingForSearch(0.5, query);
-            matchingForSearch.matching(new Callback<MatchingResponseWithUser>() {
+            matchingForSearch.matching(new Callback<MatchingForSearchResponse>() {
                 @Override
-                public void onResponse(Call<MatchingResponseWithUser> call, Response<MatchingResponseWithUser> response) {
-                    MatchingResponseWithUser matchingResponse = response.body();
+                public void onResponse(Call<MatchingForSearchResponse> call, Response<MatchingForSearchResponse> response) {
+                    MatchingForSearchResponse matchingResponse = response.body();
                     if (matchingResponse != null) {
 
                         List<MatchingDTO> matchingDTOS = new ArrayList<>();
@@ -451,7 +471,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 }
 
                 @Override
-                public void onFailure(Call<MatchingResponseWithUser> call, Throwable t) {
+                public void onFailure(Call<MatchingForSearchResponse> call, Throwable t) {
                     ActivityUtils.displayLog(t.getMessage());
                     if (dialog.isShowing()) {
                         dialog.dismiss();
@@ -525,6 +545,33 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             btn_options.setText("Motor bike");
             this.mode_user= MODE_USER.OFFER_RIDE;
         }
+    }
+
+    /**
+     * Footer controller
+     */
+
+    @OnClick(R.id.layout_profile_where_main)
+    public void clickLayoutProfile(View view) {
+        ActivityUtils.changeActivity(this, ProfileActivity.class);
+    }
+
+    @OnClick(R.id.layout_chat_where_main)
+    public void clickLayoutChat(View view) {
+        ActivityUtils.changeActivity(this, FriendActivity.class);
+    }
+
+    @OnClick(R.id.layout_find_ride_where_main)
+    public void clickLayoutFindRide(View view) {
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        changeMode(MODE_USER.FIND_RIDE);
+    }
+
+    @OnClick(R.id.layout_offer_ride_where_main)
+    public void clickLayoutOfferRide(View view) {
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        rb_offer_ride.setChecked(true);
+        changeMode(MODE_USER.OFFER_RIDE);
     }
 
     @Override

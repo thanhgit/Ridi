@@ -43,9 +43,9 @@ public class OnBoardingActivity extends OnboarderActivity {
         OnboarderPage onboarderPage2 = new OnboarderPage("Good UX, useful", "Easy to use ", R.drawable.bg_easy_to_use);
         OnboarderPage onboarderPage3 = new OnboarderPage("Saving money", "Saving to other investment", R.drawable.bg_saving_money);
 
-        onboarderPage1.setBackgroundColor(R.color.yellow);
-        onboarderPage2.setBackgroundColor(R.color.yellow);
-        onboarderPage3.setBackgroundColor(R.color.yellow);
+        onboarderPage1.setBackgroundColor(R.color.gray);
+        onboarderPage2.setBackgroundColor(R.color.gray);
+        onboarderPage3.setBackgroundColor(R.color.gray);
 
         List<OnboarderPage> pages = new ArrayList<>();
 

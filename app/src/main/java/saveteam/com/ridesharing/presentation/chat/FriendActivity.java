@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,6 +39,9 @@ public class FriendActivity extends AppCompatActivity {
         setContentView(R.layout.activity_friend);
         ButterKnife.bind(this);
 
+        getSupportActionBar().setTitle("Friend list");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         uid = SharedRefUtils.getUid(this);
 
         profiles = new ArrayList<>();
@@ -57,6 +61,18 @@ public class FriendActivity extends AppCompatActivity {
         });
 
         startTask.execute();
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
 
     }
 

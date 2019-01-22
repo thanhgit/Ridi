@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class MatchingResponseWithUser implements Serializable {
+public class MatchingForSearchResponse implements Serializable {
 
     @SerializedName("key")
     @Expose
@@ -18,7 +18,7 @@ public class MatchingResponseWithUser implements Serializable {
     @Expose
     private List<Double> percents = null;
 
-    public MatchingResponseWithUser() {
+    public MatchingForSearchResponse() {
         users = new ArrayList<>();
         percents = new ArrayList<>();
     }

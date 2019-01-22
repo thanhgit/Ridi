@@ -14,7 +14,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.telecom.Call;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -39,6 +38,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import saveteam.com.ridesharing.R;
@@ -47,8 +47,8 @@ import saveteam.com.ridesharing.database.RidesharingDB;
 import saveteam.com.ridesharing.database.model.SearchPlaceHistory;
 import saveteam.com.ridesharing.model.Geo;
 import saveteam.com.ridesharing.server.ApiUtils;
-import saveteam.com.ridesharing.server.model.place.PlaceResponse;
-import saveteam.com.ridesharing.server.model.place.Result;
+import saveteam.com.ridesharing.server.model.searchplacewithtext.Result;
+import saveteam.com.ridesharing.server.model.searchplacewithtext.SearchPlaceWithTextResponse;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
 import saveteam.com.ridesharing.utils.google.S2Utils;
 
@@ -133,16 +133,16 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
                                 .position(center)
                                 .title("Your position"));
 
-                        retrofit2.Call<PlaceResponse> placeResponseCall = ApiUtils.getServerGoogleMapApi()
-                                .searchWithCoordinate(center.latitude+","+center.longitude, getResources().getString(R.string.google_maps_key));
-                        placeResponseCall.enqueue(new Callback<PlaceResponse>() {
+                        Call<SearchPlaceWithTextResponse> searchPlaceWithTextResponseCall = ApiUtils.getServerGoogleMapApi()
+                                .searchPlaceWithText(center.latitude+","+center.longitude, getResources().getString(R.string.google_maps_key));
+                        searchPlaceWithTextResponseCall.enqueue(new Callback<SearchPlaceWithTextResponse>() {
                             @Override
-                            public void onResponse(retrofit2.Call<PlaceResponse> call, Response<PlaceResponse> response) {
+                            public void onResponse(Call<SearchPlaceWithTextResponse> call, Response<SearchPlaceWithTextResponse> response) {
                                 if (response.isSuccessful()) {
-                                    PlaceResponse placeResponse = response.body();
+                                    SearchPlaceWithTextResponse placeResponse = response.body();
                                     if (placeResponse.getResults().size() > 0) {
                                         Result result = placeResponse.getResults().get(0);
-                                        titlePlaceName = result.getFormattedAddress();
+                                        titlePlaceName = result.getName();
                                         choose = new Geo(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng(), 0);
                                         txt_search.setText(result.getFormattedAddress());
                                     }
@@ -150,8 +150,8 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
                             }
 
                             @Override
-                            public void onFailure(retrofit2.Call<PlaceResponse> call, Throwable t) {
-                                ActivityUtils.displayToast(SearchPlaceActivity.this, t.getMessage());
+                            public void onFailure(Call<SearchPlaceWithTextResponse> call, Throwable t) {
+
                             }
                         });
                     }
@@ -159,7 +159,6 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
             }
         });
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -181,7 +180,7 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
             @Override
             public void selected(Result result) {
                 placeId = result.getPlaceId();
-                titlePlaceName = result.getFormattedAddress();
+                titlePlaceName = result.getName();
                 choose = new Geo(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng(), 0);
                 clickButtonChoose();
             }
@@ -199,13 +198,13 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String query = s.toString();
                 if (!query.trim().equals("") && !query.equals(querySearch)){
-                    retrofit2.Call<PlaceResponse> placeResponseCall = ApiUtils.getServerGoogleMapApi()
-                            .searchWithString(query.replaceAll(" ", "+").toLowerCase(),
-                                    getResources().getString(R.string.google_maps_key));
 
-                    placeResponseCall.enqueue(new Callback<PlaceResponse>() {
+                    retrofit2.Call<SearchPlaceWithTextResponse> searchPlaceWithTextResponseCall = ApiUtils.getServerGoogleMapApi()
+                            .searchPlaceWithText(query.replaceAll(" ", "+").toLowerCase(),
+                                    getResources().getString(R.string.google_maps_key));
+                    searchPlaceWithTextResponseCall.enqueue(new Callback<SearchPlaceWithTextResponse>() {
                         @Override
-                        public void onResponse(retrofit2.Call<PlaceResponse> call, Response<PlaceResponse> response) {
+                        public void onResponse(retrofit2.Call<SearchPlaceWithTextResponse> call, Response<SearchPlaceWithTextResponse> response) {
                             if (response.isSuccessful()) {
                                 results.clear();
                                 results.addAll(response.body().getResults());
@@ -218,10 +217,12 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
                         }
 
                         @Override
-                        public void onFailure(retrofit2.Call<PlaceResponse> call, Throwable t) {
+                        public void onFailure(retrofit2.Call<SearchPlaceWithTextResponse> call, Throwable t) {
 
                         }
                     });
+
+
                     querySearch = query;
                 }
             }
@@ -285,24 +286,24 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
 
             if (myLocation != null) {
 
-                retrofit2.Call<PlaceResponse> placeResponseCall = ApiUtils.getServerGoogleMapApi()
-                        .searchWithCoordinate(myLocation.getLatitude()+","+myLocation.getLongitude(), getResources().getString(R.string.google_maps_key));
-                placeResponseCall.enqueue(new Callback<PlaceResponse>() {
+                retrofit2.Call<SearchPlaceWithTextResponse> placeResponseCall = ApiUtils.getServerGoogleMapApi()
+                        .searchPlaceWithText(myLocation.getLatitude()+","+myLocation.getLongitude(), getResources().getString(R.string.google_maps_key));
+                placeResponseCall.enqueue(new Callback<SearchPlaceWithTextResponse>() {
                     @Override
-                    public void onResponse(retrofit2.Call<PlaceResponse> call, Response<PlaceResponse> response) {
+                    public void onResponse(retrofit2.Call<SearchPlaceWithTextResponse> call, Response<SearchPlaceWithTextResponse> response) {
                         if (response.isSuccessful()) {
-                            PlaceResponse placeResponse = response.body();
+                            SearchPlaceWithTextResponse placeResponse = response.body();
                             if (placeResponse.getResults().size() > 0) {
                                 Result result = placeResponse.getResults().get(0);
-                                titlePlaceName = result.getFormattedAddress();
+                                titlePlaceName = result.getName();
                                 choose = new Geo(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng(), 0);
-                                txt_search.setText(result.getFormattedAddress());
+                                txt_search.setText(result.getName());
                             }
                         }
                     }
 
                     @Override
-                    public void onFailure(retrofit2.Call<PlaceResponse> call, Throwable t) {
+                    public void onFailure(retrofit2.Call<SearchPlaceWithTextResponse> call, Throwable t) {
                         ActivityUtils.displayToast(SearchPlaceActivity.this, t.getMessage());
                     }
                 });
@@ -322,7 +323,11 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
         if (searchLocation) {
             searchLocation = false;
             iv_search_location.setBackgroundResource(R.drawable.ic_edit_location_black_24dp);
+            if (mMap != null) {
+                mMap.clear();
+            }
         } else {
+            ActivityUtils.hideKeyboard(this, txt_search);
             searchLocation = true;
             iv_search_location.setBackgroundResource(R.drawable.ic_edit_location_pink_400_24dp);
             mMap.clear();
@@ -396,8 +401,10 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
         menu.clear();
         if (histories.size() > 0 && menu != null) {
             Menu submenu = menu.addSubMenu("History");
-            for (SearchPlaceHistory history : histories) {
-                submenu.add(history.getTitle());
+            for (int index = 0; index < histories.size(); index++) {
+
+                MenuItem menuItem = submenu.add(0, index, index, histories.get(index).getTitle());
+                menuItem.setIcon(R.drawable.to_place);
             }
 
             navigationView.invalidate();

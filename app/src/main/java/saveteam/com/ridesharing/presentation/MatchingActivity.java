@@ -19,7 +19,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import butterknife.BindView;
@@ -27,15 +26,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import saveteam.com.ridesharing.R;
 import saveteam.com.ridesharing.adapter.MatchingTripAdapter;
-import saveteam.com.ridesharing.database.model.Profile;
 import saveteam.com.ridesharing.firebase.model.TripFB;
 import saveteam.com.ridesharing.model.FindTripDTO;
 import saveteam.com.ridesharing.model.Geo;
 import saveteam.com.ridesharing.model.MatchingDTO;
 import saveteam.com.ridesharing.model.Trip;
 import saveteam.com.ridesharing.presentation.home.MainActivity;
-import saveteam.com.ridesharing.server.model.MatchingResponseWithUser;
-import saveteam.com.ridesharing.server.model.matching.MatchingResponse;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
 
 public class MatchingActivity extends AppCompatActivity {
