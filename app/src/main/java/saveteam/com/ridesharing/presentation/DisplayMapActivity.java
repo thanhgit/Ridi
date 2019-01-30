@@ -1,17 +1,13 @@
 package saveteam.com.ridesharing.presentation;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.AppCompatButton;
 import android.view.View;
 
@@ -43,13 +39,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import saveteam.com.ridesharing.R;
+import saveteam.com.ridesharing.firebase.FirebaseUtils;
+import saveteam.com.ridesharing.firebase.model.ConfirmFB;
+import saveteam.com.ridesharing.firebase.model.ConfirmListFB;
 import saveteam.com.ridesharing.firebase.model.ProfileFB;
 import saveteam.com.ridesharing.firebase.model.TripFB;
-import saveteam.com.ridesharing.model.MatchingDTO;
-import saveteam.com.ridesharing.model.Trip;
-import saveteam.com.ridesharing.presentation.chat.ChatActivity;
-import saveteam.com.ridesharing.presentation.chat.FriendActivity;
+import saveteam.com.ridesharing.presentation.home.MainActivity;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
+import saveteam.com.ridesharing.utils.activity.DataManager;
 import saveteam.com.ridesharing.utils.activity.SharedRefUtils;
 
 public class DisplayMapActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -58,12 +55,16 @@ public class DisplayMapActivity extends FragmentActivity implements OnMapReadyCa
     AppCompatButton btn_put_trip;
 
     TripFB trip;
-    Trip tripSearch;
+    TripFB tripSearch;
 
     String uid = "";
     ProfileFB profile;
 
     private GoogleMap mMap;
+
+    private ProgressDialog progressDialog;
+
+    private ConfirmListFB confirmList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,49 +73,99 @@ public class DisplayMapActivity extends FragmentActivity implements OnMapReadyCa
 
         ButterKnife.bind(this);
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Loading ...");
+        progressDialog.show();
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_where_display_map);
         mapFragment.getMapAsync(this);
 
         Intent intent = getIntent();
         trip = (TripFB) intent.getSerializableExtra("data");
-        tripSearch = (Trip) intent.getSerializableExtra("tripSearch");
+        tripSearch = (TripFB) intent.getSerializableExtra("tripSearch");
 
         uid = SharedRefUtils.getUid(this);
 
         StartTask startTask = new StartTask(this, trip.getUid(), new StartTask.GetProfileListener() {
             @Override
-            public void get(ProfileFB profileFB) {
+            public void get(ProfileFB profileFB, ConfirmListFB confirmListFB) {
                 profile = profileFB;
+                confirmList = confirmListFB;
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+            }
+
+            @Override
+            public void fail() {
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
             }
         });
         startTask.execute();
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        createRoute(ActivityUtils.convertFrom(trip.getGeoStart()), ActivityUtils.convertFrom(trip.getGeoEnd()), Color.argb(100, 255, 0, 0), false);;
+        createRoute(ActivityUtils.convertFrom(tripSearch.getGeoStart()), ActivityUtils.convertFrom(tripSearch.getGeoEnd()), Color.argb(100, 0, 255, 0), true);;
+    }
+
     @OnClick(R.id.btn_put_trip_where_display_map)
     public void clickPutTrip(View view) {
-        new AlertDialog.Builder(this)
-                .setMessage("Are you sure you want to reset the count?")
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+        progressDialog.show();
+        ProfileFB myProfile = DataManager.getInstance().getProfile();
+        ProfileFB profileMatching = DataManager.getInstance().getProfileMatching();
 
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        dismissDialog(arg1);
-                    }
-                })
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
+        ConfirmFB confirmFB = new ConfirmFB(profileMatching.getUid(),
+                myProfile.getUid(),myProfile.getFirstName() +" "+ myProfile.getLastName(),
+                profileMatching.getUid(),profileMatching.getFirstName() + " " + profileMatching.getLastName(),
+                DataManager.getInstance().getDistance(), DataManager.getInstance().getCost(),
+                "nothing", "nothing",
+                "nothing", "nothing",
+                "nothing");
 
-                        String roomId = uid.hashCode() + profile.getUid().hashCode() + "";
+        if (confirmList == null) {
+            List<ConfirmFB> _confirms = new ArrayList<>();
+            List<ProfileFB> _profiles = new ArrayList<>();
+            _confirms.add(confirmFB);
+            _profiles.add(profileMatching);
+            confirmList = new ConfirmListFB(profileMatching.getUid(),
+                    profileMatching.getFirstName() +" " + profileMatching.getLastName(),
+                    _confirms, _profiles);
+        } else {
+            confirmList.getConfirms().add(confirmFB);
+            confirmList.getProfiles().add(profileMatching);
+        }
 
-                        Intent chatIntent = new Intent(DisplayMapActivity.this, ChatActivity.class);
-                        chatIntent.putExtra("data", roomId);
-                        chatIntent.putExtra("profile", profile );
-                        startActivity(chatIntent);
-                    }
-                })
-                .create().show();
+
+        PutConfirmTask putConfirmTask = new PutConfirmTask(confirmList, new FirebaseUtils.PutConfirmListener() {
+            @Override
+            public void success() {
+                ActivityUtils.displayToast(DisplayMapActivity.this, "sent confirm successfully");
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+
+                Intent intent = new Intent(DisplayMapActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+
+            @Override
+            public void fail() {
+                ActivityUtils.displayToast(DisplayMapActivity.this, "sent confirm fail");
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+            }
+        });
+        putConfirmTask.execute();
     }
 
     private void createRoute(final LatLng start, final LatLng end, final int color, final boolean query) {
@@ -160,22 +211,14 @@ public class DisplayMapActivity extends FragmentActivity implements OnMapReadyCa
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        createRoute(ActivityUtils.convertFrom(trip.getGeoStart()), ActivityUtils.convertFrom(trip.getGeoEnd()), Color.argb(100, 255, 0, 0), false);;
-        createRoute(ActivityUtils.convertFrom(tripSearch.startGeo), ActivityUtils.convertFrom(tripSearch.endGeo), Color.argb(100, 0, 255, 0), true);;
-
-    }
-
     static class StartTask extends AsyncTask<Void, Void, Void> {
         private Context context;
         private String uid;
         private GetProfileListener listener;
 
         public interface GetProfileListener {
-            void get(ProfileFB profileFB);
+            void get(ProfileFB profileFB, ConfirmListFB confirmListFB);
+            void fail();
         }
 
         public StartTask(Context context, String uid, GetProfileListener listener) {
@@ -187,21 +230,58 @@ public class DisplayMapActivity extends FragmentActivity implements OnMapReadyCa
         @Override
         protected Void doInBackground(Void... voids) {
             DatabaseReference dbRefTrips = FirebaseDatabase.getInstance().getReference(ProfileFB.DB_IN_FB);
+            final DatabaseReference dbRefConfirms = FirebaseDatabase.getInstance().getReference(ConfirmListFB.DB_IN_FB);
             dbRefTrips.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    ProfileFB profileFB = dataSnapshot.getValue(ProfileFB.class);
+                    final ProfileFB profileFB = dataSnapshot.getValue(ProfileFB.class);
                     if (profileFB != null) {
-                        listener.get(profileFB);
+                        dbRefConfirms.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                ConfirmListFB confirmListFB = dataSnapshot.getValue(ConfirmListFB.class);
+                                if (confirmListFB != null) {
+                                    listener.get(profileFB, confirmListFB);
+                                }
+
+                                listener.fail();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                listener.fail();
+                            }
+                        });
+
+                    } else {
+                        listener.fail();
                     }
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                    listener.fail();
                 }
             });
             return null;
         }
     }
+
+    static class PutConfirmTask extends AsyncTask<Void, Void, Void> {
+        private ConfirmListFB confirm;
+        private FirebaseUtils.PutConfirmListener listener;
+
+        public PutConfirmTask(ConfirmListFB confirm, FirebaseUtils.PutConfirmListener listener) {
+            this.confirm = confirm;
+            this.listener = listener;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            FirebaseUtils.putConfirm(confirm, listener);
+            return null;
+        }
+    }
+
+
 }

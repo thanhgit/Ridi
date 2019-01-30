@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -31,6 +33,7 @@ import saveteam.com.ridesharing.firebase.FirebaseDB;
 import saveteam.com.ridesharing.firebase.model.ProfileFB;
 import saveteam.com.ridesharing.presentation.home.MainActivity;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
+import saveteam.com.ridesharing.utils.activity.DataManager;
 import saveteam.com.ridesharing.utils.google.MyGoogleAuthen;
 
 public class ActivateCodeActivity extends AppCompatActivity {
@@ -40,6 +43,8 @@ public class ActivateCodeActivity extends AppCompatActivity {
     AppCompatButton btn_activate;
     @BindView(R.id.tv_resend_where_activate_code)
     TextView tv_resend;
+    @BindView(R.id.tv_phone_where_activate_code)
+    TextView tv_phone;
 
     PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacks;
 
@@ -54,13 +59,35 @@ public class ActivateCodeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_activate_code);
         ButterKnife.bind(this);
 
-        profile = (ProfileFB) getIntent().getSerializableExtra("profile");
+        // profile = (ProfileFB) getIntent().getSerializableExtra("profile");
+        profile = DataManager.getInstance().getProfile();
 
         if (profile != null) {
             phoneNumber = "+84"+profile.getPhone();
+            tv_phone.setText(phoneNumber);
         }
 
         genPhoneCode();
+
+        txt_activate_code.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String activate_code = s.toString();
+                if (activate_code.length() == 6) {
+                    clickActivate(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     @OnClick(R.id.btn_activate_where_activate_code)
@@ -72,7 +99,7 @@ public class ActivateCodeActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    DatabaseReference db = FirebaseDB.getInstance().child("profiles");
+                                    DatabaseReference db = FirebaseDB.getInstance().child(ProfileFB.DB_IN_FB);
                                     db.child(profile.getUid()).setValue(profile);
                                     db.addValueEventListener(new ValueEventListener() {
                                         @Override
@@ -114,12 +141,12 @@ public class ActivateCodeActivity extends AppCompatActivity {
                 new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                     @Override
                     public void onVerificationCompleted(PhoneAuthCredential credential) {
-                        ActivityUtils.changeActivity(ActivateCodeActivity.this, MainActivity.class);
+                        // ActivityUtils.changeActivity(ActivateCodeActivity.this, MainActivity.class);
                     }
 
                     @Override
                     public void onVerificationFailed(FirebaseException e) {
-                        ActivityUtils.displayToast(ActivateCodeActivity.this, "false");
+                        ActivityUtils.displayToast(ActivateCodeActivity.this, "false: "+e.getMessage());
                     }
 
                     @Override

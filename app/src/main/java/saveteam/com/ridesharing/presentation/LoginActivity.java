@@ -1,7 +1,5 @@
 package saveteam.com.ridesharing.presentation;
 
-import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -20,9 +18,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,12 +27,13 @@ import co.gofynd.gravityview.GravityView;
 import saveteam.com.ridesharing.R;
 import saveteam.com.ridesharing.database.DBUtils;
 import saveteam.com.ridesharing.database.RidesharingDB;
-import saveteam.com.ridesharing.database.model.Profile;
 import saveteam.com.ridesharing.database.model.User;
 import saveteam.com.ridesharing.firebase.FirebaseDB;
+import saveteam.com.ridesharing.firebase.model.ProfileFB;
 import saveteam.com.ridesharing.presentation.home.MainActivity;
 import saveteam.com.ridesharing.presentation.profile.RegisterProfileActivity;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
+import saveteam.com.ridesharing.utils.activity.DataManager;
 import saveteam.com.ridesharing.utils.google.MyGoogleAuthen;
 import saveteam.com.ridesharing.utils.MyPermission;
 import saveteam.com.ridesharing.utils.activity.SharedRefUtils;
@@ -76,6 +73,8 @@ public class LoginActivity extends AppCompatActivity {
                 SharedRefUtils.saveEmail(user.getEmail(), LoginActivity.this);
                 SharedRefUtils.saveUid(user.getUid(), LoginActivity.this);
 
+                //ActivityUtils.changeActivity(LoginActivity.this, MainActivity.class);
+
                 InsertUserTask insertUserTask = new InsertUserTask(requestUser);
                 insertUserTask.execute();
             }
@@ -89,7 +88,10 @@ public class LoginActivity extends AppCompatActivity {
         authen.init();
     }
 
-
+    @Override
+    public void onBackPressed() {
+        return;
+    }
 
     private void initGravityView() {
         gravityView = GravityView.getInstance(this)
@@ -154,12 +156,13 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            DatabaseReference dbref = FirebaseDB.getInstance().child("profiles");
-            dbref.child(user.getUid()).addValueEventListener(new ValueEventListener() {
+            DatabaseReference dbref = FirebaseDatabase.getInstance().getReference(ProfileFB.DB_IN_FB);
+            dbref.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Profile profile = dataSnapshot.getValue(Profile.class);
+                    ProfileFB profile = dataSnapshot.getValue(ProfileFB.class);
                     if (profile != null) {
+                        DataManager.getInstance().setProfile(profile);
                         ActivityUtils.changeActivity(LoginActivity.this, MainActivity.class);
                         DBUtils.InsertProfileTask insertProfileTask = new DBUtils.InsertProfileTask(LoginActivity.this, profile);
                         insertProfileTask.execute();
@@ -171,6 +174,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
+                    ActivityUtils.displayToast(LoginActivity.this, "Error firebase");
 
                 }
             });

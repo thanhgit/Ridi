@@ -7,6 +7,7 @@ public class Geo implements Serializable {
     public double lng;
     public long cellId;
     public String title;
+    public String time;
 
     public Geo() {
     }
@@ -23,6 +24,14 @@ public class Geo implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     @Override

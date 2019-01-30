@@ -181,22 +181,27 @@ public class ActivityUtils {
 
     public static void openNetWork(final Activity context) {
         if (!ActivityUtils.checkInternetConnection(context)) {
-            ActivityUtils.displayAlert("Network problem", "Do you want to open network to use apps?", context,
-                    new ActivityUtils.OnOkClickListener(){
+            Snackbar snackbar = Snackbar.make(context.findViewById(android.R.id.content), "No internet", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Open", new View.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(View v) {
                             context.startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
                         }
                     });
+            snackbar.show();
         }
     }
 
 
-    public interface OnOkClickListener{
+    public interface OnOkClickListener {
         void onClick(DialogInterface dialog, int which);
     }
 
-    public static void displayAlert(@NonNull final String title,@NonNull final String message,@NonNull final Activity context, final OnOkClickListener listener) {
+    public interface OnCancelClickListener {
+        void onClick(DialogInterface dialog, int which);
+    }
+
+    public static void displayAlert(@NonNull final String title,@NonNull final String message,@NonNull final Activity context, final OnOkClickListener listenerOk, final OnCancelClickListener listenerCancel) {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -207,13 +212,14 @@ public class ActivityUtils {
                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                listener.onClick(dialog, which);
+                                listenerOk.onClick(dialog, which);
                                 dialog.dismiss();
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                listenerCancel.onClick(dialog, which);
                                 dialog.dismiss();
                             }
                         }).show();
@@ -261,5 +267,21 @@ public class ActivityUtils {
     public static String getNow() {
         SimpleDateFormat myDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault());
         return myDateFormat.format(new Date());
+    }
+
+    /**
+     * Date time format
+     */
+
+    public static SimpleDateFormat getDateTimeFormat() {
+        return new SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault());
+    }
+
+    public static SimpleDateFormat getTimeFormat() {
+        return new SimpleDateFormat("HH:mm", java.util.Locale.getDefault());
+    }
+
+    public static SimpleDateFormat getDateFormat() {
+        return new SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
     }
 }

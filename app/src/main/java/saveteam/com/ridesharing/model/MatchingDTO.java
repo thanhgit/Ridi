@@ -1,26 +1,25 @@
 package saveteam.com.ridesharing.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class MatchingDTO implements Serializable {
-    private String userName;
+    private String userId;
     private double percent;
 
     public MatchingDTO() {
     }
 
-    public MatchingDTO(String userName, double percent) {
-        this.userName = userName;
+    public MatchingDTO(String userId, double percent) {
+        this.userId = userId;
         this.percent = percent;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public double getPercent() {

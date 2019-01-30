@@ -11,10 +11,9 @@
     <uses-feature
         android:name="android.hardware.camera.flash"
         android:required="false" />
-
     <uses-feature
         android:glEsVersion="0x00020000"
-        android:required="true"/>
+        android:required="true" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -32,29 +31,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service
+            android:name="com.novoda.merlin.MerlinService"
+            android:exported="false" />
+        <service android:name=".utils.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key"/>
-
-        <meta-data
-            android:name="com.here.android.maps.appid"
-            android:value="zQMG2ngiscDYKJhtSnGF" />
-        <meta-data
-            android:name="com.here.android.maps.apptoken"
-            android:value="YC4UasAmWb4rY3OCN9jGBQ" />
-        <meta-data
-            android:name="com.here.android.maps.license.key"
-            android:value="YecYI7S5XVUZmd5Hg3xPD+sTzAQ7naynlPoPCLBb+erqiHIe+rvZBsR8jdcrE2G63xnvJ2y4WiW64kHlgYx2hpMXjckwAZ2IP2s3N3uU2MMKc1qdhsyBs8YdiGfIG71NnStqbUwDIrXqu72lDCDKqAceC/ZnkfFy5ycya+Kdmco7u940z095FGC0pB+fliCrVFEp0odcB79TXDYd668XAVcXUXfAm2PhQrYV0SkwB014rYPWsTeIJxqgSExOwuFMNhqqD9D8gkW5KPLvmfo0n3PYy9dyhHkU9YiD2LItuHiJm95IEjXmvDiVidqji5w1gi2JW2ByWBr4NmCUw9HHuM4GD2jzVBm+D3i31cAGyxcttHgaUsA1d+od0k2UTFapyS1SL+LPZ2WrI7A08OanwplkH0EA3KSGwjSUbr9D3PJqOEwUtSQ13s+5oIVB+DqUkIbDJh9es/0zQYRJiCtlS2Web4Bw8tOOPK5g48bAoL1qOophJqV6+o0DXuuCl2bwKxi/15LFrzpwnvx2IGVYhrtylp+NcJRoa4oWw1A9wYxLXDB//I4k03hcp1kGFhTF0SSJRbZMSRvqZge0gXLy08LdW+f5Un9iYgKtZZ0ZziNkA7KyHLvCQ9DCN+uAxdu0s3vLV20ZBphrYV4LLQkN21J5+EfCh/0mjQlWv0uTjd4=" />
-        "/>
-        <service
-            android:name="com.here.android.mpa.service.MapService"
-            android:exported="false"
-            android:label="saveteam.com.ridesharing.MapService">
-            <intent-filter>
-                <action android:name="saveteam.com.ridesharing.MapService" />
-            </intent-filter>
-        </service>
+            android:value="@string/google_maps_key" />
 
         <activity
             android:name=".presentation.LoginActivity"
@@ -63,8 +51,6 @@
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
@@ -81,16 +67,19 @@
         <activity
             android:name=".presentation.DisplayMapActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".presentation.profile.RegisterProfileActivity" />
-        <activity android:name=".presentation.profile.ActivateCodeActivity" />
+        <activity
+            android:name=".presentation.profile.RegisterProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".presentation.profile.ActivateCodeActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".presentation.profile.ProfileActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
@@ -98,7 +87,15 @@
             android:name=".presentation.home.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".presentation.MatchingActivity" />
+        <activity
+            android:name=".presentation.MatchingActivity"
+            android:screenOrientation="portrait">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+        </activity>
         <activity
             android:name=".presentation.splashscreen.SplashActivity"
             android:screenOrientation="portrait"
@@ -109,39 +106,58 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.splashscreen.OnBoardingActivity" />
-        <activity android:name=".presentation.payment.AddBankCardActivity">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
-        <activity android:name=".presentation.payment.BankcardManagerActivity">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
-        <activity android:name=".presentation.chat.ChatActivity">
+        <activity
+            android:name=".presentation.splashscreen.OnBoardingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".presentation.payment.AddBankCardActivity"
+            android:screenOrientation="portrait">
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
-        <activity android:name=".presentation.chat.FriendActivity" />
-        <activity android:name=".presentation.home.NotificationActivity" />
+        <activity
+            android:name=".presentation.payment.BankcardManagerActivity"
+            android:screenOrientation="portrait">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+        </activity>
+        <activity
+            android:name=".presentation.chat.ChatActivity"
+            android:screenOrientation="portrait">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+        </activity>
+        <activity
+            android:name=".presentation.chat.FriendActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".presentation.home.NotificationActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".presentation.setting.SettingActivity"
             android:label="@string/title_activity_setting" />
         <activity android:name=".presentation.home.AboutUsActivity" />
-        <activity android:name=".presentation.home.PolicyActivity"></activity>
+        <activity android:name=".presentation.home.PolicyActivity" />
+        <activity
+            android:name=".presentation.RideActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+        </activity>
+        <activity android:name=".presentation.TrackingActivity"></activity>
     </application>
 
 </manifest>

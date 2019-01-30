@@ -11,17 +11,18 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.AppCompatButton;
-import android.util.Log;
+import android.support.v7.widget.CardView;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.akexorcist.googledirection.DirectionCallback;
@@ -47,16 +48,13 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
-import com.kunzisoft.switchdatetime.SwitchDateTimeDialogFragment;
+import com.novoda.merlin.Connectable;
+import com.novoda.merlin.Disconnectable;
+import com.novoda.merlin.Merlin;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,52 +64,57 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import saveteam.com.ridesharing.R;
 import saveteam.com.ridesharing.database.RidesharingDB;
-import saveteam.com.ridesharing.database.model.Profile;
 import saveteam.com.ridesharing.firebase.FirebaseDB;
 import saveteam.com.ridesharing.firebase.FirebaseUtils;
+import saveteam.com.ridesharing.firebase.model.ProfileFB;
 import saveteam.com.ridesharing.firebase.model.TripFB;
 import saveteam.com.ridesharing.logic.MatchingForSearch;
 import saveteam.com.ridesharing.model.FindTripDTO;
 import saveteam.com.ridesharing.model.Geo;
 import saveteam.com.ridesharing.model.MatchingDTO;
 import saveteam.com.ridesharing.model.Query;
-import saveteam.com.ridesharing.model.Trip;
 import saveteam.com.ridesharing.presentation.LoginActivity;
 import saveteam.com.ridesharing.presentation.MatchingActivity;
+import saveteam.com.ridesharing.presentation.RideActivity;
 import saveteam.com.ridesharing.presentation.SearchPlaceActivity;
 import saveteam.com.ridesharing.presentation.chat.FriendActivity;
+import saveteam.com.ridesharing.presentation.fragment.NoInternetFragment;
 import saveteam.com.ridesharing.presentation.profile.ProfileActivity;
 import saveteam.com.ridesharing.presentation.setting.SettingActivity;
 import saveteam.com.ridesharing.server.model.MatchingForSearchResponse;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
+import saveteam.com.ridesharing.utils.activity.AnimationUtils;
+import saveteam.com.ridesharing.utils.activity.DataManager;
+import saveteam.com.ridesharing.utils.activity.DateTimePickerUtils;
 import saveteam.com.ridesharing.utils.activity.SharedRefUtils;
 import saveteam.com.ridesharing.utils.google.MyGoogleAuthen;
+import saveteam.com.ridesharing.utils.google.S2Utils;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
     private static final int START_POINT_ACTIVITY = 9000;
     private static final int END_POINT_ACTIVITY = 9001;
+    private static final int COST_PER_KM = 5;
 
     public enum MODE_USER {
         FIND_RIDE,
         OFFER_RIDE
     }
 
-    @BindView(R.id.rb_find_ride_where_main)
-    RadioButton rb_find_ride;
-    @BindView(R.id.rb_offer_ride_where_main)
-    RadioButton rb_offer_ride;
-    @BindView(R.id.btn_submit_where_main)
-    AppCompatButton btn_submit;
-    @BindView(R.id.layout_extend_where_main)
-    LinearLayout layout_extend;
-
+    /**
+     * Search box
+     */
     @BindView(R.id.btn_from_place_where_main)
     AppCompatButton btn_from_where;
     @BindView(R.id.btn_from_time_where_main)
     AppCompatButton btn_from_time;
     @BindView(R.id.btn_time_on_search_where_main)
     AppCompatButton btn_time_on_search;
+    @BindView(R.id.layout_seach_box_where_main)
+    CardView layout_search_box;
 
+    /**
+     * Bottom sheet
+     */
     @BindView(R.id.btn_to_place_where_main)
     AppCompatButton btn_to_where;
     @BindView(R.id.btn_options_where_main)
@@ -120,12 +123,32 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     TextView tv_cash;
     @BindView(R.id.tv_distance_where_main)
     TextView tv_distance;
-
     @BindView(R.id.bottom_sheet_where_main)
     LinearLayout bottom_sheet;
+    @BindView(R.id.btn_submit_where_main)
+    AppCompatButton btn_submit;
+    @BindView(R.id.layout_close_where_main)
+    LinearLayout layout_close;
+    @BindView(R.id.btn_mode_where_main)
+    AppCompatButton btn_mode;
+    @BindView(R.id.iv_mode_where_main)
+    ImageView iv_mode;
+    @BindView(R.id.tv_from_place_where_main)
+    TextView tv_from_place;
+    @BindView(R.id.tv_to_place_where_main)
+    TextView tv_to_place;
 
-    boolean isQuit = false;
+    BottomSheetBehavior bottomSheetBehavior;
 
+    /**
+     * Bottom navigation
+     */
+    @BindView(R.id.tv_find_ride_where_main)
+    TextView tv_find_ride;
+    @BindView(R.id.tv_offer_ride_where_main)
+    TextView tv_offer_ride;
+//    @BindView(R.id.tv_ride_where_main)
+//    TextView tv_ride;
 
     /**
      * Drawer layout
@@ -136,8 +159,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     ImageButton ibtn_menu;
     @BindView(R.id.nav_view_where_main)
     NavigationView nav_view;
-
-    BottomSheetBehavior bottomSheetBehavior;
 
     View nav_header;
     TextView tv_name;
@@ -150,19 +171,22 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     LatLng start_point;
     LatLng end_point;
 
-    Trip tripSearch;
+    TripFB tripSearch;
     List<Geo> geos;
 
     GoogleMap mMap;
 
-    private static final String TAG = "Sample";
-
-    private static final String FROM_TIME_DATETIME_FRAGMENT = "FROM_TIME_DATETIME_FRAGMENT";
-
-    private SwitchDateTimeDialogFragment dateTimeFragment;
     private MODE_USER mode_user;
 
     private double distance = 0;
+
+    private DateTimePickerUtils startTime;
+
+    private Merlin network;
+
+    boolean isQuit = false;
+
+    private ProfileFB profile;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -172,19 +196,22 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         ButterKnife.bind(this);
 
         uid = SharedRefUtils.getUid(this);
+        profile = DataManager.getInstance().getProfile();
 
         geos = new ArrayList<>();
+
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_where_main);
         mapFragment.getMapAsync(this);
 
-        tripSearch = new Trip();
+        tripSearch = new TripFB();
 
         nav_header = nav_view.getHeaderView(0);
         tv_name = nav_header.findViewById(R.id.tv_name_where_nav_header_main);
         tv_email = nav_header.findViewById(R.id.tv_email_where_nav_header_main);
         iv_profile = nav_header.findViewById(R.id.iv_profile_where_nav_header_main);
+        tv_name.setText(profile.getFirstName() + " " + profile.getLastName());
         tv_email.setText(SharedRefUtils.getEmail(this));
 
         iv_profile.setOnClickListener(new View.OnClickListener() {
@@ -195,6 +222,35 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         initApp();
+
+    }
+
+    private void initNetwork() {
+        network = new Merlin.Builder()
+                .withConnectableCallbacks()
+                .withDisconnectableCallbacks()
+                .build(this);
+        network.registerConnectable(new Connectable() {
+            @Override
+            public void onConnect() {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                Fragment fragment = fragmentManager.findFragmentByTag(NoInternetFragment.FRAGMENT_TAG);
+                if (fragment != null && fragment instanceof NoInternetFragment) {
+                    NoInternetFragment noInternetFragment = (NoInternetFragment) fragment;
+                    fragmentManager.beginTransaction().remove(noInternetFragment).commit();
+                }
+            }
+        });
+        network.registerDisconnectable(new Disconnectable() {
+            @Override
+            public void onDisconnect() {
+                NoInternetFragment noInternetFragment = NoInternetFragment.newInstance();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                noInternetFragment.setCancelable(false);
+                noInternetFragment.show(fragmentManager, NoInternetFragment.FRAGMENT_TAG);
+
+            }
+        });
     }
 
     @Override
@@ -205,20 +261,32 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void initApp() {
+
         dialog = new ProgressDialog(this);
         dialog.setMessage("Loading ...");
         dialog.setCancelable(false);
 
-        final String uid = SharedRefUtils.getUid(this);
-        AsyncTask.execute(new Runnable() {
+        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        bottomSheetBehavior.setSkipCollapsed(true);
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+
             @Override
-            public void run() {
-                List<Profile> profiles = RidesharingDB.getInstance(MainActivity.this)
-                        .getProfileDao().loadProfileBy(uid);
-                if (profiles != null && profiles.size() > 0) {
-                    Profile profile = profiles.get(0);
-                    tv_name.setText(profile.getFirstName() + " " + profile.getLastName());
+            public void onStateChanged(@NonNull View view, int i) {
+                if (i == BottomSheetBehavior.STATE_HIDDEN) {
+                    AnimationUtils.slideToLeft(layout_search_box);
+                    tv_find_ride.setVisibility(View.GONE);
+                    tv_offer_ride.setVisibility(View.GONE);
                 }
+
+                if (i == BottomSheetBehavior.STATE_EXPANDED) {
+                    AnimationUtils.slideToRight(layout_search_box);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View view, float v) {
+
             }
         });
 
@@ -226,7 +294,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public void onSuccess(byte[] bytes) {
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        Glide.with(MainActivity.this).load(bitmap)
+                        Glide.with(getApplicationContext()).load(bitmap)
                                 .apply(RequestOptions.circleCropTransform())
                                 .thumbnail(0.5f)
                                 .into(iv_profile);
@@ -242,23 +310,24 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mode_user = MODE_USER.FIND_RIDE;
         changeMode(mode_user);
 
-        initDateTimePicker();
-
-        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet);
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+        startTime = new DateTimePickerUtils(this);
+        startTime.initDateTimePicker("time",new DateTimePickerUtils.DateTimeListener() {
             @Override
-            public void onStateChanged(@NonNull View view, int i) {
-                if (i == BottomSheetBehavior.STATE_EXPANDED) {
-                    layout_extend.setVisibility(View.GONE);
-                } else if (i == BottomSheetBehavior.STATE_COLLAPSED) {
-                    layout_extend.setVisibility(View.VISIBLE);
-                }
+            public void onPositiveButtonClick(Date date, String tagFragment) {
+
+                btn_from_time.setText(ActivityUtils.getDateTimeFormat().format(date));
+                btn_time_on_search.setText(ActivityUtils.getTimeFormat().format(date));
             }
 
             @Override
-            public void onSlide(@NonNull View view, float v) {
+            public void onNegativeButtonClick(Date date, String tagFragment) {
+                // Do nothing
+            }
 
+            @Override
+            public void onNeutralButtonClick(Date date, String tagFragment) {
+                // Optional if neutral button does'nt exists
+                btn_from_time.setText("");
             }
         });
 
@@ -293,14 +362,27 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    /**
+     * life cycle
+     */
+
     @Override
     protected void onResume() {
         super.onResume();
 
+        initNetwork();
+        network.bind();
+
         if (start_point!=null && end_point!=null) {
             clickFromTime(btn_from_time);
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        network.unbind();
+        super.onPause();
+
     }
 
     @Override
@@ -317,55 +399,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    private void initDateTimePicker() {
-        dateTimeFragment = (SwitchDateTimeDialogFragment) getSupportFragmentManager().findFragmentByTag(FROM_TIME_DATETIME_FRAGMENT);
-        if(dateTimeFragment == null) {
-            dateTimeFragment = SwitchDateTimeDialogFragment.newInstance(
-                    getString(R.string.label_datetime_dialog),
-                    getString(android.R.string.ok),
-                    getString(android.R.string.cancel)
-            );
-        }
-
-        // Optionally define a timezone
-        dateTimeFragment.setTimeZone(TimeZone.getDefault());
-
-        // Init format
-        final SimpleDateFormat myDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault());
-        final SimpleDateFormat myTimeFormat = new SimpleDateFormat("HH:mm", java.util.Locale.getDefault());
-
-        // Assign unmodifiable values
-        dateTimeFragment.set24HoursMode(false);
-        dateTimeFragment.setHighlightAMPMSelection(false);
-        dateTimeFragment.setMinimumDateTime(new GregorianCalendar(2015, Calendar.JANUARY, 1).getTime());
-        dateTimeFragment.setMaximumDateTime(new GregorianCalendar(2025, Calendar.DECEMBER, 31).getTime());
-
-        // Define new day and month format
-        try {
-            dateTimeFragment.setSimpleDateMonthAndDayFormat(new SimpleDateFormat("MMMM dd", Locale.getDefault()));
-        } catch (SwitchDateTimeDialogFragment.SimpleDateMonthAndDayFormatException e) {
-            Log.e(TAG, e.getMessage());
-        }
-
-        // Set listener for date
-        dateTimeFragment.setOnButtonClickListener(new SwitchDateTimeDialogFragment.OnButtonWithNeutralClickListener() {
-            @Override
-            public void onPositiveButtonClick(Date date) {
-                btn_from_time.setText(myDateFormat.format(date));
-                btn_time_on_search.setText(myTimeFormat.format(date));
-            }
-
-            @Override
-            public void onNegativeButtonClick(Date date) {
-                // Do nothing
-            }
-
-            @Override
-            public void onNeutralButtonClick(Date date) {
-                // Optional if neutral button does'nt exists
-                btn_from_time.setText("");
-            }
-        });
+    @OnClick(R.id.layout_close_where_main)
+    public void clickCloseBottomNavigation(View view) {
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        AnimationUtils.slideToLeft(layout_search_box);
     }
 
     @OnClick(R.id.iv_exchange_place_where_main)
@@ -401,9 +438,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     @OnClick({R.id.btn_from_time_where_main, R.id.btn_time_on_search_where_main})
     public void clickFromTime(View view) {
-        dateTimeFragment.startAtCalendarView();
-        dateTimeFragment.setDefaultDateTime(Calendar.getInstance().getTime());
-        dateTimeFragment.show(getSupportFragmentManager(), FROM_TIME_DATETIME_FRAGMENT);
+        startTime.openDateTimePicker();
     }
 
     @OnClick(R.id.btn_from_place_where_main)
@@ -435,15 +470,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @OnClick(R.id.btn_submit_where_main)
     public void clickSubmit(View view) {
         if (mode_user == MODE_USER.FIND_RIDE) {
-            tripSearch.userName = SharedRefUtils.getEmail(MainActivity.this);
-            tripSearch.startGeo = ActivityUtils.convertToGeo(start_point);
-            tripSearch.endGeo = ActivityUtils.convertToGeo(end_point);
-            tripSearch.path = new ArrayList<>();
-            tripSearch.path.addAll(geos);
+            final TripFB findRideTrip = new TripFB();
+            findRideTrip.setUid(uid);
+            findRideTrip.setGeoStart(ActivityUtils.convertToGeo(start_point));
+            findRideTrip.setGeoEnd(ActivityUtils.convertToGeo(end_point));
+            findRideTrip.setPaths(geos);
+            findRideTrip.setSize(geos.size());
+            findRideTrip.setUserName(profile.getFirstName()+" "+profile.getLastName());
+            findRideTrip.setStartTime(btn_from_time.getText().toString());
+
+            DataManager.getInstance().setFindRideTrip(findRideTrip);
 
             Query query = new Query();
-            query.key = tripSearch.userName;
-            query.trip = tripSearch;
+            query.setKey(uid);
+            query.setTrip(findRideTrip);
 
             dialog.show();
 
@@ -473,7 +513,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                         Intent intent = new Intent(MainActivity.this, MatchingActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.putExtra("matching", new FindTripDTO(tripSearch, matchingDTOS));
+                        intent.putExtra("matching", new FindTripDTO(findRideTrip, matchingDTOS));
                         startActivity(intent);
                     }
                 }
@@ -487,23 +527,27 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             });
         } else if (mode_user == MODE_USER.OFFER_RIDE) {
-            tripSearch.userName = SharedRefUtils.getEmail(MainActivity.this);
-            tripSearch.startGeo = ActivityUtils.convertToGeo(start_point);
-            tripSearch.endGeo = ActivityUtils.convertToGeo(end_point);
-            tripSearch.path = new ArrayList<>();
-            tripSearch.path.addAll(geos);
+            TripFB offerRideTrip = new TripFB();
+            offerRideTrip.setUid(uid);
+            Geo geoStart = new Geo(start_point.latitude, start_point.longitude, S2Utils.getCellId(start_point.latitude, start_point.longitude).id());
+            geoStart.setTitle(btn_from_where.getHint().toString());
+            offerRideTrip.setGeoStart(geoStart);
 
-            TripFB tripFB = new TripFB();
-            tripFB.setUid(uid);
-            tripFB.setGeoStart(ActivityUtils.convertToGeo(start_point));
-            tripFB.setGeoEnd(ActivityUtils.convertToGeo(end_point));
-            tripFB.setPaths(geos);
-            tripFB.setSize(geos.size());
+            Geo geoEnd = new Geo(end_point.latitude, end_point.longitude, S2Utils.getCellId(end_point.latitude, end_point.longitude).id());
+            geoStart.setTitle(btn_to_where.getHint().toString());
+            offerRideTrip.setGeoEnd(ActivityUtils.convertToGeo(end_point));
+
+            offerRideTrip.setPaths(geos);
+            offerRideTrip.setSize(geos.size());
+            offerRideTrip.setUserName(profile.getFirstName()+" "+profile.getLastName());
+            offerRideTrip.setStartTime(btn_from_time.getText().toString());
+
+            DataManager.getInstance().setOfferRideTrip(offerRideTrip);
 
             dialog.show();
 
             DatabaseReference dbref = FirebaseDB.getInstance().child(TripFB.DB_IN_FB);
-            dbref.child(uid).setValue(tripFB).addOnCompleteListener(new OnCompleteListener<Void>() {
+            dbref.child(uid).setValue(offerRideTrip).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
 
@@ -525,32 +569,18 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    /**
-     * change mode
-     */
-
-    @OnClick(R.id.rb_find_ride_where_main)
-    public void clickFindRide() {
-        changeMode(MODE_USER.FIND_RIDE);
-    }
-
-    @OnClick(R.id.rb_offer_ride_where_main)
-    public void clickOfferRide() {
-        changeMode(MODE_USER.OFFER_RIDE);
-    }
-
     private void changeMode(MODE_USER mode_user) {
         if (mode_user == MODE_USER.FIND_RIDE) {
-            rb_find_ride.setChecked(true);
-            rb_offer_ride.setChecked(false);
-            btn_submit.setText("Find Ride");
-            btn_options.setText("1 slot");
+            btn_submit.setText(getResources().getString(R.string.find_ride_where_main));
+            btn_options.setText(getResources().getString(R.string.option_find_ride_where_bottom_navigation_where_main));
+            btn_mode.setText(getResources().getString(R.string.find_ride_where_bottom_navigation_where_main));
+            iv_mode.setBackgroundResource(R.drawable.findride);
             this.mode_user = MODE_USER.FIND_RIDE;
         } else {
-            rb_find_ride.setChecked(false);
-            rb_offer_ride.setChecked(true);
-            btn_submit.setText("Offer Ride");
-            btn_options.setText("Motor bike");
+            btn_submit.setText(getResources().getString(R.string.offer_ride_where_main));
+            btn_options.setText(getResources().getString(R.string.option_offer_ride_where_bottom_navigation_where_main));
+            btn_mode.setText(getResources().getString(R.string.offer_ride_where_bottom_navigation_where_main));
+            iv_mode.setBackgroundResource(R.drawable.offerride);
             this.mode_user= MODE_USER.OFFER_RIDE;
         }
     }
@@ -569,17 +599,34 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         ActivityUtils.changeActivity(this, FriendActivity.class);
     }
 
+    @OnClick(R.id.layout_ride_where_main)
+    public void clickLayoutRide(View view) {
+        ActivityUtils.changeActivity(this, RideActivity.class);
+    }
+
     @OnClick(R.id.layout_find_ride_where_main)
     public void clickLayoutFindRide(View view) {
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        changeMode(MODE_USER.FIND_RIDE);
+        tv_offer_ride.setVisibility(View.GONE);
+        if (tv_find_ride.getVisibility() == View.VISIBLE) {
+            return;
+        } else {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            changeMode(MODE_USER.FIND_RIDE);
+            tv_find_ride.setVisibility(View.VISIBLE);
+        }
     }
 
     @OnClick(R.id.layout_offer_ride_where_main)
     public void clickLayoutOfferRide(View view) {
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        rb_offer_ride.setChecked(true);
-        changeMode(MODE_USER.OFFER_RIDE);
+        tv_find_ride.setVisibility(View.GONE);
+        if (tv_offer_ride.getVisibility() == View.VISIBLE) {
+            return;
+        } else {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            changeMode(MODE_USER.OFFER_RIDE);
+            tv_offer_ride.setVisibility(View.VISIBLE);
+        }
+
     }
 
     @Override
@@ -594,8 +641,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             if (start != null) {
                 if (title.equals("")) {
                     btn_from_where.setText(start.toString());
+                    tv_from_place.setText(start.toString());
                 } else {
                     btn_from_where.setText(title);
+                    tv_from_place.setText(title);
                 }
                 btn_from_where.setBackground(null);
 
@@ -612,8 +661,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             if (end != null) {
                 if (title.equals("")) {
                     btn_to_where.setText(end.toString());
+                    tv_to_place.setText(end.toString());
                 } else {
                     btn_to_where.setText(title);
+                    tv_to_place.setText(title);
                 }
                 btn_to_where.setBackground(null);
 
@@ -654,10 +705,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                             distance /=1000;
                             tv_distance.setText(distance +" km");
-                            double cash = distance * 5;
+                            double cash = distance * COST_PER_KM;
                             tv_cash.setText((int)cash + " thousand VND");
 
-                            ActivityUtils.displayToast(MainActivity.this, "distance: "+distance);
+                            DataManager.getInstance().setDistance(distance);
+                            DataManager.getInstance().setCost(cash);
                             int color = Color.argb(100, 255,0,0);
                             ArrayList<LatLng> directionPositionList = route.getLegList().get(0).getDirectionPoint();
                             geos.clear();

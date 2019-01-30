@@ -11,10 +11,14 @@
     <color name="secondaryTextColor">#000000</color>
 
     <color name="transparent">#00ffffff</color>
+    <color name="no_transparent">#80f57c00</color>
 
     // common color
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="yellow">#ffff00</color>
     <color name="gray">#8c8a8a</color>
+
+    <!--data place holder-->
+    <color name="background">#dddddd</color>
 </resources>

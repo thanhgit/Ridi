@@ -4,26 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_sheet_where_main"
     android:layout_width="match_parent"
-    android:layout_height="250dp"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="@dimen/margin_button_where_home"
-    app:behavior_hideable="false"
-    app:behavior_peekHeight="85dp"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="800dp"
     android:background="@drawable/border_radius"
     android:layout_marginLeft="@dimen/margin_button_where_home"
     android:layout_marginRight="@dimen/margin_button_where_home"
+    android:visibility="visible"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
-    <LinearLayout
-        android:id="@+id/layout_extend_where_main"
-        android:layout_width="match_parent"
-        android:layout_height="32dp"
-        android:gravity="center"
-        android:orientation="vertical">
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="@drawable/ic_vertical_align_top_black_24dp"/>
-    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -31,30 +22,65 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3">
-            <RadioButton
-                android:id="@+id/rb_find_ride_where_main"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="Find Ride"></RadioButton>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_weight="1">
+            <TextView
+                android:id="@+id/tv_from_place_where_main"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:drawableLeft="@drawable/from_place"
+                android:gravity="left|center"
+                android:onClick="clickFromWhere"
+                android:hint="From place"/>
+            <TextView
+                android:id="@+id/tv_to_place_where_main"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="left|center"
+                android:drawableLeft="@drawable/to_place"
+                android:layout_marginTop="@dimen/margin_button_where_home"
+                android:onClick="clickToWhere"
+                android:background="@color/transparent"
+
+                android:hint="To place"/>
         </LinearLayout>
         <LinearLayout
-            android:layout_width="0dp"
+            android:id="@+id/layout_close_where_main"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="3">
-            <RadioButton
-                android:id="@+id/rb_offer_ride_where_main"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Offer Ride"></RadioButton>
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/ic_close_black_24dp"/>
         </LinearLayout>
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/iv_mode_where_main"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="@dimen/margin_button_where_home"
+            android:src="@drawable/findride"/>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_mode_where_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:gravity="left|center"
+            android:text="@string/find_ride_where_bottom_navigation_where_main"/>
+    </LinearLayout>
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -92,12 +118,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <TextView
-            android:layout_width="100dp"
+        <android.support.v7.widget.AppCompatButton
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="@dimen/textsize_title"
-            android:text="Distance is :  "/>
+            android:background="@color/transparent"
+            android:drawableLeft="@drawable/distance"/>
         <TextView
             android:id="@+id/tv_distance_where_main"
             android:layout_width="0dp"
@@ -111,12 +136,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <TextView
-            android:layout_width="100dp"
+        <android.support.v7.widget.AppCompatButton
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="@dimen/textsize_title"
-            android:text="Cash is :  "/>
+            android:background="@color/transparent"
+            android:drawableLeft="@drawable/cash"/>
         <TextView
             android:id="@+id/tv_cash_where_main"
             android:layout_width="0dp"
@@ -129,6 +153,7 @@
         android:id="@+id/btn_submit_where_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:backgroundTint="@color/transparent"
+        android:textColor="@color/secondaryLightColor"
         android:text="Post ride"/>
 </LinearLayout>

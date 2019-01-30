@@ -94,7 +94,7 @@ public class FriendActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            DatabaseReference dbProfileRef = FirebaseDatabase.getInstance().getReference("profiles");
+            DatabaseReference dbProfileRef = FirebaseDatabase.getInstance().getReference(ProfileFB.DB_IN_FB);
             dbProfileRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

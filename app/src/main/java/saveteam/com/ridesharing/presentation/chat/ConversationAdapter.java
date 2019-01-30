@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +22,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import saveteam.com.ridesharing.R;
-import saveteam.com.ridesharing.database.model.Profile;
 import saveteam.com.ridesharing.firebase.FirebaseUtils;
 import saveteam.com.ridesharing.firebase.model.ProfileFB;
-import saveteam.com.ridesharing.presentation.home.MainActivity;
 
 public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapter.MessageHolder> {
 

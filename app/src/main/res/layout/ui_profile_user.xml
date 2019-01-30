@@ -3,42 +3,59 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="@dimen/margin_button_where_home"
     android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:gravity="center"
         android:orientation="horizontal">
-        <!--<LinearLayout-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="1">-->
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_find_ride_where_ui_profile_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/findride"
+            android:drawablePadding="@dimen/margin_button_where_home"
+            android:shadowColor="@color/colorPrimary"
+            android:padding="@dimen/margin_button_where_home"
+            android:layout_marginRight="@dimen/margin_button_where_home"
+            android:background="@color/no_transparent"
+            android:hint="@string/find_ride_where_profile"/>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_offer_ride_where_ui_profile_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/offerride"
+            android:drawablePadding="@dimen/margin_button_where_home"
+            android:background="@color/transparent"
+            android:padding="@dimen/margin_button_where_home"
+            android:hint="@string/offer_ride_where_profile"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_country_where_ui_profile_user"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:drawableLeft="@drawable/flag_vi"
                 android:drawableRight="@drawable/ic_keyboard_arrow_down"
+                android:drawablePadding="@dimen/margin_button_where_home"
+                android:backgroundTint="@color/transparent"
                 android:text="VI +84"/>
-
-        <!--</LinearLayout>-->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2">
             <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_button_where_home"
+                android:layout_weight="1">
                 <EditText
                     android:id="@+id/txt_phone_where_ui_profile_user"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Phone"
+                    android:hint="@string/phone_where_profile"
                     android:inputType="phone" />
             </android.support.design.widget.TextInputLayout>
-        </LinearLayout>
-
     </LinearLayout>
 
     <LinearLayout
@@ -57,7 +74,7 @@
                     android:id="@+id/txt_first_name_where_ui_profile_user"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="First name"
+                    android:hint="@string/first_name_where_profile"
                     android:inputType="textCapWords" />
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
@@ -73,7 +90,7 @@
                     android:id="@+id/txt_last_name_where_ui_profile_user"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Last name"
+                    android:hint="@string/last_name_where_profile"
                     android:inputType="textCapWords" />
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
@@ -82,12 +99,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="@dimen/textsize_title"
-            android:text="Select Gender"/>
         <RadioGroup
             android:id="@+id/rbg_gender_where_ui_profile_user"
             android:layout_width="match_parent"
@@ -105,5 +116,53 @@
                 android:layout_height="wrap_content"
                 android:text="Female"/>
         </RadioGroup>
+    </LinearLayout>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_birth_day_where_ui_profile_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/birthday"
+        android:drawablePadding="@dimen/margin_button_where_home"
+        android:backgroundTint="@color/transparent"
+        android:gravity="left|center"
+        android:hint="@string/birth_day_where_profile"/>
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_home_place_where_ui_profile_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_home_black_24dp"
+        android:drawablePadding="@dimen/margin_button_where_home"
+        android:backgroundTint="@color/transparent"
+        android:gravity="left|center"
+        android:hint="@string/home_place_where_profile"/>
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_office_place_where_ui_profile_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/office"
+        android:drawablePadding="@dimen/margin_button_where_home"
+        android:backgroundTint="@color/transparent"
+        android:gravity="left|center"
+        android:hint="@string/office_place_where_profile"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_start_time_where_ui_profile_user"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/transparent"
+            android:hint="@string/start_time_where_profile"/>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_leave_office_time_where_ui_profile_user"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/transparent"
+            android:hint="@string/leave_office_where_profile"/>
     </LinearLayout>
 </LinearLayout>

@@ -9,22 +9,22 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-import saveteam.com.ridesharing.database.model.Profile;
+import saveteam.com.ridesharing.firebase.model.ProfileFB;
 
 @Dao
 public interface ProfileDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertProfiles(Profile... profiles);
+    void insertProfiles(ProfileFB... profiles);
 
     @Update
-    void updateProfiles(Profile... Profiles);
+    void updateProfiles(ProfileFB... Profiles);
 
     @Delete
-    void deleteProfiles(Profile... Profiles);
+    void deleteProfiles(ProfileFB... Profiles);
 
     @Query("SELECT * FROM profiles")
-    List<Profile> loadAllProfiles();
+    List<ProfileFB> loadAllProfiles();
 
     @Query("SELECT * FROM profiles WHERE uid = :uid")
-    List<Profile> loadProfileBy(String uid);
+    List<ProfileFB> loadProfileBy(String uid);
 }

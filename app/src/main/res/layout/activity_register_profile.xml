@@ -16,6 +16,8 @@
             android:id="@+id/btn_activate_account_where_register_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/transparent"
+            android:textColor="@color/secondaryLightColor"
             android:text="Active Account"/>
         <TextView
             android:layout_width="match_parent"

@@ -50,7 +50,7 @@ public class FirebaseDB {
                 for (DataSnapshot item : dataSnapshot.getChildren()) {
                     Query query = item.getValue(Query.class);
                     if (query != null) {
-                        ActivityUtils.displayLog("key la" + query.key);
+                        ActivityUtils.displayLog("key la" + query.getKey());
                     }
 
                     result.add(query);

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -14,8 +13,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
-import saveteam.com.ridesharing.database.model.Profile;
 import saveteam.com.ridesharing.database.model.User;
+import saveteam.com.ridesharing.firebase.model.ProfileFB;
 
 public class DBUtils {
     /**
@@ -23,9 +22,9 @@ public class DBUtils {
      */
     public static class InsertProfileTask extends AsyncTask<Void, Void, Void> {
         Activity activity;
-        Profile profile;
+        ProfileFB profile;
 
-        public InsertProfileTask(Activity activity, Profile profile) {
+        public InsertProfileTask(Activity activity, ProfileFB profile) {
             this.activity = activity;
             this.profile = profile;
         }
@@ -43,7 +42,7 @@ public class DBUtils {
         GetProfileListener listener;
 
         public interface GetProfileListener {
-            void done(Profile profile);
+            void done(ProfileFB profile);
         }
 
         public GetProfileByIdTask(Context context, String uid, GetProfileListener listener ) {
@@ -54,11 +53,11 @@ public class DBUtils {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("profiles").child(uid);
+            DatabaseReference dbref = FirebaseDatabase.getInstance().getReference(ProfileFB.DB_IN_FB).child(uid);
             dbref.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Profile profile = dataSnapshot.getValue(Profile.class);
+                    ProfileFB profile = dataSnapshot.getValue(ProfileFB.class);
                     listener.done(profile);
                 }
 

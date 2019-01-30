@@ -29,6 +29,7 @@
         </LinearLayout>
 
         <android.support.v7.widget.CardView
+            android:id="@+id/layout_seach_box_where_main"
             android:layout_width="match_parent"
             android:layout_margin="@dimen/margin_button_where_home"
             android:translationZ="1dp"
@@ -108,26 +109,61 @@
             android:background="@color/white"
             android:layout_gravity="bottom">
             <LinearLayout
+                android:id="@+id/layout_ride_where_main"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_weight="1">
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/rides"/>
+                <TextView
+                    android:id="@+id/tv_ride_where_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ride_where_main"
+                    android:visibility="gone"
+                    android:textColor="@color/colorPrimary"/>
+            </LinearLayout>
+            <LinearLayout
                 android:id="@+id/layout_find_ride_where_main"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:orientation="vertical"
                 android:layout_weight="1">
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:background="@drawable/ic_search_black_24dp"/>
+                <TextView
+                    android:id="@+id/tv_find_ride_where_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/find_ride_where_main"
+                    android:visibility="gone"
+                    android:textColor="@color/colorPrimary"/>
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/layout_offer_ride_where_main"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:orientation="vertical"
                 android:layout_weight="1">
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:background="@drawable/ic_add_black_24dp"/>
+                <TextView
+                    android:id="@+id/tv_offer_ride_where_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/offer_ride_where_main"
+                    android:visibility="gone"
+                    android:textColor="@color/colorPrimary"/>
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/layout_chat_where_main"
@@ -161,5 +197,4 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/drawer_navigation_main_menu" />
-
 </android.support.v4.widget.DrawerLayout>

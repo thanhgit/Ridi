@@ -18,6 +18,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -196,7 +197,7 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String query = s.toString();
+                String query = s.toString().trim();
                 if (!query.trim().equals("") && !query.equals(querySearch)){
 
                     retrofit2.Call<SearchPlaceWithTextResponse> searchPlaceWithTextResponseCall = ApiUtils.getServerGoogleMapApi()
@@ -222,7 +223,6 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
                         }
                     });
 
-
                     querySearch = query;
                 }
             }
@@ -235,6 +235,17 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
                    ibtn_close.setVisibility(View.GONE);
                    searchPlaceAdapter.notifyDataSetChanged();
                }
+            }
+        });
+
+        txt_search.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    // ActivityUtils.displayToast(SearchPlaceActivity.this, "Doing proccess");
+                    return true;
+                }
+                return false;
             }
         });
 

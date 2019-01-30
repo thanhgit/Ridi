@@ -2,10 +2,8 @@
     <string name="app_name">Ride sharing</string>
     <string name="title_activity_maps">Map</string>
     <string name="term_apps">By active account, I agree to <b>Ridesharing term</b></string>
-    <string name="message_where_activate_code">
-        Thank you for active account with Ride sharing \n
-        We send activate code to XXXXXXXX through SMS
-    </string>
+    <string name="title_message_where_activate_code">Nhập mã OTP</string>
+    <string name="description_message_where_activate_code">Mã OTP sẽ được gửi tới số</string>
 
     <!-- Navigation Drawer menu labels -->
     <string name="nav_home">Home</string>
@@ -91,4 +89,37 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+
+    <!--profile activity-->
+    <string name="find_ride_where_profile">I find ride</string>
+    <string name="offer_ride_where_profile"> I offer ride</string>
+    <string name="home_place_where_profile">Set home location</string>
+    <string name="office_place_where_profile">Set office location</string>
+    <string name="start_time_where_profile">Start time</string>
+    <string name="leave_office_where_profile">Leave office time</string>
+    <string name="birth_day_where_profile">Set birth day</string>
+
+    <!--ui profile user-->
+    <string name="phone_where_profile">Phone</string>
+    <string name="first_name_where_profile">First name</string>
+    <string name="last_name_where_profile">Last name</string>
+
+    <!--main activity-->
+    <string name="find_ride_where_main">Find a ride</string>
+    <string name="offer_ride_where_main">Offer a ride</string>
+    <string name="ride_where_main">Rides</string>
+    <!--bottom sheet-->
+    <string name="find_ride_where_bottom_navigation_where_main">I want to find a ride</string>
+    <string name="offer_ride_where_bottom_navigation_where_main">I can offer a ride</string>
+    <string name="option_find_ride_where_bottom_navigation_where_main">1 slot</string>
+    <string name="option_offer_ride_where_bottom_navigation_where_main">Motorbike</string>
+
+    <!--no internet fragment-->
+    <string name="no_internet_where_no_internet_fragment">No Internet</string>
+
+    <!--item matching-->
+    <string name="request_where_item_matching">Request</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

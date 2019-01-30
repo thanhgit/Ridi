@@ -9,23 +9,43 @@ import saveteam.com.ridesharing.model.Geo;
 
 @IgnoreExtraProperties
 public class TripFB implements Serializable {
-    public static final String DB_IN_FB = "offertrips";
+    public static final String DB_IN_FB = "offertripsv1";
 
     private String uid;
+    private String userName;
     private int size;
     private Geo geoStart;
     private Geo geoEnd;
+    private String startTime;
     private List<Geo> paths;
 
     public TripFB() {
     }
 
-    public TripFB(String uid, int size, Geo geoStart, Geo geoEnd, List<Geo> paths) {
+    public TripFB(String uid, String userName, int size, Geo geoStart, Geo geoEnd, String startTime, List<Geo> paths) {
         this.uid = uid;
+        this.userName = userName;
         this.size = size;
         this.geoStart = geoStart;
         this.geoEnd = geoEnd;
+        this.startTime = startTime;
         this.paths = paths;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 
     public String getUid() {

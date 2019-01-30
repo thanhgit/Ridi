@@ -11,10 +11,26 @@
         android:padding="@dimen/margin_button_where_home"
         android:orientation="vertical">
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:textStyle="bold"
-            android:text="@string/message_where_activate_code"/>
+            android:textSize="@dimen/textsize_title"
+            android:text="@string/title_message_where_activate_code"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="@dimen/textsize_normal"
+            android:text="@string/description_message_where_activate_code"/>
+        <TextView
+            android:id="@+id/tv_phone_where_activate_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:textSize="@dimen/textsize_title"
+            android:text="+84 XXXXXXXXX"/>
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,6 +40,7 @@
                 android:id="@+id/txt_activate_code_where_activate_code"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:focusable="true"
                 android:hint="Enter activate code"
                 android:inputType="number" />
         </android.support.design.widget.TextInputLayout>

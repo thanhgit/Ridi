@@ -41,15 +41,40 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:textSize="@dimen/textsize_title"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:inputType="text"
+                        android:layout_marginRight="@dimen/margin_button_where_home"
+                        android:textSize="@dimen/textsize_normal"
                         android:background="@null"/>
                     <ImageView
                         android:id="@+id/ibtn_close_where_search_place"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/ic_close_black_24dp"
+                        android:background="@drawable/close_circle"
+                        android:layout_marginRight="2dp"
                         android:visibility="gone"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/margin_button_where_home"
+                        android:layout_gravity="center"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:id="@+id/iv_my_location_where_search_place"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginRight="2dp"
+                            android:padding="@dimen/margin_button_where_home"
+                            android:background="@drawable/ic_my_location_black_24dp"/>
+                        <ImageView
+                            android:id="@+id/iv_search_location_where_search_place"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:padding="@dimen/margin_button_where_home"
+                            android:background="@drawable/ic_edit_location_black_24dp"/>
+                    </LinearLayout>
                     <ImageButton
                         android:id="@+id/ibtn_routing_where_search_place"
                         android:layout_width="50dp"
@@ -66,30 +91,10 @@
                 android:id="@+id/rv_place_name_where_search_place"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary"></android.support.v7.widget.RecyclerView>
+                android:layout_marginLeft="@dimen/margin_button_where_home"
+                android:layout_marginRight="@dimen/margin_button_where_home"
+                android:background="@color/white"></android.support.v7.widget.RecyclerView>
     </android.support.design.widget.AppBarLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="top|right"
-        android:layout_margin="@dimen/margin_button_where_home"
-        android:paddingTop="80dp"
-        android:orientation="vertical">
-        <ImageView
-            android:id="@+id/iv_my_location_where_search_place"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_margin="@dimen/margin_button_where_home"
-            android:background="@drawable/ic_my_location_black_24dp"/>
-        <ImageView
-            android:id="@+id/iv_search_location_where_search_place"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_margin="@dimen/margin_button_where_home"
-            android:background="@drawable/ic_edit_location_black_24dp"/>
-    </LinearLayout>
-
 
     <android.support.design.widget.NavigationView
         android:id="@+id/navigation_view_where_search_place"

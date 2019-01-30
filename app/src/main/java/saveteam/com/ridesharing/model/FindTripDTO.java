@@ -3,20 +3,22 @@ package saveteam.com.ridesharing.model;
 import java.io.Serializable;
 import java.util.List;
 
+import saveteam.com.ridesharing.firebase.model.TripFB;
+
 public class FindTripDTO implements Serializable {
-    private Trip tripSearch;
+    private TripFB tripSearch;
     private List<MatchingDTO> matchingDTOS;
 
-    public FindTripDTO(Trip tripSearch, List<MatchingDTO> matchingDTOS) {
+    public FindTripDTO(TripFB tripSearch, List<MatchingDTO> matchingDTOS) {
         this.tripSearch = tripSearch;
         this.matchingDTOS = matchingDTOS;
     }
 
-    public Trip getTripSearch() {
+    public TripFB getTripSearch() {
         return tripSearch;
     }
 
-    public void setTripSearch(Trip tripSearch) {
+    public void setTripSearch(TripFB tripSearch) {
         this.tripSearch = tripSearch;
     }
 
@@ -30,7 +32,7 @@ public class FindTripDTO implements Serializable {
 
     public double getPercentByUid(String uid) {
         for (MatchingDTO matchingDTO : matchingDTOS) {
-            if (matchingDTO.getUserName().equals(uid)) {
+            if (matchingDTO.getUserId().equals(uid)) {
                 return matchingDTO.getPercent();
             }
         }

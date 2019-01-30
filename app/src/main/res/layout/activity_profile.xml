@@ -59,68 +59,91 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/profile_layout"
+            android:layout_margin="@dimen/margin_button_where_home"
             android:layout_marginTop="5dp"
             android:visibility="visible"
             android:orientation="vertical">
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_phone_where_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:drawableLeft="@drawable/ic_phone_android_black_24dp"
+                android:drawablePadding="@dimen/margin_button_where_home"
+                android:gravity="left|center"/>
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_email_where_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:drawableLeft="@drawable/ic_email_black_24dp"
+                android:drawablePadding="@dimen/margin_button_where_home"
+                android:gravity="left|center"/>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_birth_day_where_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:drawableLeft="@drawable/birthday"
+                android:drawablePadding="@dimen/margin_button_where_home"
+                android:gravity="left|center"/>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_gender_where_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:drawableLeft="@drawable/gender"
+                android:drawablePadding="@dimen/margin_button_where_home"
+                android:gravity="left|center"/>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_mode_where_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:drawableLeft="@drawable/findride"
+                android:drawablePadding="@dimen/margin_button_where_home"
+                android:gravity="left|center"
+                android:hint="@string/find_ride_where_profile"/>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_home_place_where_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:drawableLeft="@drawable/ic_home_black_24dp"
+                android:drawablePadding="@dimen/margin_button_where_home"
+                android:gravity="left|center"/>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_office_place_where_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:drawableLeft="@drawable/office"
+                android:drawablePadding="@dimen/margin_button_where_home"
+                android:gravity="left|center"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:orientation="horizontal">
-                <TextView
-                    android:layout_width="0dp"
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/btn_start_time_where_profile"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Phone: "
-                    android:textSize="@dimen/textsize_title"
-                    android:textStyle="bold"/>
-                <TextView
-                    android:id="@+id/tv_phone_where_profile"
-                    android:layout_width="0dp"
+                    android:background="@color/transparent"
+                    android:layout_marginHorizontal="@dimen/margin_button_where_home"/>
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/btn_leave_office_time_where_profile"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text="09853xxxxx"
-                    android:textSize="@dimen/textsize_title"
-                    android:textStyle="bold"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Email: "
-                    android:textSize="@dimen/textsize_title"
-                    android:textStyle="bold"/>
-                <TextView
-                    android:id="@+id/tv_email_where_profile"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text="defaultuser@gmail.com"
-                    android:textSize="@dimen/textsize_title"
-                    android:textStyle="bold"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Gender: "
-                    android:textSize="@dimen/textsize_title"
-                    android:textStyle="bold"/>
-                <TextView
-                    android:id="@+id/tv_gender_where_profile"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text="Male"
-                    android:textSize="@dimen/textsize_title"
-                    android:textStyle="bold"/>
+                    android:background="@color/transparent"
+                    android:layout_marginHorizontal="@dimen/margin_button_where_home"/>
             </LinearLayout>
         </LinearLayout>
         <LinearLayout
@@ -136,6 +159,8 @@
                 android:id="@+id/btn_update_profile_where_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/transparent"
+                android:textColor="@color/secondaryLightColor"
                 android:text="Update profile"/>
         </LinearLayout>
     </RelativeLayout>
