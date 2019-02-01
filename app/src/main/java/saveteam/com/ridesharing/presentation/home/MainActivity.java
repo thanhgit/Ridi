@@ -348,6 +348,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         ActivityUtils.changeActivity(MainActivity.this, SettingActivity.class);
                         return true;
                     case R.id.nav_home_where_drawer_navigation_main_menu:
+                        ActivityUtils.changeActivity(MainActivity.this, HomeActivity.class);
                         return true;
                     case R.id.nav_about_us_where_drawer_navigation_main_menu:
                         ActivityUtils.changeActivity(MainActivity.this, AboutUsActivity.class);
@@ -493,19 +494,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 public void onResponse(Call<MatchingForSearchResponse> call, Response<MatchingForSearchResponse> response) {
                     MatchingForSearchResponse matchingResponse = response.body();
                     if (matchingResponse != null) {
-
                         List<MatchingDTO> matchingDTOS = new ArrayList<>();
-
-                        for (int index = 0; index < matchingResponse.getUsers().size(); index++) {
-                            matchingDTOS.add(new MatchingDTO(
-                                    matchingResponse.getUsers().get(index),
-                                    matchingResponse.getPercents().get(index)
-                            ));
+                        if (matchingResponse.getUsers() != null) {
+                            for (int index = 0; index < matchingResponse.getUsers().size(); index++) {
+                                matchingDTOS.add(new MatchingDTO(
+                                        matchingResponse.getUsers().get(index),
+                                        matchingResponse.getPercents().get(index)
+                                ));
+                            }
                         }
 
-                        for (String user : matchingResponse.getUsers()) {
-                            ActivityUtils.displayLog(user);
-                        }
 
                         if (dialog.isShowing()) {
                             dialog.dismiss();

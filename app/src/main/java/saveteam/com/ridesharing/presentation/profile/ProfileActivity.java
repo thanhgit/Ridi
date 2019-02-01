@@ -20,8 +20,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
@@ -116,6 +118,7 @@ public class ProfileActivity extends AppCompatActivity {
     ProfileFB mProfile;
 
     ProgressDialog dialog;
+    boolean isUpdateAvatar = false;
 
     private DateTimePickerUtils birthday;
     private DateTimePickerUtils startTime;
@@ -231,39 +234,34 @@ public class ProfileActivity extends AppCompatActivity {
         layout_update_profile.setVisibility(View.INVISIBLE);
         layout_profile.setVisibility(View.VISIBLE);
         String uid = SharedRefUtils.getUid(this);
-        FirebaseUtils.uploadImageFile(uid, iv_user_profile_photo, new OnSuccessListener() {
-                    @Override
-                    public void onSuccess(Object o) {
-                        updateProfile();
-                    }
-                },
-                new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        ActivityUtils.displayToast(ProfileActivity.this, "Not update");
-                    }
-                });
+        mProfile.setFirstName(txt_first_name.getText().toString().trim());
+        mProfile.setLastName(txt_last_name.getText().toString().trim());
+        mProfile.setPhone(txt_phone.getText().toString().trim());
+        mProfile.setGender(rbg_gender.getCheckedRadioButtonId() == R.id.rb_male ? true : false);
+
+        updateProfile();
     }
 
     private void updateProfile() {
-        FirebaseUtils.uploadImageFile(mProfile.getUid(), iv_user_profile_photo, new OnSuccessListener() {
-            @Override
-            public void onSuccess(Object o) {
+        if (isUpdateAvatar) {
+            FirebaseUtils.uploadImageFile(mProfile.getUid(), iv_user_profile_photo, new OnSuccessListener() {
+                @Override
+                public void onSuccess(Object o) {
 
-            }
-        }, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+                }
+            }, new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
 
-            }
-        });
+                }
+            });
+        }
+
         DatabaseReference db = FirebaseDB.getInstance().child(ProfileFB.DB_IN_FB);
-        Map<String, Object> obj = new HashMap<>();
-        obj.put(mProfile.getUid(), mProfile);
-        db.updateChildren(obj, new DatabaseReference.CompletionListener() {
+        db.child(mProfile.getUid()).setValue(mProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                if (databaseError != null) {
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
                     ActivityUtils.displayLog("add profile success");
                     DataManager.getInstance().setProfile(mProfile);
                     loadCurrentProfile();
@@ -309,6 +307,7 @@ public class ProfileActivity extends AppCompatActivity {
             phone.setHint(mProfile.getPhone());
             gender.setHint(mProfile.isGender() ? "male" : "female");
             mode.setHint(mProfile.getMode().equals("find_ride") ? getResources().getString(R.string.find_ride_where_profile) : getResources().getString(R.string.offer_ride_where_profile));
+            mode.setCompoundDrawablesWithIntrinsicBounds(mProfile.getMode().equals("find_ride") ? getResources().getDrawable(R.drawable.findride) : getResources().getDrawable(R.drawable.offerride), null, null, null);
             birth_day.setHint(mProfile.getBirthday());
 
             String[] homes = mProfile.getHomePlace().split("\\|");
@@ -356,6 +355,7 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == 2000) {
+            isUpdateAvatar = true;
             Uri photo = data.getData();
 
             Glide.with(this).load(photo)

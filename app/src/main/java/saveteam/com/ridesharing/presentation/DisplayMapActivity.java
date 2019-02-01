@@ -25,6 +25,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -113,7 +114,7 @@ public class DisplayMapActivity extends FragmentActivity implements OnMapReadyCa
         mMap = googleMap;
 
         createRoute(ActivityUtils.convertFrom(trip.getGeoStart()), ActivityUtils.convertFrom(trip.getGeoEnd()), Color.argb(100, 255, 0, 0), false);;
-        createRoute(ActivityUtils.convertFrom(tripSearch.getGeoStart()), ActivityUtils.convertFrom(tripSearch.getGeoEnd()), Color.argb(100, 0, 255, 0), true);;
+        createRoute(ActivityUtils.convertFrom(tripSearch.getGeoStart()), ActivityUtils.convertFrom(tripSearch.getGeoEnd()), Color.argb(100, 0, 255, 0), true);
     }
 
     @OnClick(R.id.btn_put_trip_where_display_map)
@@ -183,8 +184,10 @@ public class DisplayMapActivity extends FragmentActivity implements OnMapReadyCa
                                 mMap.addMarker(new MarkerOptions().position(start).icon(BitmapDescriptorFactory.fromResource(R.drawable.from_place)));
                                 mMap.addMarker(new MarkerOptions().position(end).icon(BitmapDescriptorFactory.fromResource(R.drawable.to_place)));
                             } else {
-                                mMap.addMarker(new MarkerOptions().position(start).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_start)));
-                                mMap.addMarker(new MarkerOptions().position(end).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_end)));
+                                Marker startOfferMarker = mMap.addMarker(new MarkerOptions().position(start).title(trip.getUserName()).snippet("I am here").icon(BitmapDescriptorFactory.fromResource(R.drawable.offerride)));
+                                startOfferMarker.showInfoWindow();
+                                Marker endOfferMarker = mMap.addMarker(new MarkerOptions().position(end).title(trip.getUserName()).snippet("This is my destination").icon(BitmapDescriptorFactory.fromResource(R.drawable.goal)));
+                                //endOfferMarker.showInfoWindow();
                             }
 
 

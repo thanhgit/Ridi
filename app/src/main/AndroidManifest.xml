@@ -157,7 +157,11 @@
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
-        <activity android:name=".presentation.TrackingActivity"></activity>
+        <activity
+            android:name=".presentation.TrackingActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".presentation.home.HomeActivity"></activity>
     </application>
 
 </manifest>

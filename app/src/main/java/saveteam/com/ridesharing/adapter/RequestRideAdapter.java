@@ -17,6 +17,7 @@ import butterknife.ButterKnife;
 import saveteam.com.ridesharing.R;
 import saveteam.com.ridesharing.firebase.model.ConfirmFB;
 import saveteam.com.ridesharing.firebase.model.ProfileFB;
+import saveteam.com.ridesharing.presentation.TrackingActivity;
 import saveteam.com.ridesharing.presentation.chat.ChatActivity;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
 import saveteam.com.ridesharing.utils.activity.SharedRefUtils;
@@ -54,10 +55,11 @@ public class RequestRideAdapter extends RecyclerView.Adapter<RequestRideAdapter.
                 ActivityUtils.displayToast(activity, "successfully");
                 String uid = SharedRefUtils.getUid(activity);
                 String roomId = confirmFB.getFindRideId().hashCode() + confirmFB.getOfferRideId().hashCode() + "";
-                Intent intent = new Intent(activity, ChatActivity.class);
-                intent.putExtra("data", roomId);
-                intent.putExtra("profile", profileFB);
-
+//                Intent intent = new Intent(activity, ChatActivity.class);
+//                intent.putExtra("data", roomId);
+//                intent.putExtra("profile", profileFB);
+//                activity.startActivity(intent);
+                Intent intent = new Intent(activity, TrackingActivity.class);
                 activity.startActivity(intent);
             }
         });
