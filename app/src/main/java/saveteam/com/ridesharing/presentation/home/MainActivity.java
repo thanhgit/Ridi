@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,6 +18,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,11 +37,13 @@ import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -81,7 +85,10 @@ import saveteam.com.ridesharing.presentation.chat.FriendActivity;
 import saveteam.com.ridesharing.presentation.fragment.NoInternetFragment;
 import saveteam.com.ridesharing.presentation.profile.ProfileActivity;
 import saveteam.com.ridesharing.presentation.setting.SettingActivity;
+import saveteam.com.ridesharing.server.ApiUtils;
 import saveteam.com.ridesharing.server.model.MatchingForSearchResponse;
+import saveteam.com.ridesharing.server.model.searchplacewithtext.Result;
+import saveteam.com.ridesharing.server.model.searchplacewithtext.SearchPlaceWithTextResponse;
 import saveteam.com.ridesharing.utils.activity.ActivityUtils;
 import saveteam.com.ridesharing.utils.activity.AnimationUtils;
 import saveteam.com.ridesharing.utils.activity.DataManager;
@@ -160,6 +167,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @BindView(R.id.nav_view_where_main)
     NavigationView nav_view;
 
+    /**
+     * Map
+     */
+    @BindView(R.id.iv_my_location_where_main)
+    ImageView iv_my_location;
+    @BindView(R.id.iv_forword_where_main)
+    ImageView iv_forword;
+
     View nav_header;
     TextView tv_name;
     TextView tv_email;
@@ -187,6 +202,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     boolean isQuit = false;
 
     private ProfileFB profile;
+
+    private Location myLocation;
+    private LatLng center;
+    private boolean isStartPoint = true;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -223,6 +243,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         initApp();
 
+        btn_from_time.setText(ActivityUtils.getNow());
     }
 
     private void initNetwork() {
@@ -258,6 +279,78 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         LatLng here = new LatLng(10.8659698,106.8107944);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 13));
+
+        try {
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(true);
+            mMap.getUiSettings().setRotateGesturesEnabled(true);
+            mMap.getUiSettings().setZoomGesturesEnabled(true);
+        } catch (SecurityException e)  {
+            Log.e("Exception: %s", e.getMessage());
+        }
+
+        mMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
+            @Override
+            public void onCameraMove() {
+                if (!isStartPoint || (start_point != null && end_point != null)) {
+                    return;
+                }
+
+                checkDisplayForward();
+
+                mMap.clear();
+                center = mMap.getCameraPosition().target;
+
+                mMap.addMarker(new MarkerOptions()
+                        .position(center)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.from_place)));
+
+            }
+        });
+
+        mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+            @Override
+            public void onCameraIdle() {
+                if (!isStartPoint || (start_point != null && end_point != null)) {
+                    return;
+                }
+
+                mMap.clear();
+
+                if (mMap != null) {
+                    center = mMap.getCameraPosition().target;
+
+                    checkDisplayForward();
+
+                    mMap.addMarker(new MarkerOptions()
+                            .position(center)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.from_place)));
+
+                    Call<SearchPlaceWithTextResponse> searchPlaceWithTextResponseCall = ApiUtils.getServerGoogleMapApi()
+                            .searchPlaceWithText(center.latitude + "," + center.longitude, getResources().getString(R.string.google_maps_key));
+                    searchPlaceWithTextResponseCall.enqueue(new Callback<SearchPlaceWithTextResponse>() {
+                        @Override
+                        public void onResponse(Call<SearchPlaceWithTextResponse> call, Response<SearchPlaceWithTextResponse> response) {
+                            if (response.isSuccessful()) {
+                                SearchPlaceWithTextResponse placeResponse = response.body();
+                                if (placeResponse.getResults().size() > 0) {
+                                    Result result = placeResponse.getResults().get(0);
+                                    String titlePlaceName = result.getFormattedAddress();
+                                    start_point = new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng());
+                                    btn_from_where.setHint(titlePlaceName);
+                                    tv_from_place.setText(titlePlaceName);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<SearchPlaceWithTextResponse> call, Throwable t) {
+
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private void initApp() {
@@ -374,8 +467,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         initNetwork();
         network.bind();
 
-        if (start_point!=null && end_point!=null) {
+        if (start_point!=null && end_point!=null && btn_time_on_search.getText().toString().trim().equals("")) {
             clickFromTime(btn_from_time);
+        }
+
+        if (profile != null && start_point != null && end_point != null) {
+            if (profile.getMode().equals("find_ride")) {
+                clickLayoutFindRide(null);
+            } else if (profile.getMode().equals("offer_ride")) {
+                clickLayoutOfferRide(null);
+            }
         }
     }
 
@@ -412,9 +513,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         start_point = end_point;
         end_point = tmp;
 
-        String strTmp = btn_from_where.getText().toString();
-        btn_from_where.setText(btn_to_where.getText().toString());
-        btn_to_where.setText(strTmp);
+        String strTmp = btn_from_where.getHint().toString();
+        btn_from_where.setHint(btn_to_where.getHint().toString());
+        btn_to_where.setHint(strTmp);
 
         if (start_point != null && end_point != null) {
             createRoute();
@@ -627,6 +728,19 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    @OnClick(R.id.iv_forword_where_main)
+    public void clickForword(View view) {
+        if (start_point != null) {
+            end_point = null;
+            Intent intent = new Intent(this, SearchPlaceActivity.class);
+            startActivityForResult(intent,END_POINT_ACTIVITY);
+        } else if (end_point != null) {
+            start_point = null;
+            Intent intent = new Intent(this, SearchPlaceActivity.class);
+            startActivityForResult(intent,START_POINT_ACTIVITY);
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -638,13 +752,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             if (start != null) {
                 if (title.equals("")) {
-                    btn_from_where.setText(start.toString());
+                    btn_from_where.setHint(start.toString());
                     tv_from_place.setText(start.toString());
                 } else {
-                    btn_from_where.setText(title);
+                    btn_from_where.setHint(title);
                     tv_from_place.setText(title);
                 }
                 btn_from_where.setBackground(null);
+
+                mMap.clear();
+                isStartPoint = false;
 
                 start_point = new LatLng(start.lat, start.lng);
                 mMap.addMarker(new MarkerOptions().position(start_point).icon(BitmapDescriptorFactory.fromResource(R.drawable.from_place)));
@@ -658,10 +775,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             if (end != null) {
                 if (title.equals("")) {
-                    btn_to_where.setText(end.toString());
+                    btn_to_where.setHint(end.toString());
                     tv_to_place.setText(end.toString());
                 } else {
-                    btn_to_where.setText(title);
+                    btn_to_where.setHint(title);
                     tv_to_place.setText(title);
                 }
                 btn_to_where.setBackground(null);
@@ -672,10 +789,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
 
-        if (start_point!=null && end_point!= null) {
-            createRoute();
-        }
+        checkDisplayForward();
 
+    }
+
+    private void checkDisplayForward() {
+        if (start_point!=null && end_point!= null) {
+            iv_forword.setVisibility(View.GONE);
+            iv_my_location.setVisibility(View.GONE);
+            createRoute();
+        } else if (start_point != null || end_point != null) {
+            iv_forword.setVisibility(View.VISIBLE);
+        } else {
+            iv_forword.setVisibility(View.GONE);
+        }
     }
 
     private void createRoute() {
@@ -744,5 +871,49 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(intent);
             }
         });
+    }
+
+    /**
+     * My location
+     */
+    @OnClick(R.id.iv_my_location_where_main)
+    public void clickMyLocation(View view) {
+        mMap.clear();
+        if (mMap != null) {
+            myLocation = mMap.getMyLocation();
+
+            if (myLocation != null) {
+
+                retrofit2.Call<SearchPlaceWithTextResponse> placeResponseCall = ApiUtils.getServerGoogleMapApi()
+                        .searchPlaceWithText(myLocation.getLatitude()+","+myLocation.getLongitude(), getResources().getString(R.string.google_maps_key));
+                placeResponseCall.enqueue(new Callback<SearchPlaceWithTextResponse>() {
+                    @Override
+                    public void onResponse(retrofit2.Call<SearchPlaceWithTextResponse> call, Response<SearchPlaceWithTextResponse> response) {
+                        if (response.isSuccessful()) {
+                            SearchPlaceWithTextResponse placeResponse = response.body();
+                            if (placeResponse.getResults().size() > 0) {
+                                Result result = placeResponse.getResults().get(0);
+                                String titlePlaceName = result.getFormattedAddress();
+                                start_point = new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng());
+                                btn_from_where.setHint(titlePlaceName);
+                                tv_from_place.setText(titlePlaceName);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(retrofit2.Call<SearchPlaceWithTextResponse> call, Throwable t) {
+                        ActivityUtils.displayToast(MainActivity.this, t.getMessage());
+                    }
+                });
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()))
+                        .zoom(13)
+                        .build();
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
+                mMap.animateCamera(cameraUpdate);
+            }
+
+        }
     }
 }

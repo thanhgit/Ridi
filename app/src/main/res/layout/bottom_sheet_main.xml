@@ -12,7 +12,6 @@
     android:background="@drawable/border_radius"
     android:layout_marginLeft="@dimen/margin_button_where_home"
     android:layout_marginRight="@dimen/margin_button_where_home"
-    android:visibility="visible"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
     <LinearLayout
@@ -33,6 +32,8 @@
                 android:drawableLeft="@drawable/from_place"
                 android:gravity="left|center"
                 android:onClick="clickFromWhere"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:hint="From place"/>
             <TextView
                 android:id="@+id/tv_to_place_where_main"
@@ -43,6 +44,8 @@
                 android:drawableLeft="@drawable/to_place"
                 android:layout_marginTop="@dimen/margin_button_where_home"
                 android:onClick="clickToWhere"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:background="@color/transparent"
 
                 android:hint="To place"/>

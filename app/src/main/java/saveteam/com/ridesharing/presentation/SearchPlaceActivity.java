@@ -306,9 +306,9 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
                             SearchPlaceWithTextResponse placeResponse = response.body();
                             if (placeResponse.getResults().size() > 0) {
                                 Result result = placeResponse.getResults().get(0);
-                                titlePlaceName = result.getName();
+                                titlePlaceName = result.getFormattedAddress();
                                 choose = new Geo(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng(), 0);
-                                txt_search.setText(result.getName());
+                                txt_search.setText(result.getFormattedAddress());
                             }
                         }
                     }
