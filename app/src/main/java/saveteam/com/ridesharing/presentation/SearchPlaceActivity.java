@@ -30,11 +30,13 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -90,7 +92,7 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
     private GoogleMap mMap;
     private Location myLocation;
     private LatLng center;
-    private boolean searchLocation = false;
+    private boolean searchLocation = true;
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -116,7 +118,7 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
 
                     mMap.addMarker(new MarkerOptions()
                             .position(center)
-                            .title("Your position"));
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.from_place)));
                 }
 
             }
@@ -132,7 +134,7 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
 
                         mMap.addMarker(new MarkerOptions()
                                 .position(center)
-                                .title("Your position"));
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.from_place)));
 
                         Call<SearchPlaceWithTextResponse> searchPlaceWithTextResponseCall = ApiUtils.getServerGoogleMapApi()
                                 .searchPlaceWithText(center.latitude+","+center.longitude, getResources().getString(R.string.google_maps_key));
@@ -166,6 +168,8 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_place);
         ButterKnife.bind(this);
+
+        iv_search_location.setVisibility(View.GONE);
 
         results = new ArrayList<>();
 
@@ -408,6 +412,7 @@ public class SearchPlaceActivity extends FragmentActivity implements OnMapReadyC
     }
 
     public void createMenu(List<SearchPlaceHistory> histories){
+        Collections.reverse(histories);
         Menu menu = navigationView.getMenu();
         menu.clear();
         if (histories.size() > 0 && menu != null) {

@@ -783,6 +783,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 btn_to_where.setBackground(null);
 
+                iv_my_location.setVisibility(View.GONE);
+
                 end_point = new LatLng(end.lat, end.lng);
                 mMap.addMarker(new MarkerOptions().position(end_point).icon(BitmapDescriptorFactory.fromResource(R.drawable.to_place)));
 
@@ -796,7 +798,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private void checkDisplayForward() {
         if (start_point!=null && end_point!= null) {
             iv_forword.setVisibility(View.GONE);
-            iv_my_location.setVisibility(View.GONE);
             createRoute();
         } else if (start_point != null || end_point != null) {
             iv_forword.setVisibility(View.VISIBLE);
