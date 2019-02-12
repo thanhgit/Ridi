@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".presentation.TrackingActivity">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,7 +26,10 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/transparent"
         app:layout_scrollFlags="scroll|enterAlways"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+    </android.support.v7.widget.Toolbar>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,6 +43,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <TextView
+                android:id="@+id/tv_from_place_where_tracking"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -55,10 +58,13 @@
                 android:layout_height="24dp"
                 android:background="@drawable/ic_arrow_forward"/>
             <TextView
+                android:id="@+id/tv_to_place_where_tracking"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="@dimen/textsize_title"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:textColorHint="@color/colorPrimary"
                 android:gravity="center"
                 android:hint="Nhà thờ đức bà "/>
@@ -68,6 +74,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <TextView
+                android:id="@+id/tv_from_time_where_tracking"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -77,6 +84,7 @@
                 android:ellipsize="end"
                 android:hint="Start time: 7:00 "/>
             <TextView
+                android:id="@+id/tv_to_time_where_tracking"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -90,17 +98,21 @@
             android:layout_margin="@dimen/margin_button_where_home"
             android:orientation="horizontal">
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_cash_where_tracking"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/black"
                 android:text="Cost: 100 thousand VND"/>
             <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_status_where_tracking"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginLeft="@dimen/margin_button_where_home"
                 android:backgroundTint="@color/transparent"
-                android:hint="Secure Action"
-                android:textColorHint="@color/red"/>
+                android:hint="Start"
+                android:textColorHint="@color/green"/>
         </LinearLayout>
 
     </LinearLayout>

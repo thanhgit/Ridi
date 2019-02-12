@@ -8,17 +8,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:776097512960:android:c1dc59a3fe57b1cf",
+        "mobilesdk_app_id": "1:776097512960:android:0c0794592ed9dbad",
         "android_client_info": {
-          "package_name": "org.saveteam.xpo"
+          "package_name": "saveteam.com.ridesharing"
         }
       },
       "oauth_client": [
         {
-          "client_id": "776097512960-mcde8f91gtcmdgh7us8p5sq1dbqj477m.apps.googleusercontent.com",
+          "client_id": "776097512960-4cb2kuv6gbnbt6cauob1ft96ss96809k.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "org.saveteam.xpo",
+            "package_name": "saveteam.com.ridesharing",
             "certificate_hash": "5849063c5de53c5bfe8891f1688ff2e84248c7cf"
           }
         },
@@ -52,17 +52,17 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:776097512960:android:0c0794592ed9dbad",
+        "mobilesdk_app_id": "1:776097512960:android:d0c7667e3b13f2bf",
         "android_client_info": {
-          "package_name": "saveteam.com.ridesharing"
+          "package_name": "saveteam.com.ridi"
         }
       },
       "oauth_client": [
         {
-          "client_id": "776097512960-4cb2kuv6gbnbt6cauob1ft96ss96809k.apps.googleusercontent.com",
+          "client_id": "776097512960-08c1l72ja4288nl07mhcoe2cuhllotto.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "saveteam.com.ridesharing",
+            "package_name": "saveteam.com.ridi",
             "certificate_hash": "5849063c5de53c5bfe8891f1688ff2e84248c7cf"
           }
         },

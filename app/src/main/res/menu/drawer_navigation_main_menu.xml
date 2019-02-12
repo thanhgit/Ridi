@@ -7,9 +7,12 @@
         <item android:id="@+id/nav_notification_where_drawer_navigation_main_menu"
             android:title="@string/nav_notifications"
             android:icon="@drawable/ic_notifications_black_24dp"></item>
-        <item android:id="@+id/nav_chat_where_drawer_navigation_main_menu"
-            android:title="@string/nav_chat"
-            android:icon="@drawable/ic_chat_black_24dp"></item>
+        <!--<item android:id="@+id/nav_chat_where_drawer_navigation_main_menu"-->
+            <!--android:title="@string/nav_chat"-->
+            <!--android:icon="@drawable/ic_chat_black_24dp"></item>-->
+        <item android:id="@+id/nav_feedback_where_drawer_navigation_main_menu"
+            android:title="@string/activity_title_feedback"
+            android:icon="@drawable/ic_feedback_black_24dp"></item>
         <item android:id="@+id/nav_setting_where_drawer_navigation_main_menu"
             android:title="@string/nav_settings"
             android:icon="@drawable/ic_settings_applications_black_24dp"></item>

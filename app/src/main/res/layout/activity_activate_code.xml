@@ -54,6 +54,7 @@
             android:id="@+id/btn_activate_where_activate_code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"
             android:text="Activate"/>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

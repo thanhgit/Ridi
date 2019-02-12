@@ -112,21 +112,34 @@
             android:padding="@dimen/margin_button_where_home"
             android:layout_gravity="right|bottom"
             android:orientation="vertical">
-            <ImageView
-                android:id="@+id/iv_forword_where_main"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_margin="@dimen/margin_button_where_home"
-                android:visibility="gone"
-                android:background="@drawable/arraw_forward"/>
-            <ImageView
-                android:id="@+id/iv_my_location_where_main"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginRight="2dp"
-                android:layout_gravity="center"
-                android:padding="@dimen/margin_button_where_home"
-                android:background="@drawable/ic_my_location_black_24dp"/>
+            <android.support.v7.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_button_where_home"
+                app:cardCornerRadius="20dp"
+                app:cardBackgroundColor="@color/white">
+                <ImageView
+                    android:id="@+id/iv_forword_where_main"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:visibility="gone"
+                    android:background="@drawable/arraw_forward"/>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardBackgroundColor="@color/white">
+                <ImageView
+                    android:id="@+id/iv_my_location_where_main"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_margin="@dimen/margin_button_where_home"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ic_my_location_black_24dp"/>
+            </android.support.v7.widget.CardView>
+
         </LinearLayout>
 
         <include layout="@layout/bottom_sheet_main" />

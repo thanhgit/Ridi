@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="saveteam.com.ridesharing">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="saveteam.com.ridi">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -22,11 +23,15 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="ANDROID.PERMISSION.READ_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
 
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/logo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -45,7 +50,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".presentation.LoginActivity"
+            android:name=".presentation.splashscreen.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
@@ -161,7 +166,8 @@
             android:name=".presentation.TrackingActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".presentation.home.HomeActivity"></activity>
+        <activity android:name=".presentation.home.HomeActivity" />
+        <activity android:name=".presentation.home.FeedbackActivity" />
     </application>
 
 </manifest>

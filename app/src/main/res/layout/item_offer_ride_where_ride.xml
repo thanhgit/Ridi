@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:backgroundTint="@color/transparent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_button_where_home"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/margin_button_where_home"
+            android:paddingRight="@dimen/margin_button_where_home"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tv_from_place_where_offer_ride"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textSize="@dimen/textsize_normal"
+                android:text="Suoi tien"/>
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/ic_arrow_forward_black_24dp"/>
+            <TextView
+                android:id="@+id/tv_to_place_where_offer_ride"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingLeft="@dimen/margin_button_where_home"
+                android:textSize="@dimen/textsize_normal"
+                android:text="Nha tho duc ba"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/margin_button_where_home"
+            android:paddingRight="@dimen/margin_button_where_home"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tv_from_time_where_offer_ride"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textSize="@dimen/textsize_normal"
+                android:text="Start: 10:30 AM"/>
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"/>
+            <TextView
+                android:id="@+id/tv_to_time_where_offer_ride"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingLeft="@dimen/margin_button_where_home"
+                android:textSize="@dimen/textsize_normal"
+                android:text="End: 11:30 AM"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <ImageView
+                    android:id="@+id/iv_avatar_rider_where_booking_ride"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:background="@drawable/bg_circle"
+                    android:layout_margin="@dimen/margin_button_where_home"
+                    android:src="@drawable/default_user"/>
+
+                <RatingBar
+                    android:id="@+id/rt_rider_where_offer_ride"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/margin_button_where_home"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:isIndicator="true"
+                    android:focusable="false"
+                    android:clickable="false"
+                    android:numStars="5"
+                    android:rating="1"
+                    android:stepSize="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:textSize="@dimen/textsize_normal"
+                        android:paddingLeft="@dimen/margin_button_where_home"
+                        android:text="Rider name:"/>
+                    <TextView
+                        android:id="@+id/tv_rider_name_where_offer_ride"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:textSize="@dimen/textsize_normal"
+                        android:paddingLeft="@dimen/margin_button_where_home"
+                        android:text="Distance:"/>
+                    <TextView
+                        android:id="@+id/tv_distance_where_offer_ride"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:textSize="@dimen/textsize_normal"
+                        android:paddingLeft="@dimen/margin_button_where_home"
+                        android:text="Cost:"/>
+                    <TextView
+                        android:id="@+id/tv_cost_where_offer_ride"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:textSize="@dimen/textsize_normal"
+                        android:paddingLeft="@dimen/margin_button_where_home"
+                        android:text="Note:"/>
+                    <TextView
+                        android:id="@+id/tv_note_where_offer_ride"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:orientation="horizontal">
+                    <android.support.v7.widget.AppCompatButton
+                        android:id="@+id/btn_ok_where_offer_ride"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColorHint="@color/colorPrimary"
+                        android:hint="Ok"/>
+                    <android.support.v7.widget.AppCompatButton
+                        android:id="@+id/btn_cancel_where_offer_ride"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="Cancel"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>

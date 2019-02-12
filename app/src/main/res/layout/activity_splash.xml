@@ -5,26 +5,31 @@
     android:id="@+id/layout_where_splash"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_where_splash"
     tools:context=".presentation.splashscreen.SplashActivity">
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:gravity="center"-->
+        <!--android:text="Ridi"-->
+        <!--android:textSize="50sp"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:typeface="serif"-->
+        <!--android:textStyle="italic"-->
+        <!--android:fontFamily="sans-serif-medium"-->
+        <!--android:textColor="@color/colorPrimary"-->
+        <!--android:paddingTop="20dp"/>-->
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:foregroundGravity="center"
+        android:src="@drawable/logo"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ridi"
-        android:textSize="50sp"
+        android:text="Online support:   0985375546"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:typeface="serif"
-        android:textStyle="italic"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="@color/colorPrimary"
-        android:paddingTop="20dp"/>
+        android:layout_marginBottom="@dimen/textsize_title"
+        android:textColor="@color/red"/>
 
-    <com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/circle_loading_view_where_splash"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:background="@color/transparent"
-        android:layout_centerInParent="true"
-        />
 </RelativeLayout>
