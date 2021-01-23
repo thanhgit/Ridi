@@ -70,11 +70,11 @@ public class SplashActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     if (profile != null && profile.getUid() != null && !SharedRefUtils.isOnboarding(SplashActivity.this)) {
-                                        ActivityUtils.changeActivity(SplashActivity.this, MainActivity.class);
+                                        ActivityUtils.changeActivityTop(SplashActivity.this, MainActivity.class);
                                     } else if(SharedRefUtils.isOnboarding(SplashActivity.this)) {
-                                        ActivityUtils.changeActivity(SplashActivity.this, OnBoardingActivity.class);
+                                        ActivityUtils.changeActivityTop(SplashActivity.this, OnBoardingActivity.class);
                                     } else  {
-                                        ActivityUtils.changeActivity(SplashActivity.this, LoginActivity.class);
+                                        ActivityUtils.changeActivityTop(SplashActivity.this, LoginActivity.class);
                                     }
                                 }
                             };

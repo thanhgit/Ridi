@@ -22,6 +22,14 @@
     <string name="onboard_ux_description">Dễ sử dụng</string>
     <string name="onboard_money_title">Tiết kiệm tiền</string>
     <string name="onboard_money_description">Đầu tư vào bản thân</string>
+    
+    <!--Feedback-->
+    <string name="feeling_where_feedback">Bạn cảm thấy sao khi sử dụng ứng dụng?</string>
+    <string name="promise_where_feedback">Nếu có vấn đề, hãy phản hồi cho chúng tôi để chúng tôi sửa lỗi sai của mình. Chúng tôi muốn bạn có trải nghiệm tốt nhất!</string>
+    <string name="title_where_feedback">Tên vấn đề</string>
+    <string name="description_where_feedback">Diễn tả vấn đề</string>
+    <string name="satisfaction_level_where_feedback">Mức độ hài lòng của bạn</string>
+    <string name="submit_where_feedback">Gửi </string>
 
 
     <!-- Navigation Drawer menu labels -->

@@ -14,20 +14,20 @@ android {
     }
     buildTypes {
         // disable crarshlytics
-//        debug {
-//            ext.alwaysUpdateBuildId = false
-//        }
+        debug {
+            ext.alwaysUpdateBuildId = false
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 // disable PNG crunching
-//    if (projects.hasProperty('devBuild')) {
-//        splits.abi.enable = false
-//        splits.density.enable = false
-//        aaptOptions.cruncherEnabled = false
-//    }
+    if (projects.hasProperty('devBuild')) {
+        splits.abi.enable = false
+        splits.density.enable = false
+        aaptOptions.cruncherEnabled = false
+    }
     productFlavors {
     }
 }

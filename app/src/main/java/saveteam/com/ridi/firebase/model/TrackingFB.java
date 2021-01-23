@@ -2,7 +2,6 @@ package saveteam.com.ridi.firebase.model;
 
 
 import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 import com.google.firebase.database.IgnoreExtraProperties;
@@ -16,7 +15,6 @@ import saveteam.com.ridi.model.Geo;
 public class TrackingFB implements Serializable {
     public static final String DB_IN_FB = "trackingv1";
 
-    @PrimaryKey
     @NonNull
     private String uid;
 

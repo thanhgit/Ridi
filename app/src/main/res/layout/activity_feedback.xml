@@ -1,9 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="@dimen/margin_button_where_home"
     tools:context=".presentation.home.FeedbackActivity">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/textsize_title"
+        android:text="@string/feeling_where_feedback"/>
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_button_where_home">
+        <EditText
+            android:id="@+id/txt_title_where_feedback"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:hint="@string/title_where_feedback"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="@dimen/margin_button_where_home">
+        <EditText
+            android:id="@+id/txt_description_where_feedback"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:maxLines="10"
+            android:hint="@string/description_where_feedback"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_button_where_home"
+        android:textSize="@dimen/textsize_title"
+        android:text="@string/satisfaction_level_where_feedback"/>
+
+    <RatingBar
+        android:id="@+id/rt_satisfaction_level_where_feedback"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_button_where_home"
+        android:layout_gravity="center"
+        android:numStars="5"
+        android:stepSize="1"
+        android:rating="1"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_button_where_home"
+        android:textStyle="italic"
+        android:textColor="@color/red"
+        android:textSize="@dimen/textsize_title"
+        android:text="@string/promise_where_feedback"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_submit_where_feedback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/transparent"
+            android:textColor="@color/colorPrimary"
+            android:layout_alignParentBottom="true"
+            android:text="@string/submit_where_feedback"/>
+    </RelativeLayout>
+</LinearLayout>

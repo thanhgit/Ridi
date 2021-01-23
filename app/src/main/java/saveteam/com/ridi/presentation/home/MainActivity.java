@@ -483,7 +483,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onResume() {
         super.onResume();
-
+        initNetwork();
         network.bind();
 
         if (start_point!=null && end_point!=null && btn_time_on_search.getText().toString().trim().equals("")) {
