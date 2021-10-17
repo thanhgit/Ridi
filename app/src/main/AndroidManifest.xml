@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="saveteam.com.ridi">
+    package="saveteam.com.quagiang">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -21,7 +21,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CAMERA" />
+<!--    <uses-permission android:name="android.permission.CAMERA" />-->
     <uses-permission android:name="ANDROID.PERMISSION.READ_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
@@ -39,7 +39,7 @@
         <service
             android:name="com.novoda.merlin.MerlinService"
             android:exported="false" />
-        <service android:name=".utils.MyFirebaseMessagingService">
+        <service android:name="saveteam.com.quagiang.utils.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
@@ -50,7 +50,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".presentation.splashscreen.LoginActivity"
+            android:name="saveteam.com.quagiang.presentation.splashscreen.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
@@ -60,7 +60,7 @@
             <!-- </intent-filter> -->
         </activity>
         <activity
-            android:name=".presentation.SearchPlaceActivity"
+            android:name="saveteam.com.quagiang.presentation.SearchPlaceActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
 
@@ -70,16 +70,16 @@
             <!-- </intent-filter> -->
         </activity>
         <activity
-            android:name=".presentation.DisplayMapActivity"
+            android:name="saveteam.com.quagiang.presentation.DisplayMapActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".presentation.profile.RegisterProfileActivity"
+            android:name="saveteam.com.quagiang.presentation.profile.RegisterProfileActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".presentation.profile.ActivateCodeActivity"
+            android:name="saveteam.com.quagiang.presentation.profile.ActivateCodeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".presentation.profile.ProfileActivity"
+            android:name="saveteam.com.quagiang.presentation.profile.ProfileActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
 
@@ -89,11 +89,11 @@
             <!-- </intent-filter> -->
         </activity>
         <activity
-            android:name=".presentation.home.MainActivity"
+            android:name="saveteam.com.quagiang.presentation.home.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".presentation.MatchingActivity"
+            android:name="saveteam.com.quagiang.presentation.MatchingActivity"
             android:screenOrientation="portrait">
 
             <!-- <intent-filter> -->
@@ -102,7 +102,7 @@
             <!-- </intent-filter> -->
         </activity>
         <activity
-            android:name=".presentation.splashscreen.SplashActivity"
+            android:name="saveteam.com.quagiang.presentation.splashscreen.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -112,10 +112,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.splashscreen.OnBoardingActivity"
+            android:name="saveteam.com.quagiang.presentation.splashscreen.OnBoardingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".presentation.payment.AddBankCardActivity"
+            android:name="saveteam.com.quagiang.presentation.payment.AddBankCardActivity"
             android:screenOrientation="portrait">
 
             <!-- <intent-filter> -->
@@ -124,7 +124,7 @@
             <!-- </intent-filter> -->
         </activity>
         <activity
-            android:name=".presentation.payment.BankcardManagerActivity"
+            android:name="saveteam.com.quagiang.presentation.payment.BankcardManagerActivity"
             android:screenOrientation="portrait">
 
             <!-- <intent-filter> -->
@@ -133,7 +133,7 @@
             <!-- </intent-filter> -->
         </activity>
         <activity
-            android:name=".presentation.chat.ChatActivity"
+            android:name="saveteam.com.quagiang.presentation.chat.ChatActivity"
             android:screenOrientation="portrait">
 
             <!-- <intent-filter> -->
@@ -142,18 +142,18 @@
             <!-- </intent-filter> -->
         </activity>
         <activity
-            android:name=".presentation.chat.FriendActivity"
+            android:name="saveteam.com.quagiang.presentation.chat.FriendActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".presentation.home.NotificationActivity"
+            android:name="saveteam.com.quagiang.presentation.home.NotificationActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".presentation.setting.SettingActivity"
+            android:name="saveteam.com.quagiang.presentation.setting.SettingActivity"
             android:label="@string/title_activity_setting" />
-        <activity android:name=".presentation.home.AboutUsActivity" />
-        <activity android:name=".presentation.home.PolicyActivity" />
+        <activity android:name="saveteam.com.quagiang.presentation.home.AboutUsActivity" />
+        <activity android:name="saveteam.com.quagiang.presentation.home.PolicyActivity" />
         <activity
-            android:name=".presentation.RideActivity"
+            android:name="saveteam.com.quagiang.presentation.RideActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
 
@@ -163,11 +163,11 @@
             <!-- </intent-filter> -->
         </activity>
         <activity
-            android:name=".presentation.TrackingActivity"
+            android:name="saveteam.com.quagiang.presentation.TrackingActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".presentation.home.HomeActivity" />
-        <activity android:name=".presentation.home.FeedbackActivity" />
+        <activity android:name="saveteam.com.quagiang.presentation.home.HomeActivity" />
+        <activity android:name="saveteam.com.quagiang.presentation.home.FeedbackActivity" />
     </application>
 
 </manifest>
